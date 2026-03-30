@@ -1,12 +1,26 @@
-'use client';
-
+import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { Filter, ChevronDown, Star, Search } from 'lucide-react';
+import { Filter, ChevronDown, Star, Search, Loader2 } from 'lucide-react';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
+import api from '@/lib/api';
+import Image from 'next/image';
 
 export default function ShopPage() {
+  const [products, setProducts] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<string[]>([]);
+
+  useEffect(() => {
+    api.get('/products').then(res => {
+      setProducts(res.data);
+      const uniqueCats: string[] = Array.from(new Set(res.data.map((p: any) => p.category)));
+      setCategories(uniqueCats);
+    }).catch(err => {
+      console.error("Failed to fetch products", err);
+    }).finally(() => setLoading(false));
+  }, []);
   return (
     <>
       <Navbar alwaysSolid />
@@ -37,12 +51,19 @@ export default function ShopPage() {
                       Category <ChevronDown size={16} className="text-brand-500" />
                     </h4>
                     <div className="space-y-2">
-                      {['Executive', 'Kids', 'Jumbo Family', 'Corporate'].map((cat) => (
+                      {categories.length > 0 ? categories.map((cat) => (
                         <label key={cat} className="flex items-center gap-2 cursor-pointer">
                           <input type="checkbox" className="rounded border-brand-300 text-brand-500 focus:ring-brand-500" />
                           <span className="text-sm text-brand-700">{cat}</span>
                         </label>
-                      ))}
+                      )) : (
+                        ['Executive', 'Kids', 'Gifting'].map(cat => (
+                          <label key={cat} className="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" className="rounded border-brand-300 text-brand-500 focus:ring-brand-500" />
+                            <span className="text-sm text-brand-700">{cat}</span>
+                          </label>
+                        ))
+                      )}
                     </div>
                   </div>
 
@@ -64,7 +85,7 @@ export default function ShopPage() {
             {/* Product Grid */}
             <div className="flex-1">
               <div className="flex justify-between items-center mb-6">
-                <p className="text-sm text-brand-600">Showing 1-12 of 36 products</p>
+                <p className="text-sm text-brand-600">Showing {products.length} products</p>
                 <div className="flex items-center gap-2 text-sm bg-white border border-brand-200 rounded-full px-4 py-2">
                   <span className="text-brand-600">Sort by:</span>
                   <select className="bg-transparent text-brand-900 font-medium focus:outline-none cursor-pointer">
@@ -77,28 +98,34 @@ export default function ShopPage() {
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {[1, 2, 3, 4, 5, 6].map((item, idx) => (
+                {loading ? (
+                  [1, 2, 3, 4, 5, 6].map(i => (
+                    <div key={i} className="bg-white rounded-2xl h-[400px] animate-pulse border border-brand-100" />
+                  ))
+                ) : products.map((item, idx) => (
                   <motion.div 
-                    key={item}
+                    key={item.id}
                     initial={{ opacity: 0, scale: 0.95 }}
                     animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: idx * 0.1 }}
+                    transition={{ delay: idx * 0.05 }}
                     className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full"
                   >
-                    <Link href={`/shop/product-slug-${item}`} className="block relative aspect-[4/5] bg-brand-100 overflow-hidden">
+                    <Link href={`/shop/${item.slug}`} className="block relative aspect-[4/5] bg-brand-100 overflow-hidden">
                       {/* Image Layer */}
-                      <div className="absolute inset-0 flex items-center justify-center text-brand-400">
-                        Image {item}
-                      </div>
+                      {item.images?.[0] ? (
+                        <Image src={item.images[0]} alt={item.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500" />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-brand-400">No Image</div>
+                      )}
 
                       {/* Quick Add Overlay */}
                       <div className="absolute inset-0 bg-brand-900/10 opacity-0 group-hover:opacity-100 transition-opacity" />
                     </Link>
 
                     <div className="p-5 flex-1 flex flex-col">
-                      <p className="text-xs text-brand-500 font-semibold mb-1 uppercase tracking-wider">Tiffin Series</p>
-                      <Link href={`/shop/product-slug-${item}`}>
-                        <h3 className="font-heading font-semibold text-lg text-brand-900 mb-2 group-hover:text-brand-600 transition-colors">Tiffin Product Name {item}</h3>
+                      <p className="text-xs text-brand-500 font-semibold mb-1 uppercase tracking-wider">{item.category}</p>
+                      <Link href={`/shop/${item.slug}`}>
+                        <h3 className="font-heading font-semibold text-lg text-brand-900 mb-2 group-hover:text-brand-600 transition-colors">{item.name}</h3>
                       </Link>
                       
                       <div className="flex items-center gap-1 mb-3">
@@ -109,8 +136,8 @@ export default function ShopPage() {
                       </div>
                       
                       <div className="mt-auto flex items-center justify-between pt-4">
-                        <span className="font-bold text-brand-900">₹1,299</span>
-                        <button className="text-brand-500 font-medium hover:text-brand-700 text-sm">Add Options</button>
+                        <span className="font-bold text-brand-900">₹{item.price.toLocaleString('en-IN')}</span>
+                        <Link href={`/shop/${item.slug}`} className="text-brand-500 font-bold hover:text-brand-900 transition-colors text-sm uppercase tracking-widest">Customize</Link>
                       </div>
                     </div>
                   </motion.div>

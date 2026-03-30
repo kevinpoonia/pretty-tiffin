@@ -1,18 +1,37 @@
-'use client';
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { Star, ShieldCheck, Heart, Truck, Check, Share2, Info, Loader2 } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
+import api from '@/lib/api';
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
   const { addItem } = useCart();
+  const [product, setProduct] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isAdding, setIsAdding] = useState(false);
   const [activeColor, setActiveColor] = useState('Classic Steel');
   const [engravingText, setEngravingText] = useState('');
   const [quantity, setQuantity] = useState(1);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
+  useEffect(() => {
+    api.get(`/products/${params.slug}`).then(res => {
+      setProduct(res.data);
+      if (res.data.images?.length > 0) {
+        // Optional: set initial active image or color if needed
+      }
+    }).catch(err => {
+      console.error("Product not found", err);
+    }).finally(() => setLoading(false));
+  }, [params.slug]);
+
+  const faqs = [
+    { title: "Product Features & Specs", icon: Info, content: "Made from premium 304 food-grade stainless steel. Features a space-saving stacking design. Dimensions: 14cm x 14cm x 22cm when fully assembled." },
+    { title: "Shipping & Delivery", icon: Truck, content: "Free express shipping across India. Orders placed before 1 PM are eligible for Same Day Delivery in select metro cities. Standard delivery takes 2-4 business days." },
+    { title: "Warranty Information", icon: ShieldCheck, content: "Enjoy peace of mind with our 1-year manufacturer warranty. Covers structural defects, clip malfunctions, and transit damages." },
+  ];
 
   const colors = [
     { name: 'Classic Steel', class: 'bg-gray-300' },
@@ -26,6 +45,23 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     return 'bg-gradient-to-br from-gray-200 to-gray-400';
   };
 
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <Loader2 className="animate-spin text-brand-500" size={48} />
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-white">
+        <h1 className="text-2xl font-bold text-brand-900 mb-4">Product Not Found</h1>
+        <Link href="/shop" className="text-brand-500 font-bold underline">Back to Shop</Link>
+      </div>
+    );
+  }
+
   return (
     <>
       <Navbar alwaysSolid />
@@ -38,43 +74,48 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
             <div className="w-full lg:w-1/2 flex flex-col gap-4">
               {/* Main Preview */}
               <div className="relative aspect-square w-full rounded-3xl overflow-hidden bg-brand-50 flex items-center justify-center p-8 sticky top-28">
-                {/* Simulated Tiffin Box using CSS */}
-                <motion.div 
-                  layout
-                  className={`relative w-64 h-80 rounded-[40px] shadow-2xl flex flex-col items-center justify-center transition-all duration-500 ${getTiffinColor()}`}
-                  style={{
-                    boxShadow: 'inset -10px -10px 30px rgba(0,0,0,0.1), 10px 10px 30px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.8)'
-                  }}
-                >
-                  {/* Tiffin Lids / Lines */}
-                  <div className="absolute top-1/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
-                  <div className="absolute top-2/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
-                  
-                  {/* Handle */}
-                  <div className="absolute -top-6 w-32 h-12 border-4 border-gray-400 rounded-t-full" />
-
-                  {/* Engraving Preview */}
-                  <AnimatePresence mode="popLayout">
-                    {engravingText && (
-                      <motion.div
-                        initial={{ opacity: 0, scale: 0.8 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.8 }}
-                        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] text-center mix-blend-overlay"
-                      >
-                        <p className="font-heading font-semibold text-2xl text-black/60 tracking-wider font-serif" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.4)' }}>
-                          {engravingText}
-                        </p>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </motion.div>
+                {product.images?.[0] ? (
+                  <Image src={product.images[0]} alt={product.name} fill className="object-contain p-12" />
+                ) : (
+                  <motion.div 
+                    layout
+                    className={`relative w-64 h-80 rounded-[40px] shadow-2xl flex flex-col items-center justify-center transition-all duration-500 ${getTiffinColor()}`}
+                    style={{
+                      boxShadow: 'inset -10px -10px 30px rgba(0,0,0,0.1), 10px 10px 30px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.8)'
+                    }}
+                  >
+                    {/* Tiffin Lids / Lines */}
+                    <div className="absolute top-1/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
+                    <div className="absolute top-2/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
+                    
+                    {/* Handle */}
+                    <div className="absolute -top-6 w-32 h-12 border-4 border-gray-400 rounded-t-full" />
+  
+                    {/* Engraving Preview */}
+                    <AnimatePresence mode="popLayout">
+                      {engravingText && (
+                        <motion.div
+                          initial={{ opacity: 0, scale: 0.8 }}
+                          animate={{ opacity: 1, scale: 1 }}
+                          exit={{ opacity: 0, scale: 0.8 }}
+                          className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] text-center mix-blend-overlay"
+                        >
+                          <p className="font-heading font-semibold text-2xl text-black/60 tracking-wider font-serif" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.4)' }}>
+                            {engravingText}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </motion.div>
+                )}
               </div>
               
               {/* Thumbnails */}
               <div className="flex gap-4 overflow-x-auto pb-2">
-                {[1, 2, 3, 4].map((thumb) => (
-                  <div key={thumb} className="w-20 h-20 rounded-xl bg-brand-100 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-brand-500 transition-colors" />
+                {product.images?.map((thumb: string, i: number) => (
+                  <div key={i} className="w-20 h-20 rounded-xl bg-brand-100 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-brand-500 transition-colors relative overflow-hidden">
+                    <Image src={thumb} alt={product.name} fill className="object-cover" />
+                  </div>
                 ))}
               </div>
             </div>
@@ -88,12 +129,12 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   </div>
                   <span className="text-sm text-brand-600 underline cursor-pointer">42 Reviews</span>
                 </div>
-                <h1 className="text-3xl md:text-4xl font-bold font-heading text-brand-900 mb-2">The Executive 3-Tier Tiffin</h1>
-                <p className="text-2xl font-semibold text-brand-900">₹1,499</p>
+                <h1 className="text-3xl md:text-4xl font-bold font-heading text-brand-900 mb-2">{product.name}</h1>
+                <p className="text-2xl font-semibold text-brand-900">₹{Number(product.price).toLocaleString('en-IN')}</p>
               </div>
 
               <p className="text-brand-700 leading-relaxed mb-8">
-                Crafted from premium 304 food-grade stainless steel, this 3-tier tiffin is designed to keep your meals fresh and your style elevated. Personalize it with bespoke laser engraving to make it truly yours.
+                {product.description}
               </p>
 
               {/* Configure Color */}
@@ -151,10 +192,11 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   onClick={async () => {
                     setIsAdding(true);
                     await addItem({
-                      productId: 'prod_premium_tiffin_01', // Mock product ID
+                      productId: product.id,
                       quantity,
-                      price: 1499,
-                      name: 'The Executive 3-Tier Tiffin',
+                      price: Number(product.price),
+                      name: product.name,
+                      imageUrl: product.images?.[0] || '',
                       customization: { engravingText, themeId: activeColor }
                     });
                     setIsAdding(false);
@@ -163,7 +205,7 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
                   disabled={isAdding}
                   className="w-full sm:flex-1 bg-brand-900 text-white font-medium rounded-full py-4 px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
                 >
-                  {isAdding ? <><Loader2 size={18} className="animate-spin" /> ADDING TO CART...</> : `Add to Cart — ₹${1499 * quantity}`}
+                  {isAdding ? <><Loader2 size={18} className="animate-spin" /> ADDING TO CART...</> : `Add to Cart — ₹${(Number(product.price) * quantity).toLocaleString('en-IN')}`}
                 </button>
                 
                 <button className="w-14 h-14 rounded-full border border-brand-200 flex items-center justify-center text-brand-600 hover:text-brand-500 hover:border-brand-500 hover:bg-brand-50 transition-all shrink-0">
@@ -173,19 +215,33 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               {/* Accordions */}
               <div className="flex flex-col gap-4">
-                {[
-                  { title: "Product Features & Specs", icon: Info },
-                  { title: "Shipping & Delivery", icon: Truck },
-                  { title: "Warranty Information", icon: ShieldCheck },
-                ].map((acc, i) => (
-                  <div key={i} className="border border-brand-100 rounded-xl p-4 cursor-pointer hover:border-brand-300 transition-colors">
+                {faqs.map((acc, i) => (
+                  <div 
+                    key={i} 
+                    onClick={() => setOpenFaq(openFaq === i ? null : i)}
+                    className="border border-brand-100 rounded-xl p-4 cursor-pointer hover:border-brand-300 transition-colors bg-white overflow-hidden"
+                  >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <acc.icon size={18} className="text-brand-500" />
-                        <span className="font-heading font-medium text-brand-900">{acc.title}</span>
+                        <acc.icon size={18} className={openFaq === i ? "text-brand-600" : "text-brand-500"} />
+                        <span className={`font-heading font-medium ${openFaq === i ? "text-brand-900" : "text-brand-800"}`}>{acc.title}</span>
                       </div>
-                      <span className="text-brand-400">+</span>
+                      <span className="text-brand-400 font-medium text-lg transition-transform duration-300" style={{ transform: openFaq === i ? 'rotate(45deg)' : 'rotate(0deg)' }}>+</span>
                     </div>
+                    <AnimatePresence>
+                      {openFaq === i && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="overflow-hidden"
+                        >
+                          <p className="pt-4 text-sm text-brand-600 leading-relaxed border-t border-brand-50 mt-4">
+                            {acc.content}
+                          </p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
                 ))}
               </div>
@@ -199,3 +255,5 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
     </>
   );
 }
+import Link from 'next/link';
+import Image from 'next/image';

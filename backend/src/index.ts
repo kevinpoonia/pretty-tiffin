@@ -11,6 +11,8 @@ import orderRoutes from './routes/orders';
 import blogRoutes from './routes/blog';
 import adminRoutes from './routes/admin';
 import emailRoutes from './routes/email';
+import userRoutes from './routes/user';
+import bannerRoutes from './routes/banners';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
@@ -40,6 +42,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/blog', blogRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/email', emailRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/banners', bannerRoutes);
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);
