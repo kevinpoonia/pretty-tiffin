@@ -44,8 +44,8 @@ export default function CartPage() {
               {items.map((item, idx) => (
                 <div key={`${item.id || item.productId}-${idx}`} className="flex flex-col md:flex-row gap-6 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
                   {/* Product Image */}
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-red-50 rounded flex-shrink-0 relative overflow-hidden">
-                    <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-cover mix-blend-multiply" />
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded flex-shrink-0 relative overflow-hidden border border-gray-100">
+                    <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-contain p-2" />
                   </div>
                   
                   {/* Product Details */}

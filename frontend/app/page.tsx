@@ -90,7 +90,7 @@ export default function Home() {
               {categories.map((cat, idx) => (
                 <Link key={idx} href={`/shop?category=${cat.name}`} className="flex flex-col items-center group cursor-pointer w-24 md:w-32 flex-shrink-0 snap-center">
                   <div className="w-20 h-20 md:w-28 md:h-28 rounded-full bg-red-50 overflow-hidden relative mb-3 group-hover:shadow-lg transition-all border-2 border-transparent group-hover:border-red-500">
-                    <Image src={cat.img} alt={cat.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500 mix-blend-multiply p-2" />
+                    <Image src={cat.img} alt={cat.name} fill className="object-cover group-hover:scale-110 transition-transform duration-500 p-2" />
                   </div>
                   <span className="text-sm font-semibold text-gray-700 text-center group-hover:text-red-500">{cat.name}</span>
                 </Link>
@@ -119,7 +119,7 @@ export default function Home() {
                      src={`/images/product-${(item % 3) + 1}.png`} 
                      alt={`Product ${item}`} 
                      fill 
-                     className="object-contain p-4 group-hover:scale-105 transition-transform mix-blend-multiply" 
+                     className="object-contain p-4 group-hover:scale-105 transition-transform bg-[#f9f9f9]" 
                    />
                 </div>
                 
