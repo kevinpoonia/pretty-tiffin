@@ -108,7 +108,7 @@ export default function Home() {
           
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {[1, 2, 3, 4, 5].map((item) => (
-              <div key={item} className="bg-white rounded shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow relative cursor-pointer">
+              <Link key={item} href="/shop/executive-premium-tiffin" className="bg-white rounded shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow relative cursor-pointer block">
                 {/* Product Image Area */}
                 <div className="relative aspect-square bg-[#f9f9f9]">
                    {item === 1 && <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-1 flex items-center gap-1 rounded-sm shadow-sm"><Truck size={10} /> Same Day</div>}
@@ -143,7 +143,7 @@ export default function Home() {
                      <span className="text-xs text-gray-400 line-through">₹1,999</span>
                    </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

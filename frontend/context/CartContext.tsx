@@ -5,6 +5,7 @@ import api from '../lib/api';
 import { useAuth } from './AuthContext';
 
 interface CartItem {
+  id?: string;
   productId: string;
   quantity: number;
   customization?: Record<string, any>;
@@ -20,8 +21,8 @@ interface CartContextType {
   sessionId: string | null;
   loading: boolean;
   addItem: (item: CartItem) => Promise<void>;
-  removeItem: (productId: string) => Promise<void>;
-  updateQuantity: (productId: string, quantity: number) => Promise<void>;
+  removeItem: (id: string) => Promise<void>;
+  updateQuantity: (id: string, quantity: number) => Promise<void>;
   clearCart: () => Promise<void>;
 }
 
@@ -86,10 +87,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const removeItem = async (productId: string) => {
+  const removeItem = async (id: string) => {
     try {
       const headers = !token && sessionId ? { 'x-session-id': sessionId } : {};
-      const res = await api.delete(`/cart/${productId}`, { headers });
+      const res = await api.delete(`/cart/${id}`, { headers });
       setItems(res.data.items || []);
       calculateTotal(res.data.items || []);
     } catch (error) {
@@ -97,11 +98,10 @@ export const CartProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const updateQuantity = async (productId: string, quantity: number) => {
-    // Optimistic update omitted for simplicity, trusting backend
+  const updateQuantity = async (id: string, quantity: number) => {
     try {
       const headers = !token && sessionId ? { 'x-session-id': sessionId } : {};
-      const res = await api.post('/cart', { productId, quantity, updateOnly: true }, { headers });
+      const res = await api.post('/cart', { id, quantity, updateOnly: true }, { headers });
       setItems(res.data.items || []);
       calculateTotal(res.data.items || []);
     } catch (error) {

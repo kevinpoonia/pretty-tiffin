@@ -42,7 +42,7 @@ export default function CartPage() {
             {/* Cart Items */}
             <div className="flex-1 bg-white rounded shadow-sm border border-gray-100 p-6 space-y-6">
               {items.map((item, idx) => (
-                <div key={`${item.productId}-${idx}`} className="flex flex-col md:flex-row gap-6 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
+                <div key={`${item.id || item.productId}-${idx}`} className="flex flex-col md:flex-row gap-6 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
                   {/* Product Image */}
                   <div className="w-24 h-24 md:w-32 md:h-32 bg-red-50 rounded flex-shrink-0 relative overflow-hidden">
                     <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-cover mix-blend-multiply" />
@@ -61,11 +61,11 @@ export default function CartPage() {
                     
                     <div className="flex items-center gap-4 mt-4">
                       <div className="flex items-center border border-gray-200 rounded">
-                        <button onClick={() => updateQuantity(item.productId, Math.max(1, item.quantity - 1))} className="px-3 py-1 font-bold text-gray-600 hover:bg-gray-50">-</button>
+                        <button onClick={() => updateQuantity(item.id!, Math.max(1, item.quantity - 1))} className="px-3 py-1 font-bold text-gray-600 hover:bg-gray-50">-</button>
                         <span className="px-3 py-1 border-x border-gray-200 text-sm font-semibold">{item.quantity}</span>
-                        <button onClick={() => updateQuantity(item.productId, item.quantity + 1)} className="px-3 py-1 font-bold text-gray-600 hover:bg-gray-50">+</button>
+                        <button onClick={() => updateQuantity(item.id!, item.quantity + 1)} className="px-3 py-1 font-bold text-gray-600 hover:bg-gray-50">+</button>
                       </div>
-                      <button onClick={() => removeItem(item.productId)} className="text-gray-400 hover:text-red-500 flex items-center gap-1 text-sm font-medium transition-colors">
+                      <button onClick={() => removeItem(item.id!)} className="text-gray-400 hover:text-red-500 flex items-center gap-1 text-sm font-medium transition-colors">
                         <Trash2 size={16} /> Remove
                       </button>
                     </div>
