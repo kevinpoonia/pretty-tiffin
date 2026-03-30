@@ -4,9 +4,35 @@ import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
 import { useState } from 'react';
+import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
   const [isLogin, setIsLogin] = useState(true);
+  const { login, register } = useAuth();
+  
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+    try {
+      if (isLogin) {
+        await login(email, password);
+      } else {
+        await register(name, email, password);
+      }
+      window.location.href = '/account';
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="bg-[#f5f5f5] min-h-screen flex flex-col">
@@ -23,18 +49,20 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); window.location.href = '/account'; }}>
+          <form className="space-y-5" onSubmit={handleSubmit}>
             
+            {error && <div className="p-3 bg-red-50 border border-red-200 text-red-600 text-sm rounded">{error}</div>}
+
             {!isLogin && (
               <div>
                 <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name</label>
-                <input type="text" placeholder="John Doe" required className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required={!isLogin} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
               </div>
             )}
 
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Email Address</label>
-              <input type="email" placeholder="you@example.com" required className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
             </div>
 
             <div>
@@ -42,11 +70,11 @@ export default function LoginPage() {
                 <label className="block text-xs font-bold text-gray-700 uppercase">Password</label>
                 {isLogin && <a href="#" className="text-xs text-red-500 hover:underline">Forgot?</a>}
               </div>
-              <input type="password" placeholder="••••••••" required className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
             </div>
 
-            <button type="submit" className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded transition-colors shadow-sm">
-              {isLogin ? 'SECURE LOGIN' : 'CREATE ACCOUNT'}
+            <button type="submit" disabled={loading} className="w-full bg-red-500 hover:bg-red-600 disabled:opacity-70 text-white font-bold py-3 px-4 rounded transition-colors shadow-sm">
+              {loading ? 'PROCESSING...' : (isLogin ? 'SECURE LOGIN' : 'CREATE ACCOUNT')}
             </button>
           </form>
 

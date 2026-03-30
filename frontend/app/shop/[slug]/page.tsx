@@ -4,10 +4,12 @@ import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Star, ShieldCheck, Heart, Truck, Check, Share2, Info } from 'lucide-react';
-// We'd use `useParams` from 'next/navigation' in a real setup.
+import { Star, ShieldCheck, Heart, Truck, Check, Share2, Info, Loader2 } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
 
 export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+  const { addItem } = useCart();
+  const [isAdding, setIsAdding] = useState(false);
   const [activeColor, setActiveColor] = useState('Classic Steel');
   const [engravingText, setEngravingText] = useState('');
   const [quantity, setQuantity] = useState(1);
@@ -139,14 +141,29 @@ export default function ProductDetailPage({ params }: { params: { slug: string }
 
               {/* Add to Cart Actions */}
               <div className="flex flex-col sm:flex-row gap-4 mb-10 pt-6 border-t border-brand-100">
-                <div className="flex items-center border border-brand-200 rounded-full bg-brand-50 overflow-hidden w-full sm:w-32">
+                <div className="flex items-center border border-brand-200 rounded-full bg-brand-50 overflow-hidden w-full sm:w-32 shrink-0 lg:shrink">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 text-brand-600 hover:text-brand-900 hover:bg-brand-100 transition-colors">-</button>
                   <span className="flex-1 text-center font-medium">{quantity}</span>
                   <button onClick={() => setQuantity(quantity + 1)} className="px-4 py-3 text-brand-600 hover:text-brand-900 hover:bg-brand-100 transition-colors">+</button>
                 </div>
                 
-                <button className="flex-1 bg-brand-900 text-white font-medium rounded-full py-4 px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 hover:-translate-y-1 hover:shadow-2xl">
-                  Add to Cart — ₹{1499 * quantity}
+                <button 
+                  onClick={async () => {
+                    setIsAdding(true);
+                    await addItem({
+                      productId: 'prod_premium_tiffin_01', // Mock product ID
+                      quantity,
+                      price: 1499,
+                      name: 'The Executive 3-Tier Tiffin',
+                      customization: { engravingText, themeId: activeColor }
+                    });
+                    setIsAdding(false);
+                    window.location.href = '/cart'; // Redirect to cart smoothly
+                  }}
+                  disabled={isAdding}
+                  className="w-full sm:flex-1 bg-brand-900 text-white font-medium rounded-full py-4 px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-2 cursor-pointer disabled:opacity-75"
+                >
+                  {isAdding ? <><Loader2 size={18} className="animate-spin" /> ADDING TO CART...</> : `Add to Cart — ₹${1499 * quantity}`}
                 </button>
                 
                 <button className="w-14 h-14 rounded-full border border-brand-200 flex items-center justify-center text-brand-600 hover:text-brand-500 hover:border-brand-500 hover:bg-brand-50 transition-all shrink-0">

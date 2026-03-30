@@ -1,173 +1,258 @@
 'use client';
 
-import { useState } from 'react';
-import { motion } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { CreditCard, Truck, Receipt, Lock } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { useState, useEffect } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
+import api from '@/lib/api';
+
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
 
 export default function CheckoutPage() {
+  const { user, loading: authLoading } = useAuth();
+  const { items, total, loading: cartLoading, clearCart } = useCart();
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('UPI');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+
+  const [shipping, setShipping] = useState({
+    firstName: '', lastName: '', phone: '', email: '', 
+    address: '', city: '', state: '', pincode: ''
+  });
+
+  // Load Razorpay Script
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+  }, []);
+
+  // Require Login
+  if (!authLoading && !user) {
+    if (typeof window !== 'undefined') window.location.href = '/login';
+    return null;
+  }
+
+  const handlePayment = async () => {
+    if (items.length === 0) return setError("Cart is empty");
+    
+    setLoading(true);
+    setError('');
+
+    try {
+      // 1. Create Razorpay Order Intent
+      const intentRes = await api.post('/orders/create-intent', { amount: total, currency: 'INR' });
+      const order = intentRes.data;
+
+      // 2. Open Razorpay Modal
+      const options = {
+        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'dummy_key',
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Pretty Tiffin',
+        description: 'Premium Customized Tiffin',
+        order_id: order.id,
+        handler: async function (response: any) {
+            try {
+              // 3. Verify Payment & Create DB Order
+              await api.post('/orders/verify', {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                totalAmount: total,
+                paymentMethod: 'RAZORPAY',
+                shippingAddress: shipping,
+                items: items.map(i => ({
+                  productId: i.productId,
+                  quantity: i.quantity,
+                  price: i.price,
+                  customizationDetails: i.customization || {}
+                }))
+              });
+
+              // 4. Success -> Clear Cart and redirect
+              await clearCart();
+              window.location.href = '/order-confirmation';
+              
+            } catch (err: any) {
+              setError(err.response?.data?.error || 'Payment Verification Failed');
+              setLoading(false);
+            }
+        },
+        prefill: {
+          name: user?.name,
+          email: user?.email,
+          contact: shipping.phone
+        },
+        theme: { color: '#ef4444' } // IGP Red
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.on('payment.failed', function () {
+         setError("Payment Failed or Cancelled");
+         setLoading(false);
+      });
+      rzp.open();
+
+    } catch (err: any) {
+      setError(err.response?.data?.error || 'Failed to initialize payment');
+      setLoading(false);
+    }
+  };
+
+  if (cartLoading || authLoading) return <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-8"><p className="animate-pulse font-bold text-gray-500">Loading Secure Checkout...</p></div>;
 
   return (
-    <>
+    <div className="bg-[#f5f5f5] min-h-screen">
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-brand-50 pt-24 pb-20">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-12">
+      <main className="container mx-auto px-4 md:px-6 py-8">
+        
+        <h1 className="text-2xl font-bold text-gray-800 mb-6">Secure Checkout</h1>
+        {error && <div className="mb-4 bg-red-100 text-red-600 p-3 rounded text-sm font-semibold">{error}</div>}
+
+        <div className="flex flex-col lg:flex-row gap-8">
+          
+          {/* Main Checkout Flow */}
+          <div className="flex-1 space-y-6">
             
-            {/* Left: Checkout Flow */}
-            <div className="w-full lg:w-2/3">
-              <h1 className="text-3xl font-bold font-heading text-brand-900 mb-8">Secure Checkout</h1>
-              
-              {/* Steps Indicator */}
-              <div className="flex items-center gap-4 mb-10">
-                <div className={`flex items-center gap-2 ${step >= 1 ? 'text-brand-900' : 'text-brand-400'}`}>
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${step >= 1 ? 'bg-brand-900 text-white' : 'bg-brand-200'}`}>1</span>
-                  <span className="font-heading font-medium text-sm">Shipping</span>
-                </div>
-                <div className="flex-1 h-px bg-brand-200" />
-                <div className={`flex items-center gap-2 ${step >= 2 ? 'text-brand-900' : 'text-brand-400'}`}>
-                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold ${step >= 2 ? 'bg-brand-900 text-white' : 'bg-brand-200'}`}>2</span>
-                  <span className="font-heading font-medium text-sm">Payment</span>
-                </div>
+            {/* Contact Info (Step 1) */}
+            <div className="bg-white rounded shadow-sm border border-gray-100 p-6">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="font-bold text-lg text-gray-800">1. Contact Information</h2>
+                {step > 1 && <button onClick={() => setStep(1)} className="text-red-500 text-sm font-semibold hover:underline">Edit</button>}
               </div>
-
-              {/* Step 1: Shipping */}
-              {step === 1 && (
-                <motion.div initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-brand-100">
-                  <h2 className="text-xl font-heading font-semibold text-brand-900 flex items-center gap-3">
-                    <Truck size={20} className="text-brand-500" /> Contact & Shipping
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">Email</label>
-                      <input type="email" placeholder="john@example.com" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">Phone</label>
-                      <input type="tel" placeholder="+91 xxxxx xxxxx" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">Full Name</label>
-                      <input type="text" placeholder="John Doe" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                    <div className="space-y-1 md:col-span-2">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">Street Address</label>
-                      <input type="text" placeholder="House/Flat No., Street" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">City</label>
-                      <input type="text" placeholder="Mumbai" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                    <div className="space-y-1">
-                      <label className="text-xs font-semibold text-brand-600 uppercase tracking-wider">PIN Code</label>
-                      <input type="text" placeholder="400001" className="w-full bg-brand-50 border border-brand-200 px-4 py-3 rounded-xl focus:outline-none focus:border-brand-500" />
-                    </div>
-                  </div>
-                  
-                  <div className="pt-6 flex justify-end">
-                    <button onClick={() => setStep(2)} className="bg-brand-900 text-white px-8 py-4 rounded-full font-medium hover:bg-brand-800 transition-all flex items-center gap-2">
-                      Continue to Payment
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 2: Payment */}
-              {step === 2 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="space-y-6 bg-white p-6 md:p-8 rounded-3xl shadow-sm border border-brand-100">
-                  <div className="flex justify-between items-center mb-6">
-                    <h2 className="text-xl font-heading font-semibold text-brand-900 flex items-center gap-3">
-                      <CreditCard size={20} className="text-brand-500" /> Payment Method
-                    </h2>
-                    <button onClick={() => setStep(1)} className="text-sm text-brand-500 hover:text-brand-900 font-medium cursor-pointer">Edit Shipping</button>
-                  </div>
-
-                  <div className="space-y-4">
-                    {/* Razorpay (UPI, Cards, Netbanking) */}
-                    <label className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-colors ${paymentMethod === 'UPI' ? 'border-brand-500 bg-brand-50' : 'border-brand-100 hover:border-brand-300'}`}>
-                      <input type="radio" checked={paymentMethod === 'UPI'} onChange={() => setPaymentMethod('UPI')} className="mt-1 w-4 h-4 text-brand-500" />
-                      <div>
-                        <h3 className="font-heading font-semibold text-brand-900">UPI / UPI Apps / Cards / Netbanking</h3>
-                        <p className="text-sm text-brand-600 mt-1">Secure payment via Razorpay. Supported: GPay, PhonePe, Paytm, Visa, Mastercard.</p>
-                      </div>
-                    </label>
-
-                    {/* COD */}
-                    <label className={`flex items-start gap-4 p-5 rounded-2xl border-2 cursor-pointer transition-colors ${paymentMethod === 'COD' ? 'border-brand-500 bg-brand-50' : 'border-brand-100 hover:border-brand-300'}`}>
-                      <input type="radio" checked={paymentMethod === 'COD'} onChange={() => setPaymentMethod('COD')} className="mt-1 w-4 h-4 text-brand-500" />
-                      <div>
-                        <h3 className="font-heading font-semibold text-brand-900">Cash on Delivery (COD)</h3>
-                        <p className="text-sm text-brand-600 mt-1">Pay when you receive the package. Only available for orders under ₹5,000.</p>
-                      </div>
-                    </label>
-                  </div>
-
-                  <div className="pt-6">
-                    <button className="w-full bg-brand-900 text-white px-8 py-4 rounded-full font-medium hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-2">
-                       <Lock size={16} /> Complete Order — ₹1,499
-                    </button>
-                    <p className="text-center text-xs text-brand-500 mt-4">Your connection is 256-bit encrypted and secure.</p>
-                  </div>
-
-                </motion.div>
+              
+              {step === 1 ? (
+                 <div className="space-y-4">
+                   <div className="p-4 bg-green-50 text-green-700 font-semibold rounded border border-green-200">
+                     ✓ Logged in as: {user?.email}
+                   </div>
+                   <button onClick={() => setStep(2)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm">
+                     CONTINUE TO SHIPPING
+                   </button>
+                 </div>
+              ) : (
+                <div className="text-sm text-gray-600">{user?.email}</div>
               )}
             </div>
 
-            {/* Right: Order Summary */}
-            <div className="w-full lg:w-1/3">
-              <div className="bg-white p-6 rounded-3xl shadow-sm border border-brand-100 sticky top-28">
-                <h2 className="text-lg font-heading font-semibold text-brand-900 mb-6 flex items-center gap-2">
-                  <Receipt size={18} className="text-brand-500" /> Order Summary
-                </h2>
-                
-                {/* Items */}
-                <div className="space-y-4 mb-6">
-                  <div className="flex gap-4">
-                    <div className="w-16 h-16 bg-brand-100 rounded-xl flex-shrink-0" />
-                    <div className="flex-1">
-                      <h4 className="font-semibold text-brand-900 text-sm">The Executive 3-Tier</h4>
-                      <p className="text-xs text-brand-600 mt-1">Color: Premium Gold <br/> Engraving: "Aarav"</p>
-                      <p className="font-medium text-brand-900 mt-2">₹1,499 x 1</p>
+            {/* Shipping Address (Step 2) */}
+            <div className={`bg-white rounded shadow-sm border p-6 ${step === 2 ? 'border-red-500' : 'border-gray-100'}`}>
+              <div className="flex justify-between items-center mb-4">
+                <h2 className={`font-bold text-lg ${step >= 2 ? 'text-gray-800' : 'text-gray-400'}`}>2. Delivery Address</h2>
+                {step > 2 && <button onClick={() => setStep(2)} className="text-red-500 text-sm font-semibold hover:underline">Edit</button>}
+              </div>
+
+              {step === 2 && (
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                    <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  </div>
+                  <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  <div className="grid grid-cols-2 gap-4">
+                    <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                    <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  </div>
+                  <input type="tel" placeholder="Mobile Number" value={shipping.phone} onChange={(e) => setShipping({...shipping, phone: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  
+                  <button onClick={() => setStep(3)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm mt-4">
+                    CONTINUE TO PAYMENT
+                  </button>
+                </div>
+              )}
+              {step > 2 && (
+                <div className="text-sm text-gray-600">
+                  {shipping.firstName} {shipping.lastName}, {shipping.address}, {shipping.city} - {shipping.pincode}
+                </div>
+              )}
+            </div>
+
+            {/* Payment Options (Step 3) */}
+            <div className={`bg-white rounded shadow-sm border p-6 ${step === 3 ? 'border-red-500' : 'border-gray-100'}`}>
+              <h2 className={`font-bold text-lg mb-4 ${step === 3 ? 'text-gray-800' : 'text-gray-400'}`}>3. Payment</h2>
+              
+              {step === 3 && (
+                <div className="space-y-4">
+                  <div className="border border-red-500 bg-red-50 rounded p-4 flex items-center justify-between cursor-pointer">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow-[0_0_0_1px_#ef4444]"></div>
+                      <span className="font-semibold text-gray-800">Razorpay (UPI, Cards, NetBanking, Wallets)</span>
                     </div>
                   </div>
-                </div>
+                  <div className="border border-gray-200 rounded p-4 flex items-center justify-between opacity-50 cursor-not-allowed">
+                    <div className="flex items-center gap-3">
+                      <div className="w-4 h-4 rounded-full border border-gray-400"></div>
+                      <span className="font-medium text-gray-600">Cash on Delivery (Unavailable for Customized Items)</span>
+                    </div>
+                  </div>
 
-                {/* Totals */}
-                <div className="border-t border-brand-100 pt-4 space-y-3">
-                  <div className="flex justify-between text-sm text-brand-700">
-                    <span>Subtotal</span>
-                    <span>₹1,499</span>
-                  </div>
-                  <div className="flex justify-between text-sm text-brand-700">
-                    <span>Shipping</span>
-                    <span className="text-green-600 font-medium">Free</span>
-                  </div>
-                  <div className="flex justify-between text-sm bg-brand-50 p-2 rounded text-brand-700">
-                    <span>Discount (WELCOME10)</span>
-                    <span className="text-brand-500">-₹149</span>
-                  </div>
-                  <div className="flex justify-between font-heading font-bold text-lg text-brand-900 pt-2 border-t border-brand-100">
-                    <span>Total</span>
-                    <span>₹1,350</span>
-                  </div>
+                  <button 
+                    disabled={loading || items.length === 0}
+                    onClick={handlePayment} 
+                    className="w-full bg-red-500 hover:bg-red-600 focus:bg-red-700 disabled:opacity-50 text-white font-bold py-4 px-4 rounded transition-colors text-sm mt-6 shadow-md"
+                  >
+                    {loading ? 'INITIALIZING PAYMENT...' : `PAY ₹${total} SECURELY`}
+                  </button>
                 </div>
-
-                <div className="mt-8 flex gap-2">
-                  <input type="text" placeholder="Promo code" className="w-full bg-brand-50 border border-brand-200 px-4 py-2 rounded-lg focus:outline-none focus:border-brand-500 text-sm" />
-                  <button className="bg-brand-900 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-brand-800">Apply</button>
-                </div>
-
-              </div>
+              )}
             </div>
 
           </div>
+
+          {/* Cart Summary Side Panel */}
+          <div className="w-full lg:w-96 flex-shrink-0">
+            <div className="bg-white rounded shadow-sm border border-gray-100 p-6 sticky top-28">
+              <h2 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">Order Summary</h2>
+              
+              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto">
+                {items.map((item, idx) => (
+                  <div key={idx} className="flex gap-4">
+                    <div className="w-16 h-16 bg-red-50 rounded flex-shrink-0 relative overflow-hidden">
+                      <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-cover mix-blend-multiply" />
+                      <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold">{item.quantity}</span>
+                    </div>
+                    <div>
+                      <h4 className="font-medium text-sm text-gray-800 line-clamp-2">{item.name}</h4>
+                      <p className="font-bold text-sm mt-1 text-gray-900">₹{item.price}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="space-y-3 mb-6 pt-4 border-t border-gray-100">
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Subtotal</span>
+                  <span>₹{total}</span>
+                </div>
+                <div className="flex justify-between text-sm text-gray-600">
+                  <span>Shipping charges</span>
+                  <span className="text-green-600 font-semibold">FREE</span>
+                </div>
+                <div className="flex justify-between font-bold text-xl text-red-600 border-t border-gray-100 pt-3">
+                  <span>Total Due</span>
+                  <span>₹{total}</span>
+                </div>
+              </div>
+
+              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
+                 <span>100% Secure Checkout</span>
+                 <Image src="/images/hero.png" width={100} height={20} alt="Payment Methods" className="opacity-50" />
+              </div>
+            </div>
+          </div>
+
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }
