@@ -8,12 +8,6 @@ import Footer from '@/components/layout/Footer';
 import { Heart, ShieldCheck, Truck, Users } from 'lucide-react';
 
 export default function AboutPage() {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.8, ease: "easeOut" }
-  };
 
   return (
     <div className="bg-white min-h-screen font-sans selection:bg-brand-500 selection:text-white">
@@ -63,7 +57,12 @@ export default function AboutPage() {
         <section className="py-24 bg-white overflow-hidden">
            <div className="container mx-auto px-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                 <motion.div {...fadeIn}>
+                 <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                  >
                     <h2 className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-4">The Craft</h2>
                     <h3 className="text-3xl md:text-5xl font-heading font-black text-brand-900 tracking-tighter mb-8 leading-tight">
                       Stainless Steel <br />Meet&apos;s Artistry.

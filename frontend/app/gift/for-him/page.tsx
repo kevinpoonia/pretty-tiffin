@@ -8,12 +8,6 @@ import Footer from '@/components/layout/Footer';
 import { Star, ShieldCheck, Heart, Truck } from 'lucide-react';
 
 export default function GiftsForHusband() {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
-  };
 
   return (
     <div className="bg-white min-h-screen font-sans">
