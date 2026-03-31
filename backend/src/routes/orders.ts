@@ -36,7 +36,7 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
       items, // array of { productId, quantity, price, customizationDetails }
       paymentMethod,
       shippingAddress,
-      giftOptionId
+      giftDetails // { occasion, message, scheduledFor, packaging }
     } = req.body;
 
     const secret = process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret';
@@ -52,6 +52,19 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
       }
     }
 
+    // Create GiftOption if details provided
+    let giftOption = null;
+    if (giftDetails && (giftDetails.occasion || giftDetails.message)) {
+      giftOption = await prisma.giftOption.create({
+        data: {
+          occasion: giftDetails.occasion,
+          message: giftDetails.message,
+          scheduledFor: giftDetails.scheduledFor ? new Date(giftDetails.scheduledFor) : null,
+          packaging: giftDetails.packaging
+        }
+      });
+    }
+
     const newOrder = await prisma.order.create({
       data: {
         userId: req.user!.id,
@@ -59,7 +72,7 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
         paymentMethod,
         paymentRef: paymentMethod === 'RAZORPAY' ? razorpay_payment_id : null,
         shippingAddress: JSON.stringify(shippingAddress),
-        giftOptionId: giftOptionId || null,
+        giftOptionId: giftOption ? giftOption.id : null,
         status: 'CONFIRMED',
         items: {
           create: items.map((item: any) => ({
@@ -70,7 +83,7 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
           }))
         }
       },
-      include: { items: true }
+      include: { items: true, giftOption: true }
     });
 
     res.json(newOrder);

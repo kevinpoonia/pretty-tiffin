@@ -31,7 +31,7 @@ router.get('/', async (req: Request, res: Response) => {
 router.post('/', async (req: Request, res: Response) => {
   try {
     const sessionId = (req as any).sessionId;
-    const { productId, quantity, customization, price, name, imageUrl, updateOnly, id } = req.body;
+    const { productId, quantity, customization, giftOption, price, name, imageUrl, updateOnly, id } = req.body;
     
     let cart = { items: [] as any[], total: 0 };
     const existingStr = await redis.get(`cart:${sessionId}`);
@@ -54,6 +54,7 @@ router.post('/', async (req: Request, res: Response) => {
         productId,
         quantity,
         customization,
+        giftOption,
         price,
         name,
         imageUrl

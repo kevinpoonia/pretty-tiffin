@@ -34,7 +34,8 @@ export default function AdminDashboard() {
   const [isEditingProduct, setIsEditingProduct] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<any>(null);
   const [productForm, setProductForm] = useState({
-    name: '', description: '', price: '', stock: '', category: '', slug: '', images: ''
+    name: '', description: '', price: '', stock: '', category: '', slug: '', images: '',
+    customizationOptions: [] as any[]
   });
 
   const fetchData = useCallback(async () => {
@@ -95,7 +96,12 @@ export default function AdminDashboard() {
         ...productForm,
         price: Number(productForm.price),
         stock: Number(productForm.stock),
-        images: productForm.images.split(',').map(s => s.trim()).filter(Boolean)
+        images: productForm.images.split(',').map(s => s.trim()).filter(Boolean),
+        customizationOptions: productForm.customizationOptions.map((opt: any) => ({
+          ...opt,
+          priceOffset: Number(opt.priceOffset) || 0,
+          values: Array.isArray(opt.values) ? opt.values : opt.values.split(',').map((v: string) => v.trim()).filter(Boolean)
+        }))
       };
       if (currentProduct) {
         await api.put(`/admin/products/${currentProduct.id}`, payload);
@@ -104,7 +110,7 @@ export default function AdminDashboard() {
       }
       setIsEditingProduct(false);
       setCurrentProduct(null);
-      setProductForm({ name: '', description: '', price: '', stock: '', category: '', slug: '', images: '' });
+      setProductForm({ name: '', description: '', price: '', stock: '', category: '', slug: '', images: '', customizationOptions: [] });
       fetchData();
     } catch (err) {
       alert("Failed to save product");
@@ -315,7 +321,7 @@ export default function AdminDashboard() {
                       <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest mt-1">Manage your storefront items</p>
                     </div>
                     <button 
-                      onClick={() => { setIsEditingProduct(true); setCurrentProduct(null); setProductForm({ name: '', description: '', price: '', stock: '', category: '', slug: '', images: '' }); }}
+                      onClick={() => { setIsEditingProduct(true); setCurrentProduct(null); setProductForm({ name: '', description: '', price: '', stock: '', category: '', slug: '', images: '', customizationOptions: [] }); }}
                       className="bg-brand-900 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest flex items-center gap-3 hover:bg-brand-800 transition-all shadow-2xl shadow-brand-900/20 active:scale-95"
                     >
                       <Plus size={18} /> Add New SKU
@@ -358,6 +364,106 @@ export default function AdminDashboard() {
                              <label className="text-[10px] font-black uppercase tracking-widest text-brand-400 ml-1">Marketing Description</label>
                              <textarea placeholder="Tell your brand story..." required value={productForm.description} onChange={e => setProductForm({...productForm, description: e.target.value})} className="w-full bg-brand-50 border-none rounded-2xl p-5 text-sm font-medium text-brand-700 focus:ring-4 focus:ring-brand-500/10 transition-all" rows={4}></textarea>
                           </div>
+
+                          {/* Customization Options Section */}
+                          <div className="md:col-span-2 space-y-6 pt-6 border-t border-brand-100">
+                             <div className="flex justify-between items-center">
+                                <h5 className="font-heading font-black text-lg tracking-tighter text-brand-900">Customization Options</h5>
+                                <button 
+                                   type="button"
+                                   onClick={() => setProductForm({
+                                     ...productForm,
+                                     customizationOptions: [...productForm.customizationOptions, { type: 'COLOR', label: '', values: '', priceOffset: 0 }]
+                                   })}
+                                   className="bg-brand-50 text-brand-600 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-brand-100 transition-all flex items-center gap-2"
+                                >
+                                   <Plus size={14} /> Add Option
+                                </button>
+                             </div>
+                             
+                             <div className="space-y-4">
+                                {productForm.customizationOptions.map((opt: any, idx: number) => (
+                                   <div key={idx} className="bg-brand-50/50 p-6 rounded-3xl border border-brand-100 grid grid-cols-1 md:grid-cols-4 gap-4 relative">
+                                      <button 
+                                         type="button" 
+                                         onClick={() => {
+                                            const newOpts = [...productForm.customizationOptions];
+                                            newOpts.splice(idx, 1);
+                                            setProductForm({ ...productForm, customizationOptions: newOpts });
+                                         }}
+                                         className="absolute -top-2 -right-2 w-8 h-8 bg-white border border-brand-200 rounded-full flex items-center justify-center text-red-500 shadow-sm hover:bg-red-50 transition-all"
+                                      >
+                                         <Trash size={14} />
+                                      </button>
+                                      <div className="space-y-1">
+                                         <label className="text-[9px] font-black uppercase tracking-widest text-brand-400 ml-1">Type</label>
+                                         <select 
+                                            value={opt.type} 
+                                            onChange={e => {
+                                               const newOpts = [...productForm.customizationOptions];
+                                               newOpts[idx].type = e.target.value;
+                                               setProductForm({ ...productForm, customizationOptions: newOpts });
+                                            }}
+                                            className="w-full bg-white border border-brand-100 rounded-xl p-3 text-xs font-bold text-brand-900 outline-none"
+                                         >
+                                            <option value="COLOR">COLOR</option>
+                                            <option value="ENGRAVING">ENGRAVING</option>
+                                            <option value="TEXT">TEXT</option>
+                                            <option value="PACKAGING">PACKAGING</option>
+                                         </select>
+                                      </div>
+                                      <div className="space-y-1">
+                                         <label className="text-[9px] font-black uppercase tracking-widest text-brand-400 ml-1">Label</label>
+                                         <input 
+                                            type="text" 
+                                            placeholder="Color" 
+                                            value={opt.label} 
+                                            onChange={e => {
+                                               const newOpts = [...productForm.customizationOptions];
+                                               newOpts[idx].label = e.target.value;
+                                               setProductForm({ ...productForm, customizationOptions: newOpts });
+                                            }}
+                                            className="w-full bg-white border border-brand-100 rounded-xl p-3 text-xs font-bold text-brand-900 outline-none" 
+                                         />
+                                      </div>
+                                      <div className="space-y-1">
+                                         <label className="text-[9px] font-black uppercase tracking-widest text-brand-400 ml-1">Values (CSV)</label>
+                                         <input 
+                                            type="text" 
+                                            placeholder="Red, Blue" 
+                                            value={Array.isArray(opt.values) ? opt.values.join(', ') : opt.values} 
+                                            onChange={e => {
+                                               const newOpts = [...productForm.customizationOptions];
+                                               newOpts[idx].values = e.target.value;
+                                               setProductForm({ ...productForm, customizationOptions: newOpts });
+                                            }}
+                                            className="w-full bg-white border border-brand-100 rounded-xl p-3 text-xs font-bold text-brand-900 outline-none" 
+                                         />
+                                      </div>
+                                      <div className="space-y-1">
+                                         <label className="text-[9px] font-black uppercase tracking-widest text-brand-400 ml-1">Price +</label>
+                                         <input 
+                                            type="number" 
+                                            placeholder="0" 
+                                            value={opt.priceOffset} 
+                                            onChange={e => {
+                                               const newOpts = [...productForm.customizationOptions];
+                                               newOpts[idx].priceOffset = e.target.value;
+                                               setProductForm({ ...productForm, customizationOptions: newOpts });
+                                            }}
+                                            className="w-full bg-white border border-brand-100 rounded-xl p-3 text-xs font-bold text-brand-900 outline-none" 
+                                         />
+                                      </div>
+                                   </div>
+                                ))}
+                                {productForm.customizationOptions.length === 0 && (
+                                   <div className="text-center py-8 bg-brand-50/50 rounded-3xl border border-dashed border-brand-200">
+                                      <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">No customization options defined</p>
+                                   </div>
+                                )}
+                             </div>
+                          </div>
+
                           <div className="md:col-span-2 flex gap-4 justify-end pt-4">
                              <button type="button" onClick={() => setIsEditingProduct(false)} className="px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest text-brand-500 hover:bg-brand-50 transition-colors">Discard</button>
                              <button type="submit" className="px-10 py-4 bg-brand-900 text-white rounded-2xl text-xs font-black uppercase tracking-widest hover:bg-brand-800 shadow-2xl shadow-brand-900/20 active:scale-95 flex items-center gap-3">
@@ -400,7 +506,7 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-8 py-6 text-right">
                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                  <button onClick={() => { setIsEditingProduct(true); setCurrentProduct(p); setProductForm({ name: p.name, description: p.description, price: String(p.price), stock: String(p.stock), category: p.category, slug: p.slug, images: (p.images || []).join(', ') }); }} className="p-3 text-brand-400 hover:text-brand-900 bg-brand-50 rounded-xl hover:bg-brand-100 transition-all"><Edit size={16}/></button>
+                                  <button onClick={() => { setIsEditingProduct(true); setCurrentProduct(p); setProductForm({ name: p.name, description: p.description, price: String(p.price), stock: String(p.stock), category: p.category, slug: p.slug, images: (p.images || []).join(', '), customizationOptions: p.customizationOptions || [] }); }} className="p-3 text-brand-400 hover:text-brand-900 bg-brand-50 rounded-xl hover:bg-brand-100 transition-all"><Edit size={16}/></button>
                                   <button onClick={() => deleteProduct(p.id)} className="p-3 text-red-300 hover:text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-all"><Trash size={16}/></button>
                                </div>
                             </td>

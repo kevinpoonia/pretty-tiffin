@@ -36,9 +36,27 @@ router.get('/products', async (req: AuthRequest, res: Response) => {
 
 router.post('/products', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, compareAtPrice, slug, category, images, stock } = req.body;
+    const { name, description, price, compareAtPrice, slug, category, images, stock, customizationOptions } = req.body;
     const product = await prisma.product.create({
-      data: { name, description, price: Number(price), compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null, slug, category, images: images || [], stock: Number(stock) || 0 }
+      data: { 
+        name, 
+        description, 
+        price: Number(price), 
+        compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null, 
+        slug, 
+        category, 
+        images: images || [], 
+        stock: Number(stock) || 0,
+        customizationOptions: {
+          create: (customizationOptions || []).map((opt: any) => ({
+            type: opt.type,
+            label: opt.label,
+            values: opt.values || [],
+            priceOffset: Number(opt.priceOffset) || 0
+          }))
+        }
+      },
+      include: { customizationOptions: true }
     });
     res.status(201).json(product);
   } catch (error: any) {
@@ -49,10 +67,38 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
 
 router.put('/products/:id', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured } = req.body;
+    const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, customizationOptions } = req.body;
+    
+    // For simplicity, we delete and recreate customization options on update
+    // A more robust approach would be to use upsert/deleteMany
+    if (customizationOptions) {
+      await (prisma as any).customizationOption.deleteMany({
+        where: { productId: String(req.params.id) }
+      });
+    }
+
     const product = await prisma.product.update({
       where: { id: String(req.params.id) },
-      data: { name, description, price: Number(price), compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null, slug, category, images, stock: Number(stock), isFeatured }
+      data: { 
+        name, 
+        description, 
+        price: Number(price), 
+        compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null, 
+        slug, 
+        category, 
+        images, 
+        stock: Number(stock), 
+        isFeatured,
+        customizationOptions: customizationOptions ? {
+          create: customizationOptions.map((opt: any) => ({
+            type: opt.type,
+            label: opt.label,
+            values: opt.values || [],
+            priceOffset: Number(opt.priceOffset) || 0
+          }))
+        } : undefined
+      },
+      include: { customizationOptions: true }
     });
     res.json(product);
   } catch (error: any) {
