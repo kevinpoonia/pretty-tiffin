@@ -1,23 +1,22 @@
 'use client';
 
+import Link from 'next/link';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { motion } from 'framer-motion';
 import { Truck, RotateCcw, AlertTriangle, ShieldCheck } from 'lucide-react';
 
 export default function ShippingReturns() {
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    animate: { opacity: 1, y: 0 },
-    transition: { duration: 0.6 }
-  };
-
   return (
     <div className="bg-white min-h-screen font-sans">
       <Navbar />
       <main className="pt-32 pb-24">
         <div className="container mx-auto px-6 max-w-4xl">
-          <motion.div {...fadeIn}>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
             <h1 className="text-4xl md:text-6xl font-heading font-black text-brand-900 tracking-tighter mb-12">Shipping & Returns</h1>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">

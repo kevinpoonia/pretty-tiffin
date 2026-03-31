@@ -21,12 +21,6 @@ export default function ContactPage() {
     setFormState({ name: '', email: '', subject: '', message: '' });
   };
 
-  const fadeIn = {
-    initial: { opacity: 0, y: 20 },
-    whileInView: { opacity: 1, y: 0 },
-    viewport: { once: true },
-    transition: { duration: 0.6 }
-  };
 
   return (
     <div className="bg-white min-h-screen font-sans">
@@ -38,7 +32,12 @@ export default function ContactPage() {
             
             {/* Left: Contact Info */}
             <div className="lg:w-2/5 space-y-12">
-               <motion.div {...fadeIn}>
+               <motion.div 
+                 initial={{ opacity: 0, y: 20 }}
+                 whileInView={{ opacity: 1, y: 0 }}
+                 viewport={{ once: true }}
+                 transition={{ duration: 0.6 }}
+               >
                   <h1 className="text-4xl md:text-6xl font-heading font-black text-brand-900 tracking-tighter mb-6 leading-none">
                     Let&apos;s Start a <br />
                     <span className="text-brand-500 italic font-serif">Conversation.</span>

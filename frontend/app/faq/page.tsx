@@ -68,6 +68,7 @@ export default function FAQPage() {
              <motion.h1 
                initial={{ opacity: 0, y: 20 }}
                animate={{ opacity: 1, y: 0 }}
+               transition={{ duration: 0.6 }}
                className="text-4xl md:text-6xl font-heading font-black text-brand-900 tracking-tighter mb-8 leading-none"
              >
                How can we <br />
