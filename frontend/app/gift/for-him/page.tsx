@@ -47,7 +47,12 @@ export default function GiftsForHusband() {
         <section className="py-24 bg-white">
            <div className="container mx-auto px-6">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
-                 <motion.div {...fadeIn}>
+                 <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6 }}
+                  >
                     <h2 className="text-3xl font-heading font-black text-brand-900 tracking-tight mb-8">Why a Pretty Tiffin is the Perfect Gift?</h2>
                     <div className="space-y-10">
                        {[
