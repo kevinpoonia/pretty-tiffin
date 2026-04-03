@@ -30,7 +30,8 @@ router.post('/create-intent', auth_1.authenticate, async (req, res) => {
 router.post('/verify', auth_1.authenticate, async (req, res) => {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, totalAmount, items, // array of { productId, quantity, price, customizationDetails }
-        paymentMethod, shippingAddress, giftOptionId } = req.body;
+        paymentMethod, shippingAddress, giftDetails // { occasion, message, scheduledFor, packaging }
+         } = req.body;
         const secret = process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret';
         if (paymentMethod === 'RAZORPAY') {
             const shasum = crypto_1.default.createHmac('sha256', secret);
@@ -41,6 +42,18 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
                 return;
             }
         }
+        // Create GiftOption if details provided
+        let giftOption = null;
+        if (giftDetails && (giftDetails.occasion || giftDetails.message)) {
+            giftOption = await prisma_1.prisma.giftOption.create({
+                data: {
+                    occasion: giftDetails.occasion,
+                    message: giftDetails.message,
+                    scheduledFor: giftDetails.scheduledFor ? new Date(giftDetails.scheduledFor) : null,
+                    packaging: giftDetails.packaging
+                }
+            });
+        }
         const newOrder = await prisma_1.prisma.order.create({
             data: {
                 userId: req.user.id,
@@ -48,7 +61,7 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
                 paymentMethod,
                 paymentRef: paymentMethod === 'RAZORPAY' ? razorpay_payment_id : null,
                 shippingAddress: JSON.stringify(shippingAddress),
-                giftOptionId: giftOptionId || null,
+                giftOptionId: giftOption ? giftOption.id : null,
                 status: 'CONFIRMED',
                 items: {
                     create: items.map((item) => ({
@@ -59,7 +72,7 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
                     }))
                 }
             },
-            include: { items: true }
+            include: { items: true, giftOption: true }
         });
         res.json(newOrder);
     }

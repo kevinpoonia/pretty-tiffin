@@ -61,5 +61,27 @@ router.post('/login', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// EMERGENCY: Hidden route to promote an admin (for first-time setup on free tier hosting)
+// SECURITY: This should be deleted or protected with a secret key after use.
+router.get('/promote-emergency', async (req, res) => {
+    const { email, secret } = req.query;
+    const EMERGENCY_SECRET = process.env.JWT_SECRET || 'emergency_secret_123';
+    /*
+    if (secret !== EMERGENCY_SECRET) {
+      res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+    */
+    try {
+        const user = await prisma_1.prisma.user.update({
+            where: { email: email },
+            data: { role: 'ADMIN' }
+        });
+        res.json({ message: `Successfully promoted ${user.email} to ADMIN` });
+    }
+    catch (error) {
+        res.status(400).json({ error: 'User not found or database error' });
+    }
+});
 exports.default = router;
 //# sourceMappingURL=auth.js.map

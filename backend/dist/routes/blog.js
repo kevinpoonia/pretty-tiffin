@@ -3,9 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const prisma_1 = require("../prisma");
 const auth_1 = require("../middleware/auth");
+const cache_1 = require("../middleware/cache");
 const router = (0, express_1.Router)();
 // Get all published posts
-router.get('/', async (req, res) => {
+router.get('/', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
     try {
         const posts = await prisma_1.prisma.blogPost.findMany({
             where: { isPublished: true },
@@ -19,7 +20,7 @@ router.get('/', async (req, res) => {
     }
 });
 // Get single post
-router.get('/:slug', async (req, res) => {
+router.get('/:slug', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
     try {
         const { slug } = req.params;
         const post = await prisma_1.prisma.blogPost.findUnique({
@@ -45,6 +46,7 @@ router.post('/', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
                 title, slug, content, summary, coverImage, isPublished, seoTitle, seoDesc
             }
         });
+        await (0, cache_1.clearCache)('blog*');
         res.status(201).json(post);
     }
     catch (error) {

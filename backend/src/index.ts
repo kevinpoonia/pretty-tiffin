@@ -1,5 +1,5 @@
-import express, { Request, Response } from 'express';
-import cors from 'cors';
+import express, { NextFunction, Request, Response } from 'express';
+import cors, { CorsOptions } from 'cors';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -21,26 +21,67 @@ import rateLimit from 'express-rate-limit';
 const app = express();
 const port = process.env.PORT || 4000;
 
-app.use(helmet());
-const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
-app.use(limiter);
+app.set('trust proxy', 1);
 
-const allowedOrigins = [
+const defaultAllowedOrigins = [
   'http://localhost:3000',
   'https://prettytiffin.pcubesolution.com',
+  'https://prettytiffin.in',
+  'https://www.prettytiffin.in',
   'https://pretty-tiffin.vercel.app'
 ];
 
-app.use(cors({
+const allowedOrigins = new Set(
+  [
+    ...defaultAllowedOrigins,
+    process.env.FRONTEND_URL,
+    ...(process.env.CORS_ALLOWED_ORIGINS || '').split(',').map((origin) => origin.trim())
+  ].filter(Boolean)
+);
+
+const allowedOriginPatterns = [
+  /^https?:\/\/localhost(?::\d+)?$/,
+  /^https:\/\/(?:www\.)?prettytiffin\.pcubesolution\.com$/,
+  /^https:\/\/(?:www\.)?prettytiffin\.in$/,
+  /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
+];
+
+const isAllowedOrigin = (origin?: string) => {
+  if (!origin) {
+    return true;
+  }
+
+  return allowedOrigins.has(origin) || allowedOriginPatterns.some((pattern) => pattern.test(origin));
+};
+
+const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (isAllowedOrigin(origin)) {
       callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
+      return;
     }
+
+    callback(new Error('Not allowed by CORS'));
   },
-  credentials: true
-}));
+  credentials: true,
+  methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'x-session-id'],
+  optionsSuccessStatus: 204
+};
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
+app.use(helmet());
+
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS'
+});
+
+app.use(limiter);
 app.use(express.json());
 
 app.get('/api/health', (req: Request, res: Response) => {
@@ -59,6 +100,22 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/banners', bannerRoutes);
+
+app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+  if (res.headersSent) {
+    next(err);
+    return;
+  }
+
+  console.error(err);
+
+  if (err.message === 'Not allowed by CORS') {
+    res.status(403).json({ error: err.message });
+    return;
+  }
+
+  res.status(500).json({ error: 'Internal server error' });
+});
 
 app.listen(port, () => {
   console.log(`Server running on http://localhost:${port}`);

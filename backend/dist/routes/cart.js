@@ -29,21 +29,36 @@ router.get('/', async (req, res) => {
 router.post('/', async (req, res) => {
     try {
         const sessionId = req.sessionId;
-        const { productId, quantity, customization, price } = req.body;
+        const { productId, quantity, customization, giftOption, price, name, imageUrl, updateOnly, id } = req.body;
         let cart = { items: [], total: 0 };
         const existingStr = await redis_1.redis.get(`cart:${sessionId}`);
         if (existingStr) {
             cart = JSON.parse(existingStr);
         }
-        const newItem = {
-            id: (0, uuid_1.v4)(),
-            productId,
-            quantity,
-            customization,
-            price
-        };
-        cart.items.push(newItem);
-        cart.total += (price * quantity);
+        if (updateOnly && id) {
+            // Handle Quantity Update
+            const itemIndex = cart.items.findIndex((i) => i.id === id);
+            if (itemIndex > -1) {
+                cart.total -= (cart.items[itemIndex].price * cart.items[itemIndex].quantity);
+                cart.items[itemIndex].quantity = quantity;
+                cart.total += (cart.items[itemIndex].price * quantity);
+            }
+        }
+        else {
+            // Handle New Item
+            const newItem = {
+                id: (0, uuid_1.v4)(),
+                productId,
+                quantity,
+                customization,
+                giftOption,
+                price,
+                name,
+                imageUrl
+            };
+            cart.items.push(newItem);
+            cart.total += (price * quantity);
+        }
         await redis_1.redis.setex(`cart:${sessionId}`, 60 * 60 * 24 * 7, JSON.stringify(cart)); // 7 days
         res.json(cart);
     }
