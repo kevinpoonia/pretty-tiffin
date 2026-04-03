@@ -21,9 +21,9 @@ export default function Footer() {
             <h4 className="font-heading font-semibold text-white mb-4">Shop</h4>
             <ul className="space-y-3 text-sm text-brand-200">
               <li><Link href="/shop" className="hover:text-white transition-colors">All Products</Link></li>
-              <li><Link href="/custom" className="hover:text-white transition-colors">Customize Your Tiffin</Link></li>
-              <li><Link href="/gift" className="hover:text-white transition-colors">Corporate Gifting</Link></li>
-              <li><Link href="/gift-for-husband" className="hover:text-white transition-colors">Gifts for Husband</Link></li>
+              <li><Link href="/shop?category=personalized" className="hover:text-white transition-colors">Customize Your Tiffin</Link></li>
+              <li><Link href="/shop?category=corporate" className="hover:text-white transition-colors">Corporate Gifting</Link></li>
+              <li><Link href="/shop?for=For Husband" className="hover:text-white transition-colors">Gifts for Husband</Link></li>
             </ul>
           </div>
 
