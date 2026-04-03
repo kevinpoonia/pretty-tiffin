@@ -43,7 +43,7 @@ export default function ProductCard({ product, showBadge = false, priority = fal
       animate={{ opacity: 1, y: 0 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full relative max-w-sm mx-auto"
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full relative w-full max-w-[180px] md:max-w-none mx-auto"
     >
       <Link href={`/shop/${product.slug}`} className="block relative aspect-[4/5] bg-brand-50 overflow-hidden">
         <AnimatePresence mode="wait">

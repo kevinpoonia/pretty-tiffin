@@ -125,7 +125,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
             <h2 className="text-2xl font-bold text-gray-800">Trending Personalized Gifts</h2>
             <Link href="/shop" className="text-red-500 font-semibold text-sm hover:underline">View All</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6">
             {loading ? (
               [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-gray-100" />)
             ) : products.slice(0, 5).map((item, idx) => (
