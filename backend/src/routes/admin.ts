@@ -154,4 +154,18 @@ router.get('/customers', async (req: AuthRequest, res: Response) => {
   }
 });
 
+import { clearCache } from '../middleware/cache';
+
+// ... existing code ...
+
+router.get('/clear-cache', async (req: AuthRequest, res: Response) => {
+  try {
+    await clearCache('*');
+    res.json({ success: true, message: 'Cache cleared successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to clear cache' });
+  }
+});
+
 export default router;

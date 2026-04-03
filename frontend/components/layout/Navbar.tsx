@@ -68,7 +68,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-8">
           <Link href="/track" className="md:hidden flex flex-col items-center text-gray-600 hover:text-red-500">
             <Search size={22} strokeWidth={1.5} />
           </Link>

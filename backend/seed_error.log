@@ -1,0 +1,38 @@
+
+> backend@1.0.0 seed
+> ts-node prisma/seed.ts
+
+PrismaClientKnownRequestError: 
+Invalid `prisma.user.findUnique()` invocation in
+/home/kevinpoonia/clients /pretty tiffin /backend/prisma/seed.ts:17:43
+
+  14 const adminPassword = process.env.ADMIN_PASSWORD || 'Admin@123456';
+  15 const adminName = 'Pretty Tiffin Admin';
+  16 
+→ 17 const existingAdmin = await prisma.user.findUnique(
+User was denied access on the database `(not available)`
+    at Gr.handleRequestError (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:237:13)
+    at Gr.handleAndLogRequestError (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:183:12)
+    at Gr.request (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/RequestHandler.ts:152:12)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async a (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/getPrismaClient.ts:938:24)
+    at async main (/home/kevinpoonia/clients /pretty tiffin /backend/prisma/seed.ts:17:25) {
+  code: 'P1010',
+  meta: {
+    modelName: 'User',
+    driverAdapterError: DriverAdapterError: DatabaseAccessDenied
+        at PrismaPgAdapter.onError (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/adapter-pg/dist/index.js:678:11)
+        at PrismaPgAdapter.performIO (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/adapter-pg/dist/index.js:673:12)
+        at processTicksAndRejections (node:internal/process/task_queues:105:5)
+        at async PrismaPgAdapter.queryRaw (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/adapter-pg/dist/index.js:604:30)
+        at async e.interpretNode (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:186:26)
+        at async e.interpretNode (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:213:41)
+        at async e.interpretNode (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:272:41)
+        at async e.run (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client-engine-runtime/src/interpreter/query-interpreter.ts:94:23)
+        at async execute (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/core/engines/client/LocalExecutor.ts:81:12)
+        at async jt.request (/home/kevinpoonia/clients /pretty tiffin /backend/node_modules/@prisma/client/src/runtime/core/engines/client/ClientEngine.ts:498:22) {
+      cause: [Object]
+    }
+  },
+  clientVersion: '7.6.0'
+}

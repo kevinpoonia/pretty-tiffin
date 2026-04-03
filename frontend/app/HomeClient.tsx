@@ -73,7 +73,14 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
           <div className="flex transition-transform duration-700 ease-in-out h-full" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
             {banners.length > 0 ? banners.map((banner, idx) => (
               <div key={banner.id} className="w-full flex-shrink-0 h-full relative cursor-pointer">
-                <Image src={banner.imageUrl} alt={banner.title} fill className="object-cover" priority={true} />
+                <Image 
+                  src={banner.imageUrl} 
+                  alt={banner.title} 
+                  fill 
+                  className="object-cover" 
+                  priority={true}
+                  sizes="100vw"
+                />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
                   <div className="container mx-auto px-8 md:px-16 text-white text-left">
                     <h2 className="text-3xl md:text-5xl font-bold mb-2">{banner.title}</h2>
@@ -122,7 +129,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
             {loading ? (
               [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-gray-100" />)
             ) : products.slice(0, 5).map((item, idx) => (
-              <ProductCard key={item.id} product={item} showBadge={idx === 0} />
+              <ProductCard key={item.id} product={item} showBadge={idx === 0} priority={idx < 2} />
             ))}
           </div>
         </section>
@@ -131,7 +138,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         <section className="bg-white py-12 mb-10 shadow-sm border-y border-gray-200">
           <div className="container mx-auto px-4 md:px-6">
             <h2 className="text-2xl font-bold text-center text-gray-800 mb-8">Gifts by Relationship</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 px-2">
               {relationships.map((rel, idx) => (
                 <Link key={idx} href={`/shop?for=${rel.title}`} className="relative bg-gray-100 aspect-square md:aspect-[4/3] rounded-lg overflow-hidden group cursor-pointer block">
                   <Image src={rel.img} alt={rel.title} fill className="object-cover group-hover:scale-105 transition-transform duration-500 opacity-90" />

@@ -4,8 +4,18 @@ import { Pool } from 'pg';
 import { PrismaPg } from '@prisma/adapter-pg';
 import bcrypt from 'bcrypt';
 
-const connectionString = `${process.env.DATABASE_URL}`;
-const pool = new Pool({ connectionString });
+const connectionString = process.env.DATABASE_URL;
+if (!connectionString) {
+  throw new Error('DATABASE_URL is not defined');
+}
+
+const pool = new Pool({ 
+  connectionString,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });
 
@@ -112,11 +122,9 @@ async function main() {
     await prisma.product.upsert({
       where: { slug: p.slug },
       update: {
-        ...productData,
-        customizationOptions: {
-          deleteMany: {},
-          create: customizationOptions
-        }
+        images: p.images,
+        description: p.description,
+        price: p.price,
       },
       create: {
         ...productData,

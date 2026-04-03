@@ -16,9 +16,10 @@ interface ProductCardProps {
     images: string[];
   };
   showBadge?: boolean;
+  priority?: boolean;
 }
 
-export default function ProductCard({ product, showBadge }: ProductCardProps) {
+export default function ProductCard({ product, showBadge = false, priority = false }: ProductCardProps) {
   const [currentImg, setCurrentImg] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
@@ -42,7 +43,7 @@ export default function ProductCard({ product, showBadge }: ProductCardProps) {
       animate={{ opacity: 1, y: 0 }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full relative"
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full relative max-w-sm mx-auto"
     >
       <Link href={`/shop/${product.slug}`} className="block relative aspect-[4/5] bg-brand-50 overflow-hidden">
         <AnimatePresence mode="wait">
@@ -59,6 +60,8 @@ export default function ProductCard({ product, showBadge }: ProductCardProps) {
               alt={product.name}
               fill
               className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={priority}
             />
           </motion.div>
         </AnimatePresence>
