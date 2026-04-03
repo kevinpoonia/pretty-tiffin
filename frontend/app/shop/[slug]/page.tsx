@@ -11,10 +11,11 @@ async function getProduct(slug: string) {
 }
 
 export async function generateMetadata(
-  { params }: { params: { slug: string } },
+  { params }: { params: Promise<{ slug: string }> },
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const product = await getProduct(params.slug);
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     return { title: 'Product Not Found' };
@@ -34,8 +35,9 @@ export async function generateMetadata(
   };
 }
 
-export default async function Page({ params }: { params: { slug: string } }) {
-  const product = await getProduct(params.slug);
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const product = await getProduct(slug);
 
   if (!product) {
     return (

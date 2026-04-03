@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
+import ProductCard from '@/components/products/ProductCard';
 import { Star, Truck, Heart, Loader2, ChevronDown } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import api from '@/lib/api';
@@ -40,7 +41,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
     if (banners.length > 0) {
       const timer = setInterval(() => {
         setCurrentSlide((prev) => (prev === banners.length - 1 ? 0 : prev + 1));
-      }, 5000);
+      }, 3000);
       return () => clearInterval(timer);
     }
   }, [banners.length]);
@@ -72,7 +73,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
           <div className="flex transition-transform duration-700 ease-in-out h-full" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
             {banners.length > 0 ? banners.map((banner, idx) => (
               <div key={banner.id} className="w-full flex-shrink-0 h-full relative cursor-pointer">
-                <Image src={banner.imageUrl} alt={banner.title} fill className="object-cover" priority={idx === 0} />
+                <Image src={banner.imageUrl} alt={banner.title} fill className="object-cover" priority={true} />
                 <div className="absolute inset-0 bg-gradient-to-r from-black/60 to-transparent flex items-center">
                   <div className="container mx-auto px-8 md:px-16 text-white text-left">
                     <h2 className="text-3xl md:text-5xl font-bold mb-2">{banner.title}</h2>
@@ -117,22 +118,11 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
             <h2 className="text-2xl font-bold text-gray-800">Trending Personalized Gifts</h2>
             <Link href="/shop" className="text-red-500 font-semibold text-sm hover:underline">View All</Link>
           </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {loading ? (
-              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white rounded h-64 animate-pulse border border-gray-100" />)
+              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white rounded-2xl h-80 animate-pulse border border-gray-100" />)
             ) : products.slice(0, 5).map((item, idx) => (
-              <Link key={item.id} href={`/shop/${item.slug}`} className="bg-white rounded shadow-sm border border-gray-100 overflow-hidden group hover:shadow-md transition-shadow relative cursor-pointer block">
-                <div className="relative aspect-square bg-[#f9f9f9]">
-                   {idx === 0 && <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-[10px] font-bold px-2 py-1 flex items-center gap-1 rounded-sm shadow-sm"><Truck size={10} /> Same Day</div>}
-                   <Image src={item.images?.[0] || `/images/product-1.png`} alt={item.name} fill className="object-contain p-4 group-hover:scale-105 transition-transform bg-[#f9f9f9]" />
-                </div>
-                <div className="p-3 border-t border-gray-100">
-                   <h3 className="text-sm text-gray-700 font-medium line-clamp-2 leading-snug mb-2 group-hover:text-red-500 transition-colors">{item.name}</h3>
-                   <div className="flex items-center gap-2">
-                     <span className="font-bold text-gray-900">₹{item.price.toLocaleString('en-IN')}</span>
-                   </div>
-                </div>
-              </Link>
+              <ProductCard key={item.id} product={item} showBadge={idx === 0} />
             ))}
           </div>
         </section>
