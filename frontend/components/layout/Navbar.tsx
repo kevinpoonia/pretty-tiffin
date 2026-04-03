@@ -1,11 +1,13 @@
 'use client';
-
+ 
 import Link from 'next/link';
-import { ShoppingCart, User, Search, MapPin, Truck, ChevronDown, Heart, Menu, X } from 'lucide-react';
+import { ShoppingCart, User, Search, MapPin, Truck, ChevronDown, Heart, Menu, X, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
+import { useAuth } from '@/context/AuthContext';
 
 export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }) {
+  const { user, logout } = useAuth();
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -71,13 +73,28 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             <Search size={22} strokeWidth={1.5} />
           </Link>
 
-          <Link href="/account" className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors">
-            <User size={24} strokeWidth={1.5} />
-            <div className="hidden lg:block text-xs font-semibold">
-              <p className="text-gray-500 font-normal leading-tight">Profile</p>
-              <p className="leading-tight">Login / Register</p>
-            </div>
-          </Link>
+          <div className="group relative">
+            <Link href={user ? "/account" : "/login"} className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors">
+              <User size={24} strokeWidth={1.5} />
+              <div className="hidden lg:block text-xs font-semibold">
+                <p className="text-gray-500 font-normal leading-tight">Profile</p>
+                <p className="leading-tight">{user ? `Hi, ${user.name.split(' ')[0]}` : 'Login / Register'}</p>
+              </div>
+            </Link>
+            
+            {user && (
+              <div className="absolute top-full right-0 mt-2 w-48 bg-white shadow-xl border border-gray-100 rounded-lg py-2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50">
+                <Link href="/account" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Account</Link>
+                <Link href="/account/orders" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50">My Orders</Link>
+                <button 
+                  onClick={logout}
+                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                >
+                  <LogOut size={14} /> Logout
+                </button>
+              </div>
+            )}
+          </div>
           
           <Link href="/wishlist" className="hidden lg:flex flex-col items-center text-gray-700 hover:text-red-500 transition-colors relative">
              <Heart size={24} strokeWidth={1.5} />
