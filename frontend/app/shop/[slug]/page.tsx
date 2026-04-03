@@ -3,11 +3,15 @@ import ProductDetailClient from './ProductDetailView';
 import Script from 'next/script';
 
 async function getProduct(slug: string) {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products/${slug}`, {
-    next: { revalidate: 3600 } // Cache for 1 hour
-  });
-  if (!res.ok) return null;
-  return res.json();
+  try {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products/${slug}`, {
+      next: { revalidate: 3600 } // Cache for 1 hour
+    });
+    if (!res.ok) return null;
+    return res.json();
+  } catch (error) {
+    return null;
+  }
 }
 
 export async function generateMetadata(

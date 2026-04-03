@@ -6,6 +6,14 @@ import crypto from 'crypto';
 
 const router = Router();
 
+const getUserOrders = async (userId: string) => {
+  return prisma.order.findMany({
+    where: { userId },
+    include: { items: { include: { product: true } } },
+    orderBy: { createdAt: 'desc' }
+  });
+};
+
 // Create Payment Intent (Razorpay Order)
 router.post('/create-intent', authenticate, async (req: AuthRequest, res: Response) => {
   try {
@@ -94,13 +102,19 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
 });
 
 // Get User Orders
+router.get('/', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const orders = await getUserOrders(req.user!.id);
+    res.json(orders);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 router.get('/my-orders', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const orders = await prisma.order.findMany({
-      where: { userId: req.user!.id },
-      include: { items: { include: { product: true } } },
-      orderBy: { createdAt: 'desc' }
-    });
+    const orders = await getUserOrders(req.user!.id);
     res.json(orders);
   } catch (error) {
     console.error(error);

@@ -6,7 +6,7 @@ async function getHomeData() {
   try {
     const [prodRes, bannerRes] = await Promise.all([
       fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products`, { next: { revalidate: 3600 } }).then(res => res.json()),
-      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/banners`, { next: { revalidate: 0 } }).then(res => res.json())
+      fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/banners`, { next: { revalidate: 300 } }).then(res => res.json())
     ]);
     return { products: prodRes || [], banners: bannerRes || [] };
   } catch (e) {

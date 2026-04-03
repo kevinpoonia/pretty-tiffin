@@ -25,12 +25,12 @@ export default function CartPage() {
   return (
     <div className="bg-[#f5f5f5] min-h-screen">
       <Navbar alwaysSolid />
-      <main className="container mx-auto px-4 md:px-6 py-8">
+      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
         
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Shopping Cart ({items.length} {items.length === 1 ? 'Item' : 'Items'})</h1>
 
         {items.length === 0 ? (
-          <div className="bg-white rounded shadow-sm border border-gray-100 p-12 text-center">
+          <div className="bg-white rounded shadow-sm border border-gray-100 p-8 md:p-12 text-center">
              <h2 className="text-xl font-bold text-gray-700 mb-4">Your cart is feeling a bit empty.</h2>
              <p className="text-gray-500 mb-8">Personalize a premium tiffin today to keep your meals fresh!</p>
              <Link href="/shop" className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded transition-colors shadow-sm">
@@ -40,16 +40,16 @@ export default function CartPage() {
         ) : (
           <div className="flex flex-col lg:flex-row gap-8">
             {/* Cart Items */}
-            <div className="flex-1 bg-white rounded shadow-sm border border-gray-100 p-6 space-y-6">
+            <div className="flex-1 bg-white rounded shadow-sm border border-gray-100 p-4 sm:p-6 space-y-6">
               {items.map((item, idx) => (
-                <div key={`${item.id || item.productId}-${idx}`} className="flex flex-col md:flex-row gap-6 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
+                <div key={`${item.id || item.productId}-${idx}`} className="flex flex-col md:flex-row gap-4 sm:gap-6 pb-6 border-b border-gray-100 last:border-b-0 last:pb-0">
                   {/* Product Image */}
                   <div className="w-24 h-24 md:w-32 md:h-32 bg-white rounded flex-shrink-0 relative overflow-hidden border border-gray-100">
-                    <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-contain p-2" />
+                    <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill sizes="(max-width: 768px) 96px, 128px" className="object-contain p-2" />
                   </div>
                   
                   {/* Product Details */}
-                  <div className="flex-1 relative">
+                  <div className="flex-1">
                     <h3 className="font-bold text-lg text-gray-800 mb-1">{item.name}</h3>
                     
                     {item.customization && (
@@ -58,8 +58,12 @@ export default function CartPage() {
                          Theme: {item.customization.themeId}
                        </p>
                     )}
+
+                    <div className="text-left md:text-right mb-4 md:mb-0 md:absolute md:top-0 md:right-0">
+                      <p className="font-bold text-lg sm:text-xl text-gray-900">₹{item.price * item.quantity}</p>
+                    </div>
                     
-                    <div className="flex items-center gap-4 mt-4">
+                    <div className="flex flex-wrap items-center gap-4 mt-4">
                       <div className="flex items-center border border-gray-200 rounded">
                         <button onClick={() => updateQuantity(item.id!, Math.max(1, item.quantity - 1))} className="px-3 py-1 font-bold text-gray-600 hover:bg-gray-50">-</button>
                         <span className="px-3 py-1 border-x border-gray-200 text-sm font-semibold">{item.quantity}</span>
@@ -70,9 +74,6 @@ export default function CartPage() {
                       </button>
                     </div>
 
-                    <div className="absolute top-0 right-0 text-right">
-                      <p className="font-bold text-xl text-gray-900">₹{item.price * item.quantity}</p>
-                    </div>
                   </div>
                 </div>
               ))}
@@ -94,7 +95,7 @@ export default function CartPage() {
                 <ChevronRight size={18} className="text-red-400 ml-auto" />
               </div>
 
-              <div className="bg-white rounded shadow-sm border border-gray-100 p-6 sticky top-28">
+              <div className="bg-white rounded shadow-sm border border-gray-100 p-6 xl:sticky xl:top-28">
                 <h2 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">Order Summary</h2>
                 
                 <div className="space-y-3 mb-6">

@@ -67,6 +67,17 @@ router.post('/', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+router.delete('/', async (req, res) => {
+    try {
+        const sessionId = req.sessionId;
+        await redis_1.redis.del(`cart:${sessionId}`);
+        res.json({ items: [], total: 0 });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 router.delete('/:itemId', async (req, res) => {
     try {
         const sessionId = req.sessionId;

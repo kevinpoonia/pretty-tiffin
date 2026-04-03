@@ -5,11 +5,14 @@ import { ShoppingCart, User, Search, MapPin, Truck, ChevronDown, Heart, Menu, X,
 import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
+import { useCart } from '@/context/CartContext';
 
 export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }) {
   const { user, logout } = useAuth();
+  const { items } = useCart();
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
   // IGP uses a prominent red branding color for primary actions. 
   // We'll adapt our theme to this style.
@@ -17,19 +20,19 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
   return (
     <header className="w-full bg-white shadow-sm sticky top-0 z-50">
       {/* Top Banner Strip */}
-      <div className="bg-[#f7f7f7] text-[#333] hidden md:block border-b border-gray-200">
-        <div className="container mx-auto px-4 md:px-6 h-8 flex items-center justify-between text-[11px] font-medium tracking-wide">
-          <div className="flex items-center gap-4 text-red-600 font-semibold tracking-wider uppercase">
+      <div className="bg-[#f7f7f7] text-[#333] hidden lg:block border-b border-gray-200">
+        <div className="container mx-auto px-4 md:px-6 h-8 flex items-center justify-between text-[11px] font-medium tracking-wide gap-4">
+          <div className="flex items-center gap-4 text-red-600 font-semibold tracking-wider uppercase truncate">
             <span>UP TO 20% OFF ON PERSONALIZED TIFFINS</span>
           </div>
-          <div className="flex items-center gap-6 text-gray-600">
+          <div className="flex items-center gap-4 xl:gap-6 text-gray-600 shrink-0">
             <Link href="/track" className="hover:text-red-500 flex items-center gap-1">
               <Truck size={12} /> Track Order
             </Link>
-            <div className="flex items-center gap-1 cursor-pointer hover:text-red-500">
+            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:text-red-500">
               <MapPin size={12} /> Deliver to: <span className="text-gray-900 font-semibold">India</span> <ChevronDown size={10} />
             </div>
-            <div className="flex items-center gap-1 cursor-pointer hover:text-red-500">
+            <div className="hidden xl:flex items-center gap-1 cursor-pointer hover:text-red-500">
               INR <ChevronDown size={10} />
             </div>
           </div>
@@ -37,38 +40,38 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
       </div>
 
       {/* Main Header Area */}
-      <div className="container mx-auto px-4 md:px-6 py-4 flex items-center justify-between gap-4 md:gap-8">
-        <div className="flex items-center gap-3">
+      <div className="container mx-auto px-4 md:px-6 py-3 md:py-4 flex items-center justify-between gap-3 md:gap-4 lg:gap-8">
+        <div className="flex items-center gap-2 md:gap-3 shrink-0">
           {/* Mobile Hamburger Menu */}
           <button onClick={() => setMobileMenuOpen(true)} className="md:hidden text-gray-800">
             <Menu size={24} />
           </button>
           {/* Logo */}
           <Link href="/" className="flex-shrink-0">
-            <span className="font-heading font-extrabold text-3xl tracking-tight text-gray-900">
+            <span className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-gray-900">
               Pretty<span className="text-red-500">Tiffin</span>
             </span>
           </Link>
         </div>
 
         {/* Huge Search Bar (Core to IGP design) */}
-        <div className="hidden md:flex flex-1 max-w-3xl relative">
+        <div className="hidden md:flex flex-1 min-w-0 max-w-[min(34rem,46vw)] lg:max-w-[min(44rem,52vw)] relative">
           <div className={`w-full flex items-center border ${searchFocused ? 'border-red-500 shadow-md' : 'border-gray-300'} rounded text-sm transition-all bg-white`}>
              <input 
                type="text" 
                placeholder="Search for custom tiffins, specific gifts, occasions..." 
-               className="w-full py-2.5 px-4 outline-none rounded-l text-gray-800 placeholder-gray-400"
+               className="w-full py-2.5 px-3 lg:px-4 outline-none rounded-l text-gray-800 placeholder-gray-400 min-w-0"
                onFocus={() => setSearchFocused(true)}
                onBlur={() => setSearchFocused(false)}
              />
-             <button className="bg-red-500 hover:bg-red-600 text-white px-6 py-2.5 rounded-r transition-colors flex items-center justify-center">
+             <button className="bg-red-500 hover:bg-red-600 text-white px-4 lg:px-6 py-2.5 rounded-r transition-colors flex items-center justify-center shrink-0">
                <Search size={18} />
              </button>
           </div>
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-4 md:gap-8">
+        <div className="flex items-center gap-3 md:gap-4 lg:gap-6 shrink-0">
           <Link href="/track" className="md:hidden flex flex-col items-center text-gray-600 hover:text-red-500">
             <Search size={22} strokeWidth={1.5} />
           </Link>
@@ -76,7 +79,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
           <div className="group relative">
             <Link href={user ? "/account" : "/login"} className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors">
               <User size={24} strokeWidth={1.5} />
-              <div className="hidden lg:block text-xs font-semibold">
+              <div className="hidden xl:block text-xs font-semibold">
                 <p className="text-gray-500 font-normal leading-tight">Profile</p>
                 <p className="leading-tight">{user ? `Hi, ${user.name.split(' ')[0]}` : 'Login / Register'}</p>
               </div>
@@ -96,27 +99,29 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             )}
           </div>
           
-          <Link href="/wishlist" className="hidden lg:flex flex-col items-center text-gray-700 hover:text-red-500 transition-colors relative">
+          <Link href="/wishlist" className="hidden md:flex flex-col items-center text-gray-700 hover:text-red-500 transition-colors relative">
              <Heart size={24} strokeWidth={1.5} />
-             <span className="text-[10px] font-semibold mt-0.5">Shortlist</span>
+             <span className="hidden xl:block text-[10px] font-semibold mt-0.5">Shortlist</span>
           </Link>
 
           <Link href="/cart" className="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors relative">
             <div className="relative">
               <ShoppingCart size={24} strokeWidth={1.5} />
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold h-4 w-4 rounded-full flex items-center justify-center">
-                0
-              </span>
+              {cartCount > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] font-bold min-w-4 h-4 px-1 rounded-full flex items-center justify-center">
+                  {cartCount}
+                </span>
+              )}
             </div>
-            <span className="hidden lg:block text-xs font-semibold mt-1">Cart</span>
+            <span className="hidden xl:block text-xs font-semibold mt-1">Cart</span>
           </Link>
         </div>
       </div>
 
       {/* Deep Category Navigation (IGP Style) */}
       <nav className="hidden md:block bg-white border-t border-gray-100 shadow-sm">
-        <div className="container mx-auto px-4 md:px-6">
-          <ul className="flex items-center justify-center lg:justify-start gap-8 text-[13px] font-semibold text-gray-700">
+        <div className="container mx-auto px-4 md:px-6 overflow-x-auto no-scrollbar">
+          <ul className="flex min-w-max items-center gap-5 lg:gap-8 text-xs lg:text-[13px] font-semibold text-gray-700">
             {['Same Day Delivery', 'Best Sellers', 'Personalized', 'Birthday', 'Anniversary', 'Corporate', 'Occasions'].map((cat, idx) => (
               <li key={idx} className="relative group">
                 <Link href={`/shop?category=${cat.toLowerCase()}`} className={`block py-3 hover:text-red-500 transition-colors flex items-center gap-1 ${idx === 0 ? 'text-red-600' : ''}`}>
@@ -152,7 +157,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             animate={{ x: 0 }}
             exit={{ x: '-100%' }}
             transition={{ type: 'tween', duration: 0.3 }}
-            className="w-4/5 max-w-[300px] h-full bg-white shadow-2xl flex flex-col pt-6"
+            className="w-[86vw] max-w-sm h-full bg-white shadow-2xl flex flex-col pt-6"
             onClick={e => e.stopPropagation()}
           >
             <div className="px-6 flex justify-between items-center mb-8 border-b border-gray-100 pb-4">

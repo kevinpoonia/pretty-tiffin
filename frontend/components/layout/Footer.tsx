@@ -2,9 +2,9 @@ import Link from 'next/link';
 
 export default function Footer() {
   return (
-    <footer className="bg-brand-900 text-brand-100 pt-16 pb-8 border-t border-brand-800 overflow-hidden w-full">
+    <footer className="bg-brand-900 text-brand-100 pt-12 md:pt-16 pb-8 border-t border-brand-800 overflow-hidden w-full">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-10 md:gap-12 mb-12">
           
           <div className="space-y-4">
             <Link href="/" className="inline-block">
@@ -40,7 +40,7 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-white mb-4">Newsletter</h4>
             <p className="text-sm text-brand-200 mb-4">Subscribe for exclusive offers and new product drops.</p>
-            <form className="flex w-full sm:max-w-sm rounded-md overflow-hidden border border-brand-700 focus-within:border-brand-500 transition-colors">
+            <form className="flex flex-col sm:flex-row w-full sm:max-w-sm rounded-md overflow-hidden border border-brand-700 focus-within:border-brand-500 transition-colors">
               <input 
                 type="email" 
                 placeholder="Enter your email" 
@@ -53,9 +53,9 @@ export default function Footer() {
           </div>
         </div>
         
-        <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between text-xs text-brand-300">
+        <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left text-xs text-brand-300 gap-4">
           <p>© {new Date().getFullYear()} Pretty Tiffin. All rights reserved.</p>
-          <div className="flex gap-4 mt-4 md:mt-0">
+          <div className="flex flex-wrap justify-center gap-4">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
           </div>

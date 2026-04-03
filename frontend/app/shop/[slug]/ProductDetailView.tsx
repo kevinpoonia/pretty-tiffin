@@ -8,11 +8,15 @@ import { Star, ShieldCheck, Heart, Truck, Info, Loader2, Gift } from 'lucide-rea
 import { useCart } from '@/context/CartContext';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 import ProductCustomizer from '@/components/products/ProductCustomizer';
 import GiftSelector from '@/components/products/GiftSelector';
+import { useAuth } from '@/context/AuthContext';
 
 export default function ProductDetailClient({ product }: { product: any }) {
   const { addItem } = useCart();
+  const { user } = useAuth();
+  const router = useRouter();
   const [isAdding, setIsAdding] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [giftDetails, setGiftDetails] = useState({
@@ -67,15 +71,15 @@ export default function ProductDetailClient({ product }: { product: any }) {
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-white pt-32 pb-20">
+      <main className="flex-1 bg-white pt-28 md:pt-32 pb-16 md:pb-20">
         <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col lg:flex-row gap-12 pt-8">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pt-6 md:pt-8">
             {/* Left: Product Images & Customizer Preview */}
             <div className="w-full lg:w-1/2 flex flex-col gap-6">
-              <div className="relative aspect-square w-full rounded-[40px] overflow-hidden bg-brand-50 flex items-center justify-center p-8 sticky top-28 shadow-inner border border-brand-100">
+              <div className="relative aspect-square w-full rounded-[28px] md:rounded-[40px] overflow-hidden bg-brand-50 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:sticky lg:top-24 shadow-inner border border-brand-100">
                 {product.images?.[0] ? (
                   <div className="relative w-full h-full">
-                     <Image src={product.images[0]} alt={product.name} fill className="object-contain p-8 z-10" />
+                     <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-contain p-3 sm:p-5 md:p-8 z-10" />
                      <AnimatePresence>
                         {selectedOptions['Engraving'] && (
                           <motion.div 
@@ -116,17 +120,17 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   </motion.div>
                 )}
               </div>
-              <div className="flex gap-4 overflow-x-auto pb-2">
+              <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2 no-scrollbar">
                 {product.images?.map((thumb: string, i: number) => (
-                  <div key={i} className="w-20 h-20 rounded-2xl bg-brand-50 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-brand-500 transition-all relative overflow-hidden shadow-sm">
-                    <Image src={thumb} alt={product.name} fill className="object-cover" />
+                  <div key={i} className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-50 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-brand-500 transition-all relative overflow-hidden shadow-sm">
+                    <Image src={thumb} alt={product.name} fill sizes="80px" className="object-cover" />
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Right: Product Info & Configurator */}
-            <div className="w-full lg:w-1/2 flex flex-col pt-4">
+            <div className="w-full lg:w-1/2 flex flex-col pt-0 lg:pt-4">
               <div className="mb-6">
                 <div className="flex items-center gap-2 mb-2">
                   <div className="flex items-center text-brand-500">
@@ -134,9 +138,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   </div>
                   <span className="text-[10px] font-black text-brand-400 uppercase tracking-widest">42 Verified Reviews</span>
                 </div>
-                <h1 className="text-3xl md:text-5xl font-black font-heading text-brand-900 mb-4 tracking-tighter leading-none">{product.name}</h1>
-                <div className="flex items-center gap-4">
-                   <p className="text-3xl font-black text-brand-900 tracking-tighter">₹{Number(product.price).toLocaleString('en-IN')}</p>
+                <h1 className="text-2xl sm:text-3xl md:text-5xl font-black font-heading text-brand-900 mb-4 tracking-tighter leading-tight">{product.name}</h1>
+                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
+                   <p className="text-2xl sm:text-3xl font-black text-brand-900 tracking-tighter">₹{Number(product.price).toLocaleString('en-IN')}</p>
                    {product.compareAtPrice && <p className="text-lg text-brand-300 line-through font-bold">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</p>}
                    <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest">In Stock</span>
                 </div>
@@ -159,7 +163,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 />
               </div>
 
-              <div className="sticky bottom-6 mt-12 bg-white/80 backdrop-blur-xl p-4 rounded-[32px] border border-brand-100 shadow-2xl flex flex-col sm:flex-row gap-4 z-30">
+              <div className="mt-8 md:mt-10 bg-white/95 backdrop-blur-xl p-4 rounded-[24px] md:rounded-[32px] border border-brand-100 shadow-2xl flex flex-col sm:flex-row gap-4 z-20 2xl:sticky 2xl:bottom-6">
                 <div className="flex items-center border border-brand-200 rounded-2xl bg-brand-50 overflow-hidden w-full sm:w-32 shrink-0">
                   <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 text-brand-600 hover:text-brand-900 transition-colors font-black">-</button>
                   <span className="flex-1 text-center font-black text-sm">{quantity}</span>
@@ -178,23 +182,23 @@ export default function ProductDetailClient({ product }: { product: any }) {
                         customization: selectedOptions,
                         giftOption: giftDetails
                       });
-                      window.location.href = '/cart'; 
+                      router.push(user ? '/checkout' : '/cart');
                     } catch (err) {
                       alert("Failed to add to cart");
                       setIsAdding(false);
                     }
                   }}
                   disabled={isAdding}
-                  className="w-full sm:flex-1 bg-brand-900 text-white font-black rounded-2xl py-5 px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-75 relative overflow-hidden group"
+                  className="w-full sm:flex-1 bg-brand-900 text-white font-black rounded-2xl py-4 md:py-5 px-5 md:px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-75 relative overflow-hidden group"
                 >
                   {isAdding ? <><Loader2 size={18} className="animate-spin" /> SYNCHRONIZING...</> : (
                     <div className="flex items-center gap-3 relative z-10">
                        <Gift size={18} />
-                       <span className="uppercase text-xs tracking-widest">Express Checkout — ₹{calculateTotalPrice().toLocaleString('en-IN')}</span>
+                       <span className="uppercase text-[11px] sm:text-xs tracking-widest text-center">Express Checkout — ₹{calculateTotalPrice().toLocaleString('en-IN')}</span>
                     </div>
                   )}
                 </button>
-                <button className="w-14 h-14 rounded-2xl border border-brand-200 flex items-center justify-center text-brand-600 hover:text-brand-500 hover:border-brand-500 hover:bg-brand-50 transition-all shrink-0">
+                <button className="hidden sm:flex w-14 h-14 rounded-2xl border border-brand-200 items-center justify-center text-brand-600 hover:text-brand-500 hover:border-brand-500 hover:bg-brand-50 transition-all shrink-0">
                   <Heart size={20} />
                 </button>
               </div>

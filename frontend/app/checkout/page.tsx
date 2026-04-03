@@ -21,19 +21,33 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [razorpayReady, setRazorpayReady] = useState(false);
 
   const [shipping, setShipping] = useState({
     firstName: '', lastName: '', phone: '', email: '', 
     address: '', city: '', state: '', pincode: ''
   });
 
-  // Load Razorpay Script
+  // Load Razorpay Script only when payment step is opened
   useEffect(() => {
+    if (step < 3 || typeof window === 'undefined') return;
+    if (window.Razorpay) {
+      setRazorpayReady(true);
+      return;
+    }
+
     const script = document.createElement('script');
     script.src = 'https://checkout.razorpay.com/v1/checkout.js';
     script.async = true;
+    script.onload = () => setRazorpayReady(true);
+    script.onerror = () => setError('Unable to load payment gateway. Please refresh and try again.');
     document.body.appendChild(script);
-  }, []);
+
+    return () => {
+      script.onload = null;
+      script.onerror = null;
+    };
+  }, [step]);
 
   // Require Login
   if (!authLoading && !user) {
@@ -95,6 +109,12 @@ export default function CheckoutPage() {
         theme: { color: '#ef4444' } // IGP Red
       };
 
+      if (!window.Razorpay) {
+         setError('Payment gateway is still loading. Please try again in a moment.');
+         setLoading(false);
+         return;
+      }
+
       const rzp = new window.Razorpay(options);
       rzp.on('payment.failed', function () {
          setError("Payment Failed or Cancelled");
@@ -113,7 +133,7 @@ export default function CheckoutPage() {
   return (
     <div className="bg-[#f5f5f5] min-h-screen">
       <Navbar alwaysSolid />
-      <main className="container mx-auto px-4 md:px-6 py-8">
+      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
         
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Secure Checkout</h1>
         {error && <div className="mb-4 bg-red-100 text-red-600 p-3 rounded text-sm font-semibold">{error}</div>}
@@ -153,12 +173,12 @@ export default function CheckoutPage() {
 
               {step === 2 && (
                 <div className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
                     <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
                   </div>
                   <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
                     <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
                   </div>
@@ -196,11 +216,11 @@ export default function CheckoutPage() {
                   </div>
 
                   <button 
-                    disabled={loading || items.length === 0}
+                    disabled={loading || items.length === 0 || !razorpayReady}
                     onClick={handlePayment} 
                     className="w-full bg-red-500 hover:bg-red-600 focus:bg-red-700 disabled:opacity-50 text-white font-bold py-4 px-4 rounded transition-colors text-sm mt-6 shadow-md"
                   >
-                    {loading ? 'INITIALIZING PAYMENT...' : `PAY ₹${total} SECURELY`}
+                    {loading ? 'INITIALIZING PAYMENT...' : !razorpayReady ? 'LOADING PAYMENT...' : `PAY ₹${total} SECURELY`}
                   </button>
                 </div>
               )}
@@ -210,14 +230,14 @@ export default function CheckoutPage() {
 
           {/* Cart Summary Side Panel */}
           <div className="w-full lg:w-96 flex-shrink-0">
-            <div className="bg-white rounded shadow-sm border border-gray-100 p-6 sticky top-28">
+            <div className="bg-white rounded shadow-sm border border-gray-100 p-6 xl:sticky xl:top-28">
               <h2 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">Order Summary</h2>
               
               <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto">
                 {items.map((item, idx) => (
                   <div key={idx} className="flex gap-4">
                     <div className="w-16 h-16 bg-red-50 rounded flex-shrink-0 relative overflow-hidden">
-                      <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill className="object-contain p-1 bg-white" />
+                      <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill sizes="64px" className="object-contain p-1 bg-white" />
                       <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold">{item.quantity}</span>
                     </div>
                     <div>

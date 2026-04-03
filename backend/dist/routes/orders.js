@@ -9,6 +9,13 @@ const auth_1 = require("../middleware/auth");
 const razorpay_1 = require("../razorpay");
 const crypto_1 = __importDefault(require("crypto"));
 const router = (0, express_1.Router)();
+const getUserOrders = async (userId) => {
+    return prisma_1.prisma.order.findMany({
+        where: { userId },
+        include: { items: { include: { product: true } } },
+        orderBy: { createdAt: 'desc' }
+    });
+};
 // Create Payment Intent (Razorpay Order)
 router.post('/create-intent', auth_1.authenticate, async (req, res) => {
     try {
@@ -82,13 +89,19 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
     }
 });
 // Get User Orders
+router.get('/', auth_1.authenticate, async (req, res) => {
+    try {
+        const orders = await getUserOrders(req.user.id);
+        res.json(orders);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
 router.get('/my-orders', auth_1.authenticate, async (req, res) => {
     try {
-        const orders = await prisma_1.prisma.order.findMany({
-            where: { userId: req.user.id },
-            include: { items: { include: { product: true } } },
-            orderBy: { createdAt: 'desc' }
-        });
+        const orders = await getUserOrders(req.user.id);
         res.json(orders);
     }
     catch (error) {
