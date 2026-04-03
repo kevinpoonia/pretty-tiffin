@@ -68,21 +68,27 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
       <Navbar alwaysSolid />
       <main className="w-full">
         {/* Hero Carousel */}
-        <section className="bg-white w-full overflow-hidden relative aspect-[4/5] sm:aspect-[16/10] xl:aspect-[21/8]">
+        <section className="w-full overflow-hidden relative bg-gradient-to-br from-stone-100 via-white to-rose-50 aspect-[4/5] sm:aspect-[16/10] xl:aspect-[21/8]">
           <div className="flex transition-transform duration-700 ease-in-out h-full" style={{ transform: `translateX(-${currentSlide * 100}%)` }}>
             {banners.length > 0 ? banners.map((banner, idx) => (
               <div key={banner.id} className="w-full flex-shrink-0 h-full relative cursor-pointer">
-                <Image 
-                  src={banner.imageUrl} 
-                  alt={banner.title} 
-                  fill 
-                  className="object-cover" 
-                  priority={idx === 0}
-                  sizes="100vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/10 flex items-end sm:items-center">
-                  <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-10 sm:pb-0">
-                    <div className="max-w-2xl">
+                <div className="absolute inset-0 bg-gradient-to-r from-[#1f1513]/75 via-[#1f1513]/35 to-transparent z-10" />
+                <div className="absolute inset-0 p-3 sm:p-5 lg:p-8 xl:p-10">
+                  <div className="relative h-full w-full">
+                    <Image 
+                      src={banner.imageUrl} 
+                      alt={banner.title} 
+                      fill 
+                      className="object-contain object-center sm:object-right" 
+                      priority={idx === 0}
+                      quality={95}
+                      sizes="100vw"
+                    />
+                  </div>
+                </div>
+                <div className="absolute inset-0 z-20 flex items-end sm:items-center">
+                  <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-8 sm:pb-0">
+                    <div className="max-w-2xl rounded-[1.75rem] bg-black/30 p-4 sm:p-6 md:p-8 backdrop-blur-[2px] shadow-[0_20px_50px_rgba(0,0,0,0.18)]">
                       <h2 className="text-2xl sm:text-4xl md:text-5xl font-bold mb-2 sm:mb-3 leading-tight">{banner.title}</h2>
                       <p className="text-sm sm:text-base md:text-xl mb-5 sm:mb-6 text-white/90 max-w-xl">{banner.subtitle}</p>
                       <Link href={banner.link || '/shop'} className="inline-flex bg-red-500 hover:bg-red-600 px-5 sm:px-8 py-3 rounded text-xs sm:text-sm font-bold tracking-wide transition-colors">
