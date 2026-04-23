@@ -7,6 +7,7 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 import { Loader2, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
 
 export default function HomeClient({ initialProducts, initialBanners }: { initialProducts: any[], initialBanners: any[] }) {
