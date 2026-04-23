@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Truck, ChevronLeft, ChevronRight, Heart } from 'lucide-react';
+import { Star, Truck, ChevronLeft, ChevronRight, Heart, Sparkles } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
 
 interface ProductCardProps {
@@ -59,38 +59,41 @@ export default function ProductCard({ product, showBadge = false, priority = fal
       viewport={{ once: true }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white rounded-[2rem] organic-shape-1 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700 border border-brand-100 flex flex-col h-full relative w-full hover:-translate-y-2"
+      className="group bg-white rounded-[2rem] overflow-hidden shadow-sm hover:shadow-[0_20px_50px_rgba(42,61,37,0.12)] transition-all duration-700 border border-stone-100/60 flex flex-col h-full relative w-full hover:-translate-y-2"
     >
-      <Link href={`/shop/${product.slug}`} className="block relative aspect-[4/5] bg-brand-50/50 overflow-hidden">
-        <AnimatePresence mode="wait">
+      <Link href={`/shop/${product.slug}`} className="block relative aspect-square bg-[#fcfaf7] overflow-hidden">
+        <AnimatePresence mode="popLayout">
           <motion.div
-            key={currentImg}
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0"
+            key={isHovered && images.length > 1 ? images[1] : images[currentImg]}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+            className="absolute inset-0 flex items-center justify-center p-8"
           >
             <Image
-              src={images[currentImg]}
+              src={isHovered && images.length > 1 ? images[1] : images[currentImg]}
               alt={product.name}
               fill
-              className="object-contain p-6 group-hover:scale-110 transition-transform duration-1000"
+              className="object-contain p-4 group-hover:scale-105 transition-transform duration-1000 ease-out"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={priority}
             />
           </motion.div>
         </AnimatePresence>
 
+        {/* Glossy Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none" />
+
         {/* Badges */}
         <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
           {showBadge && (
-            <span className="bg-brand-900 text-brand-100 text-[10px] font-bold px-3 py-1.5 flex items-center gap-2 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">
-              <Truck size={10} /> PRIORITY
+            <span className="bg-brand-900/90 text-brand-50 text-[9px] font-bold px-3 py-1.5 flex items-center gap-2 rounded-full shadow-lg backdrop-blur-md uppercase tracking-widest border border-white/20">
+              <Sparkles size={10} className="text-brand-300" /> Essential
             </span>
           )}
           {discount && (
-            <span className="bg-stone-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">
+            <span className="bg-stone-800/90 text-white text-[9px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-md uppercase tracking-widest border border-white/20">
               {discount}% OFF
             </span>
           )}
@@ -99,72 +102,66 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         {/* Wishlist Button */}
         <button
           onClick={toggleWishlist}
-          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 hover:bg-white text-stone-800 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md transition-all duration-500 hover:scale-110 active:scale-90"
+          className={`absolute top-4 right-4 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-500 hover:scale-110 active:scale-90 ${wishlisted ? 'bg-white' : 'bg-white/60 hover:bg-white backdrop-blur-md border border-white/30'}`}
           aria-label="Add to wishlist"
         >
           <Heart
             size={18}
-            className={`transition-all duration-500 ${wishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-stone-400'}`}
+            className={`transition-all duration-500 ${wishlisted ? 'fill-red-500 text-red-500' : 'text-stone-400'}`}
           />
         </button>
 
-        {/* Gallery Controls */}
+        {/* Image Navigator (Small Dots) */}
         {images.length > 1 && (
-          <div className={`absolute inset-x-0 bottom-4 flex items-center justify-between px-4 z-20 transition-all duration-500 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
-            <button onClick={prevImage} className="w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center text-stone-800 transition-all hover:scale-110">
-              <ChevronLeft size={16} />
-            </button>
-            
-            <div className="flex gap-1.5 bg-white/60 backdrop-blur-md px-2 py-1.5 rounded-full">
-              {images.map((_, idx) => (
-                <div
-                  key={idx}
-                  className={`h-1 rounded-full transition-all duration-500 ${currentImg === idx ? 'w-4 bg-brand-900' : 'w-1 bg-brand-900/20'}`}
-                />
-              ))}
-            </div>
-
-            <button onClick={nextImage} className="w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center text-stone-800 transition-all hover:scale-110">
-              <ChevronRight size={16} />
-            </button>
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-1.5 z-20">
+            {images.slice(0, 4).map((_, idx) => (
+              <div
+                key={idx}
+                className={`h-1 rounded-full transition-all duration-500 ${currentImg === idx ? 'w-4 bg-brand-600' : 'w-1 bg-brand-600/20'}`}
+              />
+            ))}
           </div>
         )}
       </Link>
 
       <div className="p-6 flex-1 flex flex-col">
-        <p className="text-[10px] text-brand-500 font-bold mb-2 uppercase tracking-[0.2em] line-clamp-1">
-          {product.category}
-        </p>
+        <div className="flex items-center justify-between mb-3">
+          <div className="px-2 py-0.5 rounded bg-brand-50 border border-brand-100">
+            <p className="text-[9px] text-brand-700 font-bold uppercase tracking-[0.1em]">
+              {product.category}
+            </p>
+          </div>
+          <div className="flex items-center gap-1">
+            <Star size={10} className="fill-brand-400 text-brand-400" />
+            <span className="text-[10px] text-stone-500 font-bold">4.9</span>
+          </div>
+        </div>
+        
         <Link href={`/shop/${product.slug}`}>
-          <h3 className="font-heading italic text-xl text-stone-800 mb-3 group-hover:text-brand-700 transition-colors line-clamp-2 leading-snug">
+          <h3 className="font-heading italic text-xl text-stone-800 mb-4 group-hover:text-brand-900 transition-colors line-clamp-2 leading-snug min-h-[3rem]">
             {product.name}
           </h3>
         </Link>
 
-        <div className="flex items-center gap-1.5 mb-6">
-          {[1, 2, 3, 4, 5].map(star => (
-            <Star key={star} size={12} className="fill-brand-300 text-brand-300" />
-          ))}
-          <span className="text-[10px] text-stone-400 font-medium ml-1">4.9 (24)</span>
-        </div>
-
-        <div className="mt-auto flex items-center justify-between pt-5 border-t border-stone-50">
+        <div className="mt-auto flex items-end justify-between pt-5 border-t border-stone-50">
           <div className="flex flex-col">
-            <span className="font-sans font-bold text-stone-900 text-lg">
-              ₹{product.price.toLocaleString('en-IN')}
-            </span>
-            {product.compareAtPrice && product.compareAtPrice > product.price && (
-              <span className="text-xs text-stone-400 line-through">
-                ₹{product.compareAtPrice.toLocaleString('en-IN')}
+            <span className="text-[10px] text-stone-400 font-medium uppercase tracking-wider mb-0.5">Investment</span>
+            <div className="flex items-baseline gap-2">
+              <span className="font-sans font-bold text-stone-900 text-xl">
+                ₹{product.price.toLocaleString('en-IN')}
               </span>
-            )}
+              {product.compareAtPrice && product.compareAtPrice > product.price && (
+                <span className="text-xs text-stone-300 line-through">
+                  ₹{product.compareAtPrice.toLocaleString('en-IN')}
+                </span>
+              )}
+            </div>
           </div>
-          <Link
-            href={`/shop/${product.slug}`}
-            className="bg-brand-900 text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-stone-800 transition-all duration-500 uppercase tracking-widest shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
-          >
-            Personalize
-          </Link>
+          <div className="flex flex-col items-end">
+            <span className="text-brand-600 font-bold text-[10px] uppercase tracking-widest group-hover:translate-x-1 transition-transform flex items-center gap-1.5">
+              Explore <ChevronRight size={12} />
+            </span>
+          </div>
         </div>
       </div>
     </motion.div>

@@ -11,6 +11,7 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'res.cloudinary.com' },
       { protocol: 'http', hostname: 'localhost' }
     ],
+    qualities: [75, 90],
   },
   experimental: {
     optimizePackageImports: ['lucide-react'],

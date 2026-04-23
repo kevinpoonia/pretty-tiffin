@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Send, MessageCircle } from 'lucide-react';
+import { Send, MessageCircle, Globe, Leaf, Sparkles } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -135,15 +135,21 @@ export default function Footer() {
           </div>
           <div className="flex flex-wrap justify-start lg:justify-end gap-8 text-brand-400">
             <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
-              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">🇮🇳</div>
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-brand-400">
+                <Globe size={20} />
+              </div>
               <span>Made in India</span>
             </div>
             <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
-              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">🌿</div>
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-brand-400">
+                <Leaf size={20} />
+              </div>
               <span>Eco-Friendly</span>
             </div>
             <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
-              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">✨</div>
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-brand-400">
+                <Sparkles size={20} />
+              </div>
               <span>Hand-Guided</span>
             </div>
           </div>

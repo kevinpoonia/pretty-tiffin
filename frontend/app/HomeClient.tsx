@@ -80,7 +80,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
           >
             {banners.length > 0 ? banners.map((banner, idx) => (
               <div key={banner.id || idx} className="w-full flex-shrink-0 h-full relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-brand-900/40 via-brand-900/10 to-transparent z-10" />
+                <div className="absolute inset-0 bg-black/25 z-10" />
                 <div className="absolute inset-0 p-3 sm:p-5 lg:p-8">
                   <div className="relative h-full w-full">
                     <Image
@@ -152,20 +152,17 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Trust Badges */}
-        <section className="bg-brand-900 py-6 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none">
-            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
-          </div>
+        <section className="bg-brand-900 py-4 relative overflow-hidden">
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-4 gap-x-10 text-brand-100 text-[11px] sm:text-xs font-medium tracking-[0.2em]">
               {[
-                { icon: '🚚', text: 'Free Shipping on All Orders' },
-                { icon: '⚡', text: 'Same Day Delivery Available' },
-                { icon: '✏️', text: 'Laser Engraved Personalization' },
-                { icon: '🔒', text: '100% Secure Payments' },
+                { icon: <Truck size={18} />, text: 'Free Shipping on All Orders' },
+                { icon: <Zap size={18} />, text: 'Same Day Delivery Available' },
+                { icon: <PenTool size={18} />, text: 'Laser Engraved Personalization' },
+                { icon: <ShieldCheck size={18} />, text: '100% Secure Payments' },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-base">{badge.icon}</span>
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-brand-300">{badge.icon}</span>
                   <span className="uppercase tracking-wide">{badge.text}</span>
                 </div>
               ))}
@@ -174,9 +171,9 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Shop By Category */}
-        <section className="bg-white py-16 md:py-20 relative">
+        <section className="bg-white py-12 md:py-16 relative">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl md:text-4xl text-center text-stone-800 mb-12">
+            <h2 className="text-3xl md:text-4xl text-center text-stone-800 mb-10">
               <span className="ink-underline">Browse by Category</span>
             </h2>
             <div className="flex overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center gap-8 md:gap-14 no-scrollbar snap-x">
@@ -186,7 +183,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                   href={`/shop?category=${encodeURIComponent(cat.name)}`}
                   className="flex flex-col items-center group cursor-pointer w-[5rem] sm:w-28 md:w-32 flex-shrink-0 snap-center"
                 >
-                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 ${idx % 2 === 0 ? 'organic-shape-1' : 'organic-shape-2'} bg-brand-50 overflow-hidden relative mb-4 group-hover:shadow-2xl transition-all duration-700 border border-brand-100 group-hover:border-brand-300 group-hover:-translate-y-2`}>
+                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-brand-50 overflow-hidden relative mb-4 group-hover:shadow-2xl transition-all duration-700 border border-brand-100 group-hover:border-brand-300 group-hover:-translate-y-2`}>
                     <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 80px, 120px" className="object-cover group-hover:scale-110 transition-transform duration-700 p-3" />
                   </div>
                   <span className="text-xs font-bold text-stone-600 text-center group-hover:text-brand-700 transition-colors tracking-wide">{cat.name}</span>
@@ -199,7 +196,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
               ))}
             </div>
           </div>
-
+          
           {/* Wavy Separator */}
           <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
             <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
@@ -209,17 +206,17 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Trending Products */}
-        <section className="container mx-auto px-4 md:px-6 py-16 mb-8">
-          <div className="flex items-end justify-between gap-4 mb-10">
+        <section className="container mx-auto px-4 md:px-6 py-12 mb-8">
+          <div className="flex items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="text-3xl md:text-4xl text-stone-800 mb-2">Trending Treasures</h2>
+              <h2 className="text-3xl md:text-4xl text-stone-800 mb-2 font-heading italic">Trending Treasures</h2>
               <p className="text-sm text-stone-500 font-medium italic">Handpicked artisanal gifts loved across the country</p>
             </div>
             <Link href="/shop" className="text-brand-700 font-bold text-xs uppercase tracking-widest hover:text-brand-900 border-b-2 border-brand-200 pb-1 transition-all">View All Collections</Link>
           </div>
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
             {loading ? (
-              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white organic-shape-1 h-80 animate-pulse border border-brand-50" />)
+              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white h-80 animate-pulse border border-brand-50 rounded-2xl" />)
             ) : products.slice(0, 5).map((item, idx) => (
               <ProductCard key={item.id} product={item} showBadge={idx === 0} priority={idx < 2} />
             ))}
@@ -227,7 +224,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Gifts by Relationship */}
-        <section className="bg-brand-50 py-20 md:py-28 relative overflow-hidden">
+        <section className="bg-brand-50 py-16 md:py-20 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-[1px] rotate-180 text-white">
             <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
               <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
@@ -235,13 +232,13 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
           </div>
 
           <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-16">Curated for Loved Ones</h2>
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-12 font-heading italic">Curated for Loved Ones</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
               {relationships.map((rel, idx) => (
                 <Link
                   key={idx}
                   href={rel.href}
-                  className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden group cursor-pointer block rounded-[2.5rem] organic-shape-1 shadow-lg hover:shadow-2xl transition-all duration-700 bg-white"
+                  className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden group cursor-pointer block rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-700 bg-white"
                 >
                   <Image src={rel.img} alt={rel.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[0.2] group-hover:grayscale-0" />
                   <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent flex flex-col justify-end p-6 md:p-8">
@@ -264,37 +261,35 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         <section className="container mx-auto px-4 md:px-6 py-16">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
             {[
-              { icon: '🏅', title: 'Premium Quality', desc: 'Food-grade 304 stainless steel, built to last decades.' },
-              { icon: '✨', title: 'Personalized for You', desc: 'Laser-engraved names, dates, and custom messages.' },
-              { icon: '📦', title: 'Gift-Ready Packaging', desc: 'Arrives in premium gift packaging, perfect for gifting.' },
+              { icon: <Medal size={28} />, title: 'Premium Quality', desc: 'Food-grade 304 stainless steel, built to last decades.' },
+              { icon: <Sparkles size={28} />, title: 'Personalized for You', desc: 'Laser-engraved names, dates, and custom messages.' },
+              { icon: <Box size={28} />, title: 'Gift-Ready Packaging', desc: 'Arrives in premium gift packaging, perfect for gifting.' },
             ].map((f, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
-                <span className="text-3xl shrink-0">{f.icon}</span>
+              <div key={i} className="bg-white rounded-2xl p-8 border border-brand-100 shadow-sm flex flex-col items-center text-center gap-4 hover:shadow-md transition-shadow">
+                <span className="text-brand-500 mb-2">{f.icon}</span>
                 <div>
-                  <h3 className="font-bold text-gray-800 mb-1">{f.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+                  <h3 className="text-xl font-heading italic text-stone-800 mb-2">{f.title}</h3>
+                  <p className="text-stone-500 text-sm leading-relaxed max-w-xs">{f.desc}</p>
                 </div>
-                <h3 className="text-xl italic text-stone-800 mb-3">{f.title}</h3>
-                <p className="text-stone-500 text-sm leading-relaxed max-w-xs">{f.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="bg-white py-24 md:py-32 relative">
+        <section className="bg-white py-12 md:py-16 relative">
           <div className="container mx-auto px-4 md:px-6 max-w-4xl">
-            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-16 italic">Curiosities & Answers</h2>
-            <div className="grid grid-cols-1 gap-6">
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-12 italic font-heading">Curiosities & Answers</h2>
+            <div className="grid grid-cols-1 gap-4">
               {faqs.map((faq, i) => (
                 <div key={i} className="border-b border-stone-100 last:border-0">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between py-8 text-left group"
+                    className="w-full flex items-center justify-between py-5 text-left group"
                   >
-                    <span className={`text-lg md:text-xl transition-all duration-300 ${openFaq === i ? 'text-brand-700 italic' : 'text-stone-700'}`}>{faq.q}</span>
-                    <div className={`w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center transition-all duration-500 ${openFaq === i ? 'rotate-180 bg-brand-700 border-brand-700 text-white' : 'group-hover:border-stone-400'}`}>
-                      <ChevronDown size={16} />
+                    <span className={`text-base md:text-lg transition-all duration-300 ${openFaq === i ? 'text-brand-700 italic font-medium' : 'text-stone-700'}`}>{faq.q}</span>
+                    <div className={`w-7 h-7 rounded-full border border-stone-200 flex items-center justify-center transition-all duration-500 ${openFaq === i ? 'rotate-180 bg-brand-700 border-brand-700 text-white' : 'group-hover:border-stone-400'}`}>
+                      <ChevronDown size={14} />
                     </div>
                   </button>
                   <AnimatePresence>
@@ -306,7 +301,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                         className="overflow-hidden"
                       >
-                        <div className="pb-8 text-base text-stone-500 leading-relaxed max-w-3xl">
+                        <div className="pb-5 text-sm text-stone-500 leading-relaxed max-w-3xl">
                           {faq.a}
                         </div>
                       </motion.div>
