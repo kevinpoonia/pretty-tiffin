@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Send } from 'lucide-react';
+import { Send, MessageCircle } from 'lucide-react';
 
 export default function Footer() {
   const [email, setEmail] = useState('');
@@ -17,25 +17,37 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-brand-900 text-brand-100 pt-12 md:pt-16 pb-8 border-t border-brand-800 overflow-hidden w-full">
+    <footer className="bg-brand-900 text-brand-100 pt-16 pb-8 border-t border-brand-800 overflow-hidden w-full font-sans">
       <div className="container mx-auto px-4 md:px-6 max-w-7xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-10 md:gap-12 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-10 md:gap-12 mb-16">
 
           {/* Brand */}
           <div className="space-y-4 sm:col-span-2 xl:col-span-1">
-            <Link href="/" className="inline-block group">
-              <span className="font-heading italic text-3xl text-white group-hover:text-brand-300 transition-colors">
+            <Link href="/" className="inline-block">
+              <span className="font-heading font-bold text-2xl text-white tracking-tight">
                 Pretty<span className="text-brand-400">Tiffin</span>
               </span>
             </Link>
-            <p className="text-base text-brand-200 italic leading-relaxed max-w-xs">
-              Hand-guided laser engravings on premium stainless steel. A legacy of love, crafted for your most cherished moments.
+            <p className="text-sm text-brand-200 leading-relaxed max-w-xs">
+              Premium, engraved stainless steel tiffins designed for modern Indian lifestyles. Combining heritage with personalization.
             </p>
-            <div className="flex items-center gap-4 pt-4">
+            <div className="flex items-center gap-3 pt-1">
               {[
-                { label: 'Instagram', href: 'https://instagram.com', icon: '📸' },
-                { label: 'Facebook', href: 'https://facebook.com', icon: '👍' },
-                { label: 'WhatsApp', href: 'https://wa.me/919999988888', icon: '💬' },
+                {
+                  label: 'Instagram',
+                  href: 'https://instagram.com',
+                  icon: (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
+                  )
+                },
+                {
+                  label: 'Facebook',
+                  href: 'https://facebook.com',
+                  icon: (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
+                  )
+                },
+                { label: 'WhatsApp', href: 'https://wa.me/919999988888', icon: <MessageCircle size={18} /> },
               ].map(s => (
                 <a
                   key={s.label}
@@ -43,7 +55,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-11 h-11 organic-shape-2 bg-brand-800 hover:bg-brand-400 flex items-center justify-center transition-all duration-500 text-lg hover:scale-110 shadow-lg"
+                  className="w-9 h-9 bg-brand-800 hover:bg-brand-500 rounded-lg flex items-center justify-center transition-colors text-sm"
                 >
                   {s.icon}
                 </a>
@@ -51,66 +63,99 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Shop Links */}
+          {/* Shop Sections */}
           <div>
-            <h4 className="font-heading font-semibold text-white mb-4">Shop</h4>
-            <ul className="space-y-3 text-sm text-brand-200">
-              <li><Link href="/shop" className="hover:text-white transition-colors">All Products</Link></li>
-              <li><Link href="/shop?category=personalized" className="hover:text-white transition-colors">Customize Your Tiffin</Link></li>
+            <h4 className="font-heading font-semibold text-white mb-6 text-lg italic">Shop</h4>
+            <ul className="space-y-4 text-sm text-brand-200">
+              <li><Link href="/shop" className="hover:text-white transition-colors">The Full Collection</Link></li>
+              <li><Link href="/shop?category=personalized" className="hover:text-white transition-colors">Custom Engravings</Link></li>
+              <li><Link href="/shop?category=best-sellers" className="hover:text-white transition-colors">Bestselling Classics</Link></li>
               <li><Link href="/shop?category=corporate" className="hover:text-white transition-colors">Corporate Gifting</Link></li>
-              <li><Link href="/shop?for=For Husband" className="hover:text-white transition-colors">Gifts for Husband</Link></li>
-              <li><Link href="/shop?category=best-sellers" className="hover:text-white transition-colors">Best Sellers</Link></li>
+              <li><Link href="/shop?category=new-arrivals" className="hover:text-white transition-colors">New Arrivals</Link></li>
+              <li><Link href="/gift-cards" className="hover:text-white transition-colors">Gift Cards</Link></li>
             </ul>
           </div>
 
-          {/* Support Links */}
+          {/* Collections Section */}
           <div>
-            <h4 className="font-heading font-semibold text-white mb-4">Support</h4>
-            <ul className="space-y-3 text-sm text-brand-200">
-              <li><Link href="/faq" className="hover:text-white transition-colors">FAQ</Link></li>
+            <h4 className="font-heading font-semibold text-white mb-6 text-lg italic">Collections</h4>
+            <ul className="space-y-4 text-sm text-brand-200">
+              <li><Link href="/shop?for=husband" className="hover:text-white transition-colors">Gifts for Him</Link></li>
+              <li><Link href="/shop?for=wife" className="hover:text-white transition-colors">Gifts for Her</Link></li>
+              <li><Link href="/shop?for=kids" className="hover:text-white transition-colors">For the Little Ones</Link></li>
+              <li><Link href="/shop?category=anniversary" className="hover:text-white transition-colors">Anniversary Specials</Link></li>
+              <li><Link href="/shop?category=birthday" className="hover:text-white transition-colors">Birthday Treasures</Link></li>
+              <li><Link href="/shop?category=festive" className="hover:text-white transition-colors">Festive Gifting</Link></li>
+            </ul>
+          </div>
+
+          {/* Support & Community */}
+          <div>
+            <h4 className="font-heading font-semibold text-white mb-6 text-lg italic">Help</h4>
+            <ul className="space-y-4 text-sm text-brand-200">
+              <li><Link href="/faq" className="hover:text-white transition-colors">Care Instructions</Link></li>
               <li><Link href="/shipping" className="hover:text-white transition-colors">Shipping & Returns</Link></li>
-              <li><Link href="/track" className="hover:text-white transition-colors">Track Order</Link></li>
-              <li><Link href="/contact" className="hover:text-white transition-colors">Contact Us</Link></li>
-              <li><Link href="/about" className="hover:text-white transition-colors">About Us</Link></li>
+              <li><Link href="/track" className="hover:text-white transition-colors">Track Your Treasure</Link></li>
+              <li><Link href="/contact" className="hover:text-white transition-colors">Get in Touch</Link></li>
+              <li><Link href="/about" className="hover:text-white transition-colors">Our Story</Link></li>
+              <li><Link href="/bulk" className="hover:text-white transition-colors">Bulk Orders</Link></li>
             </ul>
           </div>
 
-          {/* Newsletter */}
-          <div>
-            <h4 className="font-heading font-semibold text-white mb-4">Newsletter</h4>
-            <p className="text-sm text-brand-200 mb-4">Subscribe for exclusive offers and new product drops.</p>
+        </div>
+
+        {/* Newsletter & Trust Badges Strip */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center py-12 border-t border-brand-800">
+          <div className="lg:col-span-2">
+            <h4 className="font-heading font-semibold text-white mb-2 text-2xl italic">Join the Pretty Tiffin Circle</h4>
+            <p className="text-sm text-brand-300 mb-6 max-w-lg">Get first access to new product drops, personalized gifting ideas, and exclusive offers from our studio.</p>
             {subscribed ? (
-              <div className="flex flex-col items-center justify-center py-6 px-4 bg-brand-800 organic-shape-1 border border-brand-700 animate-fade-in">
-                <Send size={24} className="text-brand-400 mb-3" />
-                <p className="text-white font-heading italic text-lg">Welcome to the family!</p>
+              <div className="flex items-center gap-2 text-brand-300 text-sm font-medium bg-brand-800 rounded-xl px-4 py-3 border border-brand-700">
+                <Send size={14} className="text-brand-400" />
+                Thanks for subscribing!
               </div>
             ) : (
-              <form onSubmit={handleNewsletter} className="flex flex-col gap-4">
+              <form onSubmit={handleNewsletter} className="flex flex-col gap-2">
                 <input
                   type="email"
                   required
-                  placeholder="Your favorite email"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="bg-brand-800/50 text-white px-6 py-3.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 placeholder-brand-400 border border-brand-700 transition-all"
+                  className="bg-brand-800 text-white px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder-brand-400 border border-brand-700"
                 />
                 <button
                   type="submit"
-                  className="bg-brand-100 text-brand-900 hover:bg-white px-6 py-3.5 text-xs font-bold uppercase tracking-widest rounded-full transition-all duration-500 flex items-center justify-center gap-3 shadow-xl hover:scale-105 active:scale-95"
+                  className="bg-brand-500 hover:bg-brand-400 text-white px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
                 >
                   Join the Circle <Send size={14} />
                 </button>
               </form>
             )}
           </div>
+          <div className="flex flex-wrap justify-start lg:justify-end gap-8 text-brand-400">
+            <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">🇮🇳</div>
+              <span>Made in India</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">🌿</div>
+              <span>Eco-Friendly</span>
+            </div>
+            <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
+              <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-lg">✨</div>
+              <span>Hand-Guided</span>
+            </div>
+          </div>
         </div>
 
-        <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left text-xs text-brand-300 gap-4">
-          <p>© {new Date().getFullYear()} Pretty Tiffin. All rights reserved.</p>
-          <div className="flex flex-wrap justify-center gap-4">
-            <Link href="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
-            <Link href="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+        <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left text-[11px] font-medium text-brand-400 gap-4 uppercase tracking-wider">
+          <p>© {new Date().getFullYear()} Pretty Tiffin Studio. Crafted with love for your legacy.</p>
+          <div className="flex flex-wrap justify-center gap-6">
+            <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
+            <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>
             <Link href="/shipping" className="hover:text-white transition-colors">Shipping Policy</Link>
+            <Link href="/sitemap" className="hover:text-white transition-colors">Sitemap</Link>
           </div>
         </div>
       </div>

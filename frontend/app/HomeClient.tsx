@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
-import { Loader2, ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Loader2, ChevronDown, ChevronLeft, ChevronRight, Truck, Zap, PenTool, ShieldCheck, Medal, Sparkles, Box } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import api from '@/lib/api';
@@ -58,25 +58,29 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
   ];
 
   const faqs = [
-    { q: 'What is the best personalized gift for a husband in India?', a: 'The best personalized gift is a high-quality, engraved stainless steel tiffin box. It combines practicality for work lunches with a sentimental touch that lasts a lifetime.' },
-    { q: 'How long does shipping take for customized tiffins?', a: 'We offer express shipping across India. Standard delivery takes 3-5 business days, while metro cities often receive orders within 48-72 hours.' },
-    { q: 'Can I engrave a logo for corporate gifting?', a: 'Yes, we specialize in corporate gifting. You can engrave individual names or company logos for a premium, sustainable branding experience.' },
+    { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box combines everyday utility with a personal touch that lasts a lifetime. It’s a thoughtful way to show you care, whether for office lunches or special celebrations.' },
+    { q: 'How long does it take for my custom tiffin to arrive?', a: 'We handle every order with care. Typically, your personalized tiffin will reach you within 3-5 business days across India, with express options for metro cities.' },
+    { q: 'Can I add a custom logo for a team gift?', a: 'Absolutely. We specialize in corporate gifting and can engrave individual names or company logos to create a premium, lasting impression for your team.' },
+    { q: 'Is the engraving permanent?', a: 'Yes, our laser engraving process creates a permanent, high-precision mark on the steel. It will never fade, peel, or wash off, even with daily cleaning.' },
+    { q: 'How should I clean and care for my engraved tiffin?', a: 'Our tiffins are made from high-grade 304 stainless steel. They are dishwasher safe, but we recommend hand-washing with a soft sponge to keep the finish looking brand new for years.' },
+    { q: 'Do you offer international shipping?', a: 'Currently, we ship within India. However, we are working on expanding our reach globally soon. Stay tuned to our newsletter for updates!' },
+    { q: 'What is your return policy for customized items?', a: 'Since each piece is individually engraved for you, we can only accept returns if there is a manufacturing defect or damage during transit. Please reach out to our team within 48 hours of delivery if there is an issue.' },
   ];
 
   return (
-    <div className="bg-[#fdfaf6] min-h-screen selection:bg-brand-200 selection:text-brand-900">
+    <div className="bg-[#faf8f4] min-h-screen">
       <Navbar alwaysSolid />
       <main className="w-full">
 
         {/* Hero Carousel */}
-        <section className="w-full overflow-hidden relative bg-gradient-to-br from-stone-100 via-white to-brand-50 aspect-[4/5] sm:aspect-[16/10] xl:aspect-[21/8]">
+        <section className="w-full overflow-hidden relative bg-gradient-to-br from-stone-100 via-white to-brand-100 aspect-[4/5] sm:aspect-[16/10] xl:aspect-[21/8]">
           <div
             className="flex transition-transform duration-700 ease-in-out h-full"
             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
           >
             {banners.length > 0 ? banners.map((banner, idx) => (
               <div key={banner.id || idx} className="w-full flex-shrink-0 h-full relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[#1f1513]/70 via-[#1f1513]/30 to-transparent z-10" />
+                <div className="absolute inset-0 bg-gradient-to-r from-brand-900/40 via-brand-900/10 to-transparent z-10" />
                 <div className="absolute inset-0 p-3 sm:p-5 lg:p-8">
                   <div className="relative h-full w-full">
                     <Image
@@ -92,9 +96,9 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                 </div>
                 <div className="absolute inset-0 z-20 flex items-end sm:items-center">
                   <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-10 sm:pb-0">
-                    <div className="max-w-xl rounded-[2rem] organic-shape-1 bg-brand-900/40 p-8 sm:p-10 md:p-12 backdrop-blur-md shadow-2xl border border-white/10">
-                      <h2 className="text-3xl sm:text-4xl md:text-6xl font-heading italic text-white mb-4 leading-tight">{banner.title}</h2>
-                      <p className="text-sm sm:text-base md:text-xl mb-8 text-white/90 font-sans max-w-md leading-relaxed">{banner.subtitle}</p>
+                    <div className="max-w-xl rounded-[1.5rem] bg-black/25 p-5 sm:p-7 md:p-9 backdrop-blur-[3px] shadow-2xl">
+                      <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 leading-tight">{banner.title}</h2>
+                      <p className="text-sm sm:text-base md:text-lg mb-5 text-white/85 max-w-md">{banner.subtitle}</p>
                       <Link
                         href={banner.link || '/shop'}
                         className="inline-flex items-center bg-brand-100 text-brand-900 hover:bg-white px-8 sm:px-10 py-3.5 rounded-full text-xs sm:text-sm font-bold tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95"
@@ -155,14 +159,14 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
           <div className="container mx-auto px-4 md:px-6 relative z-10">
             <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-4 gap-x-10 text-brand-100 text-[11px] sm:text-xs font-medium tracking-[0.2em]">
               {[
-                { icon: '🚚', text: 'Complimentary Shipping' },
-                { icon: '⚡', text: 'Express Priority Delivery' },
-                { icon: '✏️', text: 'Artisanal Laser Engraving' },
-                { icon: '🔒', text: 'Secured Checkout' },
+                { icon: '🚚', text: 'Free Shipping on All Orders' },
+                { icon: '⚡', text: 'Same Day Delivery Available' },
+                { icon: '✏️', text: 'Laser Engraved Personalization' },
+                { icon: '🔒', text: '100% Secure Payments' },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-3 group">
-                  <span className="text-lg grayscale group-hover:grayscale-0 transition-all duration-500">{badge.icon}</span>
-                  <span className="uppercase">{badge.text}</span>
+                <div key={i} className="flex items-center gap-2">
+                  <span className="text-base">{badge.icon}</span>
+                  <span className="uppercase tracking-wide">{badge.text}</span>
                 </div>
               ))}
             </div>
@@ -195,11 +199,11 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
               ))}
             </div>
           </div>
-          
+
           {/* Wavy Separator */}
           <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
             <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
             </svg>
           </div>
         </section>
@@ -226,7 +230,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         <section className="bg-brand-50 py-20 md:py-28 relative overflow-hidden">
           <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-[1px] rotate-180 text-white">
             <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
             </svg>
           </div>
 
@@ -251,7 +255,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
 
           <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px] text-white">
             <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
             </svg>
           </div>
         </section>
@@ -260,13 +264,15 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         <section className="container mx-auto px-4 md:px-6 py-16">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
             {[
-              { icon: '🏅', title: 'Heritage Quality', desc: 'Sustainably sourced 304 stainless steel, designed to be passed down through generations.' },
-              { icon: '✨', title: 'Truly Personal', desc: 'Hand-guided laser engraving for a unique, soulful finish on every piece.' },
-              { icon: '📦', title: 'Artisan Packaging', desc: 'Delivered in hand-finished sustainable packaging, ready for the most special moments.' },
+              { icon: '🏅', title: 'Premium Quality', desc: 'Food-grade 304 stainless steel, built to last decades.' },
+              { icon: '✨', title: 'Personalized for You', desc: 'Laser-engraved names, dates, and custom messages.' },
+              { icon: '📦', title: 'Gift-Ready Packaging', desc: 'Arrives in premium gift packaging, perfect for gifting.' },
             ].map((f, i) => (
-              <div key={i} className="flex flex-col items-center text-center group">
-                <div className="w-16 h-16 organic-shape-2 bg-brand-100 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
-                  {f.icon}
+              <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
+                <span className="text-3xl shrink-0">{f.icon}</span>
+                <div>
+                  <h3 className="font-bold text-gray-800 mb-1">{f.title}</h3>
+                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
                 </div>
                 <h3 className="text-xl italic text-stone-800 mb-3">{f.title}</h3>
                 <p className="text-stone-500 text-sm leading-relaxed max-w-xs">{f.desc}</p>
