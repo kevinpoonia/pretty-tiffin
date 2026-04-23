@@ -51,9 +51,27 @@ export default function CheckoutPage() {
 
   // Require Login
   if (!authLoading && !user) {
-    if (typeof window !== 'undefined') window.location.href = '/login';
+    if (typeof window !== 'undefined') window.location.href = '/login?redirect=/checkout';
     return null;
   }
+
+  const validateShipping = () => {
+    const { firstName, lastName, address, city, pincode, phone } = shipping;
+    if (!firstName.trim()) return 'First name is required';
+    if (!lastName.trim()) return 'Last name is required';
+    if (!address.trim()) return 'Address is required';
+    if (!city.trim()) return 'City is required';
+    if (!pincode.trim() || !/^\d{6}$/.test(pincode)) return 'Valid 6-digit PIN code is required';
+    if (!phone.trim() || !/^\d{10}$/.test(phone.replace(/\s/g, ''))) return 'Valid 10-digit mobile number is required';
+    return null;
+  };
+
+  const handleContinueToPayment = () => {
+    const err = validateShipping();
+    if (err) return setError(err);
+    setError('');
+    setStep(3);
+  };
 
   const handlePayment = async () => {
     if (items.length === 0) return setError("Cart is empty");
@@ -106,7 +124,7 @@ export default function CheckoutPage() {
           email: user?.email,
           contact: shipping.phone
         },
-        theme: { color: '#ef4444' } // IGP Red
+        theme: { color: '#628f57' } // IGP Red
       };
 
       if (!window.Razorpay) {
@@ -128,15 +146,15 @@ export default function CheckoutPage() {
     }
   };
 
-  if (cartLoading || authLoading) return <div className="min-h-screen bg-[#f5f5f5] flex items-center justify-center p-8"><p className="animate-pulse font-bold text-gray-500">Loading Secure Checkout...</p></div>;
+  if (cartLoading || authLoading) return <div className="min-h-screen bg-[#faf8f4] flex items-center justify-center p-8"><p className="animate-pulse font-bold text-gray-500">Loading Secure Checkout...</p></div>;
 
   return (
-    <div className="bg-[#f5f5f5] min-h-screen">
+    <div className="bg-[#faf8f4] min-h-screen">
       <Navbar alwaysSolid />
       <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
         
         <h1 className="text-2xl font-bold text-gray-800 mb-6">Secure Checkout</h1>
-        {error && <div className="mb-4 bg-red-100 text-red-600 p-3 rounded text-sm font-semibold">{error}</div>}
+        {error && <div className="mb-4 bg-brand-100 text-brand-600 p-3 rounded text-sm font-semibold">{error}</div>}
 
         <div className="flex flex-col lg:flex-row gap-8">
           
@@ -147,7 +165,7 @@ export default function CheckoutPage() {
             <div className="bg-white rounded shadow-sm border border-gray-100 p-6">
               <div className="flex justify-between items-center mb-4">
                 <h2 className="font-bold text-lg text-gray-800">1. Contact Information</h2>
-                {step > 1 && <button onClick={() => setStep(1)} className="text-red-500 text-sm font-semibold hover:underline">Edit</button>}
+                {step > 1 && <button onClick={() => setStep(1)} className="text-brand-500 text-sm font-semibold hover:underline">Edit</button>}
               </div>
               
               {step === 1 ? (
@@ -155,7 +173,7 @@ export default function CheckoutPage() {
                    <div className="p-4 bg-green-50 text-green-700 font-semibold rounded border border-green-200">
                      ✓ Logged in as: {user?.email}
                    </div>
-                   <button onClick={() => setStep(2)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm">
+                   <button onClick={() => setStep(2)} className="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm">
                      CONTINUE TO SHIPPING
                    </button>
                  </div>
@@ -165,26 +183,26 @@ export default function CheckoutPage() {
             </div>
 
             {/* Shipping Address (Step 2) */}
-            <div className={`bg-white rounded shadow-sm border p-6 ${step === 2 ? 'border-red-500' : 'border-gray-100'}`}>
+            <div className={`bg-white rounded shadow-sm border p-6 ${step === 2 ? 'border-brand-500' : 'border-gray-100'}`}>
               <div className="flex justify-between items-center mb-4">
                 <h2 className={`font-bold text-lg ${step >= 2 ? 'text-gray-800' : 'text-gray-400'}`}>2. Delivery Address</h2>
-                {step > 2 && <button onClick={() => setStep(2)} className="text-red-500 text-sm font-semibold hover:underline">Edit</button>}
+                {step > 2 && <button onClick={() => setStep(2)} className="text-brand-500 text-sm font-semibold hover:underline">Edit</button>}
               </div>
 
               {step === 2 && (
                 <div className="space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
-                    <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                    <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                    <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
                   </div>
-                  <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
-                    <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                    <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                    <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
                   </div>
-                  <input type="tel" placeholder="Mobile Number" value={shipping.phone} onChange={(e) => setShipping({...shipping, phone: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-red-500" />
+                  <input type="tel" placeholder="Mobile Number" value={shipping.phone} onChange={(e) => setShipping({...shipping, phone: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
                   
-                  <button onClick={() => setStep(3)} className="bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm mt-4">
+                  <button onClick={handleContinueToPayment} className="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm mt-4">
                     CONTINUE TO PAYMENT
                   </button>
                 </div>
@@ -197,14 +215,14 @@ export default function CheckoutPage() {
             </div>
 
             {/* Payment Options (Step 3) */}
-            <div className={`bg-white rounded shadow-sm border p-6 ${step === 3 ? 'border-red-500' : 'border-gray-100'}`}>
+            <div className={`bg-white rounded shadow-sm border p-6 ${step === 3 ? 'border-brand-500' : 'border-gray-100'}`}>
               <h2 className={`font-bold text-lg mb-4 ${step === 3 ? 'text-gray-800' : 'text-gray-400'}`}>3. Payment</h2>
               
               {step === 3 && (
                 <div className="space-y-4">
-                  <div className="border border-red-500 bg-red-50 rounded p-4 flex items-center justify-between cursor-pointer">
+                  <div className="border border-brand-500 bg-brand-50 rounded p-4 flex items-center justify-between cursor-pointer">
                     <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-red-500 border-2 border-white shadow-[0_0_0_1px_#ef4444]"></div>
+                      <div className="w-4 h-4 rounded-full bg-brand-500 border-2 border-white shadow-[0_0_0_1px_#628f57]"></div>
                       <span className="font-semibold text-gray-800">Razorpay (UPI, Cards, NetBanking, Wallets)</span>
                     </div>
                   </div>
@@ -218,7 +236,7 @@ export default function CheckoutPage() {
                   <button 
                     disabled={loading || items.length === 0 || !razorpayReady}
                     onClick={handlePayment} 
-                    className="w-full bg-red-500 hover:bg-red-600 focus:bg-red-700 disabled:opacity-50 text-white font-bold py-4 px-4 rounded transition-colors text-sm mt-6 shadow-md"
+                    className="w-full bg-brand-500 hover:bg-brand-600 focus:bg-brand-700 disabled:opacity-50 text-white font-bold py-4 px-4 rounded transition-colors text-sm mt-6 shadow-md"
                   >
                     {loading ? 'INITIALIZING PAYMENT...' : !razorpayReady ? 'LOADING PAYMENT...' : `PAY ₹${total} SECURELY`}
                   </button>
@@ -236,7 +254,7 @@ export default function CheckoutPage() {
               <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto">
                 {items.map((item, idx) => (
                   <div key={idx} className="flex gap-4">
-                    <div className="w-16 h-16 bg-red-50 rounded flex-shrink-0 relative overflow-hidden">
+                    <div className="w-16 h-16 bg-brand-50 rounded flex-shrink-0 relative overflow-hidden">
                       <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill sizes="64px" className="object-contain p-1 bg-white" />
                       <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold">{item.quantity}</span>
                     </div>
@@ -257,7 +275,7 @@ export default function CheckoutPage() {
                   <span>Shipping charges</span>
                   <span className="text-green-600 font-semibold">FREE</span>
                 </div>
-                <div className="flex justify-between font-bold text-xl text-red-600 border-t border-gray-100 pt-3">
+                <div className="flex justify-between font-bold text-xl text-brand-600 border-t border-gray-100 pt-3">
                   <span>Total Due</span>
                   <span>₹{total}</span>
                 </div>

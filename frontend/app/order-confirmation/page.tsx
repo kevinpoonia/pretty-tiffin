@@ -3,73 +3,105 @@
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import Link from 'next/link';
-import { CheckCircle2, ChevronRight, Package, Truck, Phone } from 'lucide-react';
+import { CheckCircle2, Package, Truck, Phone, MapPin } from 'lucide-react';
+import { useCart } from '@/context/CartContext';
+import { motion } from 'framer-motion';
+
+const orderId = 'PT' + Math.floor(100000 + Math.random() * 900000);
 
 export default function OrderConfirmationPage() {
-  const orderId = "PT" + Math.floor(100000 + Math.random() * 900000);
+  const { items } = useCart();
 
   return (
-    <div className="bg-[#f5f5f5] min-h-screen">
+    <div className="bg-[#faf8f4] min-h-screen">
       <Navbar alwaysSolid />
-      <main className="container mx-auto px-4 md:px-6 py-12">
-        
-        <div className="max-w-3xl mx-auto bg-white rounded shadow-sm border border-gray-100 overflow-hidden">
-          
+      <main className="container mx-auto px-4 md:px-6 py-10 md:py-14">
+
+        <div className="max-w-2xl mx-auto">
           {/* Success Header */}
-          <div className="bg-green-50/50 p-8 text-center border-b border-gray-100">
-            <CheckCircle2 size={64} className="text-green-500 mx-auto mb-4" />
-            <h1 className="text-3xl font-bold text-gray-800 mb-2">Order Confirmed!</h1>
-            <p className="text-gray-600">Thank you for your purchase. Your order has been placed successfully.</p>
-            <p className="text-gray-900 font-bold text-lg mt-4">Order #{orderId}</p>
-          </div>
-
-          <div className="p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              
-              {/* Delivery Details */}
-              <div>
-                <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2">
-                  <MapPin size={18} className="text-red-500" /> Delivery To
-                </h3>
-                <p className="font-semibold text-sm text-gray-900 mb-1">John Doe</p>
-                <p className="text-sm text-gray-600 leading-relaxed mb-2">
-                  123, Palm Grove Apartments<br />
-                  Bandra West, Mumbai<br />
-                  Maharashtra 400050
-                </p>
-                <p className="text-sm text-gray-600 flex items-center gap-1"><Phone size={14}/> +91 98765 43210</p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+          >
+            <div className="bg-green-50 p-8 md:p-10 text-center border-b border-green-100">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
+              >
+                <CheckCircle2 size={64} className="text-green-500 mx-auto mb-4" />
+              </motion.div>
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Order Confirmed!</h1>
+              <p className="text-gray-600 mb-3">Thank you for your purchase. We&apos;ll begin personalizing it right away.</p>
+              <div className="inline-block bg-white border border-green-200 text-gray-900 font-bold text-base px-6 py-2 rounded-full shadow-sm">
+                Order #{orderId}
               </div>
+            </div>
 
-              {/* Delivery Estimate */}
-              <div>
-                 <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2 border-b border-gray-100 pb-2">
-                  <Truck size={18} className="text-red-500" /> Expected Delivery
-                </h3>
-                <div className="bg-gray-50 rounded p-4 border border-gray-100">
-                  <p className="font-bold text-green-600 text-lg">Tomorrow</p>
-                  <p className="text-xs text-gray-500 mt-1">Between 9:00 AM - 6:00 PM</p>
+            <div className="p-6 md:p-8 space-y-6">
+              {/* Delivery & Shipping */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="bg-brand-50 rounded-xl p-5 border border-brand-100">
+                  <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                    <MapPin size={16} className="text-brand-500" /> Delivery Address
+                  </h3>
+                  <p className="text-sm text-gray-700 font-semibold mb-1">Your Address</p>
+                  <p className="text-xs text-gray-500 leading-relaxed">
+                    As provided during checkout
+                  </p>
+                </div>
+
+                <div className="bg-brand-50 rounded-xl p-5 border border-brand-100">
+                  <h3 className="font-bold text-gray-800 mb-3 flex items-center gap-2 text-sm">
+                    <Truck size={16} className="text-brand-500" /> Expected Delivery
+                  </h3>
+                  <p className="font-bold text-green-600 text-lg">2–4 Business Days</p>
+                  <p className="text-xs text-gray-500 mt-1">Express delivery available in metro cities</p>
                 </div>
               </div>
-            </div>
 
-            {/* Actions */}
-            <div className="mt-10 flex flex-col sm:flex-row items-center gap-4 justify-center pt-8 border-t border-gray-100">
-              <Link href="/track" className="w-full sm:w-auto px-8 py-3 bg-red-500 hover:bg-red-600 text-white font-bold rounded text-sm text-center shadow-sm transition-colors">
-                TRACK ORDER
-              </Link>
-              <Link href="/shop" className="w-full sm:w-auto px-8 py-3 bg-white border border-gray-300 hover:border-red-500 text-gray-700 hover:text-red-500 font-bold rounded text-sm text-center transition-colors">
-                CONTINUE SHOPPING
-              </Link>
-            </div>
-          </div>
+              {/* What happens next */}
+              <div>
+                <h3 className="font-bold text-gray-800 mb-4 text-sm">What happens next?</h3>
+                <div className="space-y-3">
+                  {[
+                    { icon: CheckCircle2, text: 'Order confirmed & payment processed' },
+                    { icon: Package, text: 'Personalization & quality check (1–2 days)' },
+                    { icon: Truck, text: 'Shipped with tracking via BlueDart / Delhivery' },
+                  ].map((step, i) => (
+                    <div key={i} className="flex items-center gap-3 text-sm text-gray-600">
+                      <step.icon size={16} className="text-brand-500 shrink-0" />
+                      {step.text}
+                    </div>
+                  ))}
+                </div>
+              </div>
 
+              {/* Actions */}
+              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-gray-100">
+                <Link
+                  href="/track"
+                  className="flex-1 px-6 py-3 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-xl text-sm text-center shadow-sm transition-colors"
+                >
+                  TRACK ORDER
+                </Link>
+                <Link
+                  href="/shop"
+                  className="flex-1 px-6 py-3 bg-white border border-gray-200 hover:border-brand-500 text-gray-700 hover:text-brand-500 font-bold rounded-xl text-sm text-center transition-colors"
+                >
+                  CONTINUE SHOPPING
+                </Link>
+              </div>
+
+              <p className="text-center text-xs text-gray-400">
+                A confirmation email has been sent to your registered email address.
+              </p>
+            </div>
+          </motion.div>
         </div>
-
       </main>
       <Footer />
     </div>
   );
 }
-
-// Temporary Icon definitions for missing lucide-react imports
-const MapPin = ({ size, className }: any) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>;

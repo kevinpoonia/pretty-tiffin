@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         </nav>
 
         <div className="p-6 border-t border-brand-800">
-          <button onClick={logout} className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-sm text-brand-400 hover:bg-red-500 hover:text-white transition-all group group-hover:shadow-lg">
+          <button onClick={logout} className="w-full flex items-center gap-4 px-5 py-4 rounded-2xl font-bold text-sm text-brand-400 hover:bg-brand-500 hover:text-white transition-all group group-hover:shadow-lg">
             <LogOut size={20} className="group-hover:rotate-12 transition-transform" /> Sign Out
           </button>
         </div>
@@ -277,7 +277,7 @@ export default function AdminDashboard() {
                                 <td className="px-8 py-6">
                                   <span className={`px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest shadow-sm ${
                                     order.status === 'DELIVERED' ? 'bg-green-500 text-white' :
-                                    order.status === 'CANCELLED' ? 'bg-red-500 text-white' :
+                                    order.status === 'CANCELLED' ? 'bg-brand-500 text-white' :
                                     'bg-brand-900 text-white'
                                   }`}>{order.status}</span>
                                 </td>
@@ -391,7 +391,7 @@ export default function AdminDashboard() {
                                             newOpts.splice(idx, 1);
                                             setProductForm({ ...productForm, customizationOptions: newOpts });
                                          }}
-                                         className="absolute -top-2 -right-2 w-8 h-8 bg-white border border-brand-200 rounded-full flex items-center justify-center text-red-500 shadow-sm hover:bg-red-50 transition-all"
+                                         className="absolute -top-2 -right-2 w-8 h-8 bg-white border border-brand-200 rounded-full flex items-center justify-center text-brand-500 shadow-sm hover:bg-brand-50 transition-all"
                                       >
                                          <Trash size={14} />
                                       </button>
@@ -500,14 +500,14 @@ export default function AdminDashboard() {
                             <td className="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-brand-500">{p.category}</td>
                             <td className="px-8 py-6 font-black text-brand-900 tracking-tight">₹{Number(p.price).toLocaleString('en-IN')}</td>
                             <td className="px-8 py-6 text-center">
-                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${p.stock > 10 ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>
+                                <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${p.stock > 10 ? 'bg-green-100 text-green-700' : 'bg-brand-100 text-brand-700'}`}>
                                    {p.stock} Units
                                 </span>
                             </td>
                             <td className="px-8 py-6 text-right">
                                <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
                                   <button onClick={() => { setIsEditingProduct(true); setCurrentProduct(p); setProductForm({ name: p.name, description: p.description, price: String(p.price), stock: String(p.stock), category: p.category, slug: p.slug, images: (p.images || []).join(', '), customizationOptions: p.customizationOptions || [] }); }} className="p-3 text-brand-400 hover:text-brand-900 bg-brand-50 rounded-xl hover:bg-brand-100 transition-all"><Edit size={16}/></button>
-                                  <button onClick={() => deleteProduct(p.id)} className="p-3 text-red-300 hover:text-red-600 bg-red-50 rounded-xl hover:bg-red-100 transition-all"><Trash size={16}/></button>
+                                  <button onClick={() => deleteProduct(p.id)} className="p-3 text-brand-300 hover:text-brand-600 bg-brand-50 rounded-xl hover:bg-brand-100 transition-all"><Trash size={16}/></button>
                                </div>
                             </td>
                           </tr>
@@ -559,7 +559,7 @@ export default function AdminDashboard() {
                                  onChange={(e) => handleUpdateOrderStatus(o.id, e.target.value)}
                                  className={`text-[9px] font-black px-4 py-2 rounded-full border-none cursor-pointer uppercase tracking-widest shadow-sm ring-4 ring-transparent focus:ring-brand-500/10 transition-all ${
                                     o.status === 'DELIVERED' ? 'bg-green-500 text-white shadow-green-500/20' :
-                                    o.status === 'CANCELLED' ? 'bg-red-500 text-white shadow-red-500/20' :
+                                    o.status === 'CANCELLED' ? 'bg-brand-500 text-white shadow-red-500/20' :
                                     'bg-brand-900 text-white shadow-brand-900/20'
                                  }`}
                                >
@@ -655,7 +655,7 @@ export default function AdminDashboard() {
                                 <h4 className="text-white font-black text-lg tracking-tight">{b.title}</h4>
                                 <p className="text-white/80 text-xs font-bold uppercase tracking-widest">{b.subtitle}</p>
                              </div>
-                             <button onClick={() => deleteBanner(b.id)} className="absolute top-4 right-4 p-3 bg-red-500 text-white rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-opacity"><Trash size={16}/></button>
+                             <button onClick={() => deleteBanner(b.id)} className="absolute top-4 right-4 p-3 bg-brand-500 text-white rounded-xl shadow-xl opacity-0 group-hover:opacity-100 transition-opacity"><Trash size={16}/></button>
                           </div>
                           <div className="p-6 flex justify-between items-center bg-white">
                              <div className="flex items-center gap-2">

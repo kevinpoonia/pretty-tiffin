@@ -46,11 +46,11 @@ export default function ShippingReturns() {
                  We take immense pride in our craftsmanship. However, if you receive a damaged or incorrect product, we&apos;re here to help.
                </p>
 
-               <div className="flex items-start gap-4 p-8 bg-red-50 rounded-3xl border border-red-100 mb-10">
-                  <AlertTriangle className="text-red-500 shrink-0 mt-1" size={20} />
+               <div className="flex items-start gap-4 p-8 bg-brand-50 rounded-3xl border border-brand-100 mb-10">
+                  <AlertTriangle className="text-brand-500 shrink-0 mt-1" size={20} />
                   <div>
-                     <p className="font-black text-red-900 text-sm tracking-tight mb-1">Important for Custom Orders</p>
-                     <p className="text-xs text-red-700">Due to the personalized nature of engraved tiffins, we do not accept returns or exchanges unless the item is defective or damaged upon arrival.</p>
+                     <p className="font-black text-brand-900 text-sm tracking-tight mb-1">Important for Custom Orders</p>
+                     <p className="text-xs text-brand-700">Due to the personalized nature of engraved tiffins, we do not accept returns or exchanges unless the item is defective or damaged upon arrival.</p>
                   </div>
                </div>
 

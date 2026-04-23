@@ -8,9 +8,9 @@ export default function OrdersPage() {
   return (
     <div className="container mx-auto px-4 py-12 max-w-4xl min-h-[60vh]">
       <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
-        <Link href="/" className="hover:text-red-500">Home</Link>
+        <Link href="/" className="hover:text-brand-500">Home</Link>
         <ChevronRight size={14} />
-        <Link href="/account" className="hover:text-red-500">Account</Link>
+        <Link href="/account" className="hover:text-brand-500">Account</Link>
         <ChevronRight size={14} />
         <span className="text-gray-900 font-medium">Orders</span>
       </div>
@@ -31,7 +31,7 @@ export default function OrdersPage() {
         </p>
         <Link 
           href="/shop" 
-          className="inline-block bg-red-500 text-white px-10 py-3 rounded-full font-bold hover:bg-red-600 transition-colors shadow-lg shadow-red-200"
+          className="inline-block bg-brand-500 text-white px-10 py-3 rounded-full font-bold hover:bg-brand-600 transition-colors shadow-lg shadow-red-200"
         >
           Explore Shop
         </Link>

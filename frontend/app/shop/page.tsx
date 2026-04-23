@@ -22,7 +22,7 @@ export const metadata: Metadata = {
 
 function ShopPageFallback() {
   return (
-    <div className="bg-[#f5f5f5] min-h-screen">
+    <div className="bg-[#faf8f4] min-h-screen">
       <div className="container mx-auto px-4 md:px-6 py-8 md:py-10">
         <div className="h-8 w-44 rounded-full bg-white shadow-sm animate-pulse mb-6" />
         <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">

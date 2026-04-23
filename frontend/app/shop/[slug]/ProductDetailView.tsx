@@ -12,11 +12,13 @@ import { useRouter } from 'next/navigation';
 import ProductCustomizer from '@/components/products/ProductCustomizer';
 import GiftSelector from '@/components/products/GiftSelector';
 import { useAuth } from '@/context/AuthContext';
+import { useToast } from '@/context/ToastContext';
 
 export default function ProductDetailClient({ product }: { product: any }) {
   const { addItem } = useCart();
   const { user } = useAuth();
   const router = useRouter();
+  const { showToast } = useToast();
   const [isAdding, setIsAdding] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [giftDetails, setGiftDetails] = useState({
@@ -182,9 +184,10 @@ export default function ProductDetailClient({ product }: { product: any }) {
                         customization: selectedOptions,
                         giftOption: giftDetails
                       });
+                      showToast(`${product.name} added to cart!`, 'success');
                       router.push(user ? '/checkout' : '/cart');
                     } catch (err) {
-                      alert("Failed to add to cart");
+                      showToast('Failed to add to cart. Please try again.', 'error');
                       setIsAdding(false);
                     }
                   }}

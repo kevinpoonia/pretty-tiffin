@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChevronDown, Filter } from 'lucide-react';
+import { ChevronDown, Filter, X, SlidersHorizontal } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
@@ -14,137 +15,106 @@ const curatedCollections = [
   { value: 'birthday', label: 'Birthday' },
   { value: 'anniversary', label: 'Anniversary' },
   { value: 'corporate', label: 'Corporate' },
-  { value: 'occasions', label: 'Occasions' }
+  { value: 'occasions', label: 'Occasions' },
 ];
 
 const relationshipCollections = [
   { value: 'for-husband', label: 'For Husband' },
   { value: 'for-wife', label: 'For Wife' },
   { value: 'for-kids', label: 'For Kids' },
-  { value: 'for-parents', label: 'For Parents' }
+  { value: 'for-parents', label: 'For Parents' },
 ];
 
 const sortOptions = [
   { value: 'recommended', label: 'Recommended' },
   { value: 'price-asc', label: 'Price: Low to High' },
   { value: 'price-desc', label: 'Price: High to Low' },
-  { value: 'newest', label: 'Newest Arrivals' },
-  { value: 'name-asc', label: 'Name: A to Z' }
+  { value: 'newest', label: 'Newest' },
+  { value: 'name-asc', label: 'Name: A to Z' },
 ];
 
 const normalizeValue = (value: string) =>
-  value
-    .toLowerCase()
-    .trim()
-    .replace(/&/g, ' and ')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-+|-+$/g, '');
+  value.toLowerCase().trim().replace(/&/g, ' and ').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 
 const titleCaseFromSlug = (value: string) =>
-  value
-    .split('-')
-    .filter(Boolean)
-    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
-    .join(' ');
+  value.split('-').filter(Boolean).map(p => p.charAt(0).toUpperCase() + p.slice(1)).join(' ');
 
-const getProductPrice = (product: any) => Number(product.price || 0);
+const getProductPrice = (p: any) => Number(p.price || 0);
 
-const getProductCreatedAt = (product: any) => {
-  if (!product?.createdAt) return 0;
-  const date = new Date(product.createdAt);
-  return Number.isNaN(date.getTime()) ? 0 : date.getTime();
+const getProductCreatedAt = (p: any) => {
+  if (!p?.createdAt) return 0;
+  const d = new Date(p.createdAt);
+  return isNaN(d.getTime()) ? 0 : d.getTime();
 };
 
 const matchesTokens = (product: any, tokens: string[]) => {
-  const searchableText = `${product.name || ''} ${product.category || ''} ${product.description || ''}`.toLowerCase();
-  return tokens.some((token) => searchableText.includes(token));
+  const text = `${product.name || ''} ${product.category || ''} ${product.description || ''}`.toLowerCase();
+  return tokens.some(t => text.includes(t));
 };
 
 const matchesCuratedCollection = (product: any, collection: string) => {
   switch (normalizeValue(collection)) {
-    case 'same-day-delivery':
-      return Boolean(product.isFeatured) || getProductPrice(product) <= 1500;
-    case 'best-sellers':
-      return Boolean(product.isFeatured);
-    case 'personalized':
-      return Array.isArray(product.customizationOptions) && product.customizationOptions.length > 0;
-    case 'birthday':
-      return matchesTokens(product, ['kids', 'birthday', 'gift', 'special']);
-    case 'anniversary':
-      return matchesTokens(product, ['vintage', 'copper', 'premium', 'special']);
-    case 'corporate':
-      return matchesTokens(product, ['executive', 'corporate', 'modern', 'minimalist']);
-    case 'occasions':
-      return matchesTokens(product, ['gift', 'special', 'occasion', 'vintage', 'kids', 'executive']);
-    default:
-      return false;
+    case 'same-day-delivery': return Boolean(product.isFeatured) || getProductPrice(product) <= 1500;
+    case 'best-sellers': return Boolean(product.isFeatured);
+    case 'personalized': return Array.isArray(product.customizationOptions) && product.customizationOptions.length > 0;
+    case 'birthday': return matchesTokens(product, ['kids', 'birthday', 'gift', 'special']);
+    case 'anniversary': return matchesTokens(product, ['vintage', 'copper', 'premium', 'special']);
+    case 'corporate': return matchesTokens(product, ['executive', 'corporate', 'modern', 'minimalist']);
+    case 'occasions': return matchesTokens(product, ['gift', 'special', 'occasion', 'vintage', 'executive']);
+    default: return false;
   }
 };
 
 const matchesRelationship = (product: any, relationship: string) => {
   switch (normalizeValue(relationship)) {
-    case 'for-husband':
-      return matchesTokens(product, ['executive', 'vintage', 'copper', 'modern']);
-    case 'for-wife':
-      return matchesTokens(product, ['vintage', 'special', 'pastel', 'gift']);
-    case 'for-kids':
-      return matchesTokens(product, ['kids']);
-    case 'for-parents':
-      return matchesTokens(product, ['vintage', 'steel', 'modern']);
-    default:
-      return true;
+    case 'for-husband': return matchesTokens(product, ['executive', 'vintage', 'copper', 'modern']);
+    case 'for-wife': return matchesTokens(product, ['vintage', 'special', 'pastel', 'gift']);
+    case 'for-kids': return matchesTokens(product, ['kids']);
+    case 'for-parents': return matchesTokens(product, ['vintage', 'steel', 'modern']);
+    default: return true;
   }
 };
 
-const getActiveHeading = (categoryValue: string, relationshipValue: string, knownCategories: string[]) => {
+const matchesSearch = (product: any, query: string) => {
+  const q = query.toLowerCase().trim();
+  if (!q) return true;
+  const text = `${product.name || ''} ${product.category || ''} ${product.description || ''}`.toLowerCase();
+  return text.includes(q);
+};
+
+const getActiveHeading = (categoryValue: string, relationshipValue: string, searchValue: string, knownCategories: string[]) => {
+  if (searchValue) return `Search: "${searchValue}"`;
   if (relationshipValue) {
-    const matchedRelationship = relationshipCollections.find((item) => item.value === normalizeValue(relationshipValue));
-    return matchedRelationship?.label || titleCaseFromSlug(normalizeValue(relationshipValue));
+    const m = relationshipCollections.find(i => i.value === normalizeValue(relationshipValue));
+    return m?.label || titleCaseFromSlug(normalizeValue(relationshipValue));
   }
-
   if (categoryValue) {
-    const normalizedCategory = normalizeValue(categoryValue);
-    const matchedCollection = curatedCollections.find((item) => item.value === normalizedCategory);
-    if (matchedCollection) return matchedCollection.label;
-
-    const matchedCategory = knownCategories.find((category) => normalizeValue(category) === normalizedCategory);
-    return matchedCategory || titleCaseFromSlug(normalizedCategory);
+    const n = normalizeValue(categoryValue);
+    const mc = curatedCollections.find(i => i.value === n);
+    if (mc) return mc.label;
+    const mk = knownCategories.find(c => normalizeValue(c) === n);
+    return mk || titleCaseFromSlug(n);
   }
-
   return 'Shop the Collection';
-};
-
-const getActiveDescription = (categoryValue: string, relationshipValue: string) => {
-  if (relationshipValue) {
-    return 'Browse a curated gifting selection tailored to the relationship you are shopping for.';
-  }
-
-  if (categoryValue) {
-    return 'This collection is filtered to the category you selected so you can browse a more focused set of products.';
-  }
-
-  return 'Explore our range of premium, customizable stainless steel tiffins.';
 };
 
 export default function ShopClient({ initialProducts }: { initialProducts: any[] }) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [minPriceInput, setMinPriceInput] = useState('');
   const [maxPriceInput, setMaxPriceInput] = useState('');
 
   const productCategories = Array.from(
-    new Set(
-      initialProducts
-        .map((product: any) => product.category)
-        .filter(Boolean)
-    )
-  ).sort((left, right) => left.localeCompare(right));
+    new Set(initialProducts.map((p: any) => p.category).filter(Boolean))
+  ).sort((a, b) => a.localeCompare(b));
 
   const activeCategory = searchParams.get('category') || '';
   const activeRelationship = searchParams.get('for') || '';
   const activeSort = searchParams.get('sort') || 'recommended';
   const activeMinPrice = searchParams.get('minPrice') || '';
   const activeMaxPrice = searchParams.get('maxPrice') || '';
+  const activeSearch = searchParams.get('search') || '';
 
   useEffect(() => {
     setMinPriceInput(activeMinPrice);
@@ -153,15 +123,9 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
 
   const updateSearchParams = (updates: Record<string, string | null>) => {
     const params = new URLSearchParams(searchParams.toString());
-
     Object.entries(updates).forEach(([key, value]) => {
-      if (value && value.trim()) {
-        params.set(key, value);
-      } else {
-        params.delete(key);
-      }
+      if (value && value.trim()) { params.set(key, value); } else { params.delete(key); }
     });
-
     const query = params.toString();
     router.push(query ? `/shop?${query}` : '/shop');
   };
@@ -173,10 +137,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   };
 
   const applyPriceFilters = () => {
-    updateSearchParams({
-      minPrice: minPriceInput || null,
-      maxPrice: maxPriceInput || null
-    });
+    updateSearchParams({ minPrice: minPriceInput || null, maxPrice: maxPriceInput || null });
   };
 
   const normalizedCategory = normalizeValue(activeCategory);
@@ -184,206 +145,252 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
 
   let visibleProducts = [...initialProducts];
 
+  if (activeSearch) visibleProducts = visibleProducts.filter(p => matchesSearch(p, activeSearch));
   if (normalizedCategory) {
-    visibleProducts = visibleProducts.filter((product) => {
-      const productCategory = normalizeValue(product.category || '');
-
-      if (productCategory === normalizedCategory) {
-        return true;
-      }
-
-      return matchesCuratedCollection(product, normalizedCategory);
+    visibleProducts = visibleProducts.filter(p => {
+      const cat = normalizeValue(p.category || '');
+      return cat === normalizedCategory || matchesCuratedCollection(p, normalizedCategory);
     });
   }
-
-  if (normalizedRelationship) {
-    visibleProducts = visibleProducts.filter((product) => matchesRelationship(product, normalizedRelationship));
-  }
-
+  if (normalizedRelationship) visibleProducts = visibleProducts.filter(p => matchesRelationship(p, normalizedRelationship));
   if (activeMinPrice) {
-    const minPrice = Number(activeMinPrice);
-    if (!Number.isNaN(minPrice)) {
-      visibleProducts = visibleProducts.filter((product) => getProductPrice(product) >= minPrice);
-    }
+    const min = Number(activeMinPrice);
+    if (!isNaN(min)) visibleProducts = visibleProducts.filter(p => getProductPrice(p) >= min);
   }
-
   if (activeMaxPrice) {
-    const maxPrice = Number(activeMaxPrice);
-    if (!Number.isNaN(maxPrice)) {
-      visibleProducts = visibleProducts.filter((product) => getProductPrice(product) <= maxPrice);
-    }
+    const max = Number(activeMaxPrice);
+    if (!isNaN(max)) visibleProducts = visibleProducts.filter(p => getProductPrice(p) <= max);
   }
 
-  visibleProducts.sort((left, right) => {
+  visibleProducts.sort((a, b) => {
     switch (activeSort) {
-      case 'price-asc':
-        return getProductPrice(left) - getProductPrice(right);
-      case 'price-desc':
-        return getProductPrice(right) - getProductPrice(left);
-      case 'newest':
-        return getProductCreatedAt(right) - getProductCreatedAt(left);
-      case 'name-asc':
-        return String(left.name || '').localeCompare(String(right.name || ''));
-      default:
-        if (Boolean(left.isFeatured) === Boolean(right.isFeatured)) {
-          return 0;
-        }
-        return left.isFeatured ? -1 : 1;
+      case 'price-asc': return getProductPrice(a) - getProductPrice(b);
+      case 'price-desc': return getProductPrice(b) - getProductPrice(a);
+      case 'newest': return getProductCreatedAt(b) - getProductCreatedAt(a);
+      case 'name-asc': return String(a.name || '').localeCompare(String(b.name || ''));
+      default: return (a.isFeatured ? -1 : 1) - (b.isFeatured ? -1 : 1);
     }
   });
 
-  const activeHeading = getActiveHeading(activeCategory, activeRelationship, productCategories);
-  const activeDescription = getActiveDescription(activeCategory, activeRelationship);
+  const activeHeading = getActiveHeading(activeCategory, activeRelationship, activeSearch, productCategories);
+  const hasActiveFilters = !!(activeCategory || activeRelationship || activeMinPrice || activeMaxPrice || activeSearch);
+
+  const FilterPanel = () => (
+    <div className="space-y-6">
+      <div className="flex justify-between items-center">
+        <h3 className="font-heading font-semibold text-lg text-brand-900 flex items-center gap-2">
+          <SlidersHorizontal size={18} /> Filters
+        </h3>
+        {hasActiveFilters && (
+          <button onClick={clearAllFilters} className="text-xs text-brand-500 hover:text-brand-700 font-semibold underline underline-offset-2">
+            Clear All
+          </button>
+        )}
+      </div>
+
+      {/* Collections */}
+      <div>
+        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Shop by Collection</h4>
+        <div className="space-y-2">
+          {curatedCollections.map(col => {
+            const isSelected = normalizedCategory === col.value;
+            return (
+              <label key={col.value} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => updateSearchParams({ category: isSelected ? null : col.value, for: null })}
+                  className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                />
+                <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                  {col.label}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Product Categories */}
+      {productCategories.length > 0 && (
+        <div className="pt-4 border-t border-brand-100">
+          <h4 className="font-semibold text-brand-900 mb-3 text-sm">Product Categories</h4>
+          <div className="space-y-2">
+            {productCategories.map(cat => {
+              const isSelected = normalizeValue(cat) === normalizedCategory;
+              return (
+                <label key={cat} className="flex items-center gap-2.5 cursor-pointer group">
+                  <input
+                    type="checkbox"
+                    checked={isSelected}
+                    onChange={() => updateSearchParams({ category: isSelected ? null : cat, for: null })}
+                    className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                  />
+                  <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                    {cat}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Relationship */}
+      <div className="pt-4 border-t border-brand-100">
+        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Gift by Relationship</h4>
+        <div className="space-y-2">
+          {relationshipCollections.map(rel => {
+            const isSelected = normalizedRelationship === rel.value;
+            return (
+              <label key={rel.value} className="flex items-center gap-2.5 cursor-pointer group">
+                <input
+                  type="checkbox"
+                  checked={isSelected}
+                  onChange={() => updateSearchParams({ for: isSelected ? null : rel.value, category: null })}
+                  className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                />
+                <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                  {rel.label}
+                </span>
+              </label>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Price */}
+      <div className="pt-4 border-t border-brand-100">
+        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Price Range (₹)</h4>
+        <div className="flex items-center gap-2">
+          <input
+            type="number"
+            placeholder="Min"
+            value={minPriceInput}
+            onChange={e => setMinPriceInput(e.target.value)}
+            className="w-full bg-brand-50 text-sm p-2 rounded-lg border border-brand-200 focus:border-brand-500 focus:outline-none"
+          />
+          <span className="text-brand-400 shrink-0">—</span>
+          <input
+            type="number"
+            placeholder="Max"
+            value={maxPriceInput}
+            onChange={e => setMaxPriceInput(e.target.value)}
+            className="w-full bg-brand-50 text-sm p-2 rounded-lg border border-brand-200 focus:border-brand-500 focus:outline-none"
+          />
+        </div>
+        <button
+          onClick={applyPriceFilters}
+          className="mt-3 w-full bg-brand-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-800 transition-colors"
+        >
+          Apply Price Range
+        </button>
+      </div>
+    </div>
+  );
 
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-brand-50 min-h-screen pt-24 pb-20">
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="text-center py-12 mb-8 border-b border-brand-200">
-            <h1 className="text-4xl md:text-5xl font-bold font-heading text-brand-900 mb-4">{activeHeading}</h1>
-            <p className="text-brand-600 max-w-2xl mx-auto">{activeDescription}</p>
+      <main className="flex-1 bg-brand-50 min-h-screen pb-20">
+        {/* Page Header */}
+        <div className="bg-white border-b border-brand-100 py-8 md:py-12 mb-8">
+          <div className="container mx-auto px-4 md:px-6 text-center">
+            <h1 className="text-3xl md:text-4xl font-bold font-heading text-brand-900 mb-2">{activeHeading}</h1>
+            <p className="text-brand-500 text-sm max-w-lg mx-auto">
+              {activeSearch
+                ? `Showing results for "${activeSearch}"`
+                : 'Premium personalized tiffins crafted with care'}
+            </p>
           </div>
+        </div>
 
+        <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row gap-8">
-            <aside className="w-full md:w-72 flex-shrink-0">
-              <div className="bg-white p-5 md:p-6 rounded-2xl shadow-sm border border-brand-100 lg:sticky lg:top-28 space-y-6">
-                <div className="flex justify-between items-center">
-                  <h3 className="font-heading font-semibold text-lg text-brand-900 flex items-center gap-2">
-                    <Filter size={18} /> Filters
-                  </h3>
-                  <button onClick={clearAllFilters} className="text-xs text-brand-500 hover:text-brand-700">
-                    Clear All
-                  </button>
-                </div>
 
-                <div>
-                  <h4 className="font-medium text-brand-900 mb-3 flex justify-between items-center">
-                    Shop by Collection <ChevronDown size={16} className="text-brand-500" />
-                  </h4>
-                  <div className="space-y-2">
-                    {curatedCollections.map((collection) => {
-                      const isSelected = normalizedCategory === collection.value;
-                      return (
-                        <label key={collection.value} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => updateSearchParams({ category: isSelected ? null : collection.value })}
-                            className="rounded border-brand-300 text-brand-500 focus:ring-brand-500"
-                          />
-                          <span className="text-sm text-brand-700">{collection.label}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-brand-100">
-                  <h4 className="font-medium text-brand-900 mb-3 flex justify-between items-center">
-                    Product Categories <ChevronDown size={16} className="text-brand-500" />
-                  </h4>
-                  <div className="space-y-2">
-                    {productCategories.map((category) => {
-                      const isSelected = normalizeValue(category) === normalizedCategory;
-                      return (
-                        <label key={category} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => updateSearchParams({ category: isSelected ? null : category })}
-                            className="rounded border-brand-300 text-brand-500 focus:ring-brand-500"
-                          />
-                          <span className="text-sm text-brand-700">{category}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-brand-100">
-                  <h4 className="font-medium text-brand-900 mb-3 flex justify-between items-center">
-                    Gift by Relationship <ChevronDown size={16} className="text-brand-500" />
-                  </h4>
-                  <div className="space-y-2">
-                    {relationshipCollections.map((relationship) => {
-                      const isSelected = normalizedRelationship === relationship.value;
-                      return (
-                        <label key={relationship.value} className="flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => updateSearchParams({ for: isSelected ? null : relationship.value })}
-                            className="rounded border-brand-300 text-brand-500 focus:ring-brand-500"
-                          />
-                          <span className="text-sm text-brand-700">{relationship.label}</span>
-                        </label>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-brand-100">
-                  <h4 className="font-medium text-brand-900 mb-3 flex justify-between items-center">
-                    Price <ChevronDown size={16} className="text-brand-500" />
-                  </h4>
-                  <div className="flex items-center justify-between gap-4">
-                    <input
-                      type="number"
-                      placeholder="Min"
-                      value={minPriceInput}
-                      onChange={(e) => setMinPriceInput(e.target.value)}
-                      className="w-full bg-brand-50 text-sm p-2 rounded border border-brand-200 focus:border-brand-500 focus:outline-none"
-                    />
-                    <span className="text-brand-500">-</span>
-                    <input
-                      type="number"
-                      placeholder="Max"
-                      value={maxPriceInput}
-                      onChange={(e) => setMaxPriceInput(e.target.value)}
-                      className="w-full bg-brand-50 text-sm p-2 rounded border border-brand-200 focus:border-brand-500 focus:outline-none"
-                    />
-                  </div>
-                  <button
-                    onClick={applyPriceFilters}
-                    className="mt-3 w-full bg-brand-900 text-white px-4 py-2 rounded-xl text-sm font-semibold hover:bg-brand-800 transition-colors"
-                  >
-                    Apply Price Range
-                  </button>
-                </div>
+            {/* Desktop Sidebar */}
+            <aside className="hidden md:block w-64 lg:w-72 flex-shrink-0">
+              <div className="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 lg:sticky lg:top-28">
+                <FilterPanel />
               </div>
             </aside>
 
-            <div className="flex-1">
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
-                <p className="text-sm text-brand-600">Showing {visibleProducts.length} products</p>
-                <div className="flex items-center gap-2 text-sm bg-white border border-brand-200 rounded-full px-4 py-2">
-                  <span className="text-brand-600">Sort by:</span>
+            {/* Main Content */}
+            <div className="flex-1 min-w-0">
+              {/* Sort Bar */}
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+                <div className="flex items-center gap-3">
+                  {/* Mobile Filter Button */}
+                  <button
+                    onClick={() => setMobileFiltersOpen(true)}
+                    className="md:hidden flex items-center gap-2 bg-white border border-brand-200 text-brand-700 font-semibold text-sm px-4 py-2 rounded-full hover:border-brand-500 transition-colors"
+                  >
+                    <Filter size={15} /> Filters
+                    {hasActiveFilters && (
+                      <span className="bg-brand-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                        !
+                      </span>
+                    )}
+                  </button>
+                  <p className="text-sm text-brand-600">{visibleProducts.length} products</p>
+                </div>
+
+                <div className="flex items-center gap-2 text-sm bg-white border border-brand-200 rounded-full px-4 py-2 w-fit">
+                  <span className="text-brand-500 shrink-0">Sort:</span>
                   <select
                     value={activeSort}
-                    onChange={(e) => updateSearchParams({ sort: e.target.value })}
-                    className="bg-transparent text-brand-900 font-medium focus:outline-none cursor-pointer"
+                    onChange={e => updateSearchParams({ sort: e.target.value })}
+                    className="bg-transparent text-brand-900 font-semibold focus:outline-none cursor-pointer"
                   >
-                    {sortOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
+                    {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
                 </div>
               </div>
 
+              {/* Active filter chips */}
+              {hasActiveFilters && (
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {activeSearch && (
+                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                      Search: "{activeSearch}"
+                      <button onClick={() => updateSearchParams({ search: null })}><X size={12} /></button>
+                    </span>
+                  )}
+                  {activeCategory && (
+                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                      {titleCaseFromSlug(activeCategory)}
+                      <button onClick={() => updateSearchParams({ category: null })}><X size={12} /></button>
+                    </span>
+                  )}
+                  {activeRelationship && (
+                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                      {titleCaseFromSlug(activeRelationship)}
+                      <button onClick={() => updateSearchParams({ for: null })}><X size={12} /></button>
+                    </span>
+                  )}
+                  {(activeMinPrice || activeMaxPrice) && (
+                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                      ₹{activeMinPrice || '0'} – ₹{activeMaxPrice || '∞'}
+                      <button onClick={() => updateSearchParams({ minPrice: null, maxPrice: null })}><X size={12} /></button>
+                    </span>
+                  )}
+                </div>
+              )}
+
               {visibleProducts.length === 0 ? (
                 <div className="bg-white border border-brand-100 rounded-3xl p-12 text-center">
-                  <h2 className="text-2xl font-bold font-heading text-brand-900 mb-2">No products matched these filters</h2>
-                  <p className="text-brand-500 mb-6">Try a different category, price range, or clear the current filters.</p>
-                  <button onClick={clearAllFilters} className="bg-red-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-red-600 transition-colors">
-                    Reset Filters
+                  <h2 className="text-xl font-bold font-heading text-brand-900 mb-2">No products found</h2>
+                  <p className="text-brand-500 mb-6 text-sm">Try different filters or search terms.</p>
+                  <button
+                    onClick={clearAllFilters}
+                    className="bg-brand-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-600 transition-colors text-sm"
+                  >
+                    Reset All Filters
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-                  {visibleProducts.map((product) => (
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
+                  {visibleProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}
                 </div>
@@ -392,6 +399,41 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
           </div>
         </div>
       </main>
+
+      {/* Mobile Filter Drawer */}
+      <AnimatePresence>
+        {mobileFiltersOpen && (
+          <div className="fixed inset-0 bg-black/50 z-[60] md:hidden" onClick={() => setMobileFiltersOpen(false)}>
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.28 }}
+              className="absolute right-0 top-0 h-full w-[86vw] max-w-sm bg-white shadow-2xl flex flex-col"
+              onClick={e => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                <h2 className="font-bold text-gray-900 text-lg">Filters</h2>
+                <button onClick={() => setMobileFiltersOpen(false)} className="text-gray-500 p-1">
+                  <X size={22} />
+                </button>
+              </div>
+              <div className="flex-1 overflow-y-auto p-5">
+                <FilterPanel />
+              </div>
+              <div className="p-4 border-t border-gray-100">
+                <button
+                  onClick={() => setMobileFiltersOpen(false)}
+                  className="w-full bg-brand-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-brand-800 transition-colors"
+                >
+                  Show {visibleProducts.length} Products
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
+
       <Footer />
     </>
   );

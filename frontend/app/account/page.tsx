@@ -271,8 +271,8 @@ export default function AccountDashboard() {
 
   if (authLoading || !user) {
     return (
-      <div className="bg-[#f5f5f5] min-h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-red-500" size={32} />
+      <div className="bg-[#faf8f4] min-h-screen flex items-center justify-center">
+        <Loader2 className="animate-spin text-brand-500" size={32} />
       </div>
     );
   }
@@ -292,7 +292,7 @@ export default function AccountDashboard() {
                   <h2 className="font-heading font-bold text-brand-900">{user.name}</h2>
                   <p className="text-sm text-brand-600">{user.email}</p>
                   {user.role === 'ADMIN' && (
-                    <Link href="/admin" className="mt-2 inline-block text-xs bg-red-100 text-red-600 font-bold px-2 py-1 rounded">
+                    <Link href="/admin" className="mt-2 inline-block text-xs bg-brand-100 text-brand-600 font-bold px-2 py-1 rounded">
                       ADMIN PANEL
                     </Link>
                   )}
@@ -318,7 +318,7 @@ export default function AccountDashboard() {
                     </button>
                   ))}
                   <div className="pt-4 mt-4 border-t border-brand-100">
-                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-red-500 hover:bg-red-50 transition-colors">
+                    <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-brand-500 hover:bg-brand-50 transition-colors">
                       <LogOut size={18} /> Sign Out
                     </button>
                   </div>
@@ -338,14 +338,14 @@ export default function AccountDashboard() {
                     <h2 className="text-2xl font-bold font-heading text-brand-900 mb-6">My Orders</h2>
                     {ordersLoading ? (
                       <div className="flex justify-center py-12">
-                        <Loader2 className="animate-spin text-red-500" size={28} />
+                        <Loader2 className="animate-spin text-brand-500" size={28} />
                       </div>
                     ) : orders.length === 0 ? (
                       <div className="bg-white rounded-3xl p-12 text-center border border-brand-100">
                         <Package size={40} className="mx-auto mb-4 text-brand-300" />
                         <h3 className="font-bold text-brand-700 mb-2">No orders yet</h3>
                         <p className="text-sm text-brand-500 mb-6">Start shopping and your orders will appear here.</p>
-                        <Link href="/shop" className="bg-red-500 text-white px-6 py-2 rounded font-semibold text-sm hover:bg-red-600">
+                        <Link href="/shop" className="bg-brand-500 text-white px-6 py-2 rounded font-semibold text-sm hover:bg-brand-600">
                           Shop Now
                         </Link>
                       </div>
@@ -365,7 +365,7 @@ export default function AccountDashboard() {
                               <span className={`px-3 py-1 text-xs font-bold uppercase rounded-full tracking-wider ${
                                 order.status === 'DELIVERED' ? 'bg-green-100 text-green-700' :
                                 order.status === 'SHIPPED' ? 'bg-blue-100 text-blue-700' :
-                                order.status === 'CANCELLED' ? 'bg-red-100 text-red-700' :
+                                order.status === 'CANCELLED' ? 'bg-brand-100 text-brand-700' :
                                 'bg-yellow-100 text-yellow-700'
                               }`}>
                                 {order.status}
@@ -404,7 +404,7 @@ export default function AccountDashboard() {
                     </div>
 
                     {addressMessage && (
-                      <div className={`rounded-2xl px-4 py-3 text-sm font-medium ${addressMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                      <div className={`rounded-2xl px-4 py-3 text-sm font-medium ${addressMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-brand-50 text-brand-600 border border-brand-200'}`}>
                         {addressMessage.text}
                       </div>
                     )}
@@ -491,7 +491,7 @@ export default function AccountDashboard() {
 
                     {addressesLoading ? (
                       <div className="flex justify-center py-12">
-                        <Loader2 className="animate-spin text-red-500" size={28} />
+                        <Loader2 className="animate-spin text-brand-500" size={28} />
                       </div>
                     ) : addresses.length === 0 ? (
                       <div className="bg-white rounded-3xl p-12 text-center border border-brand-100">
@@ -500,7 +500,7 @@ export default function AccountDashboard() {
                         <p className="text-sm text-brand-500 mb-6">Add an address to speed up your checkout process.</p>
                         <button
                           onClick={() => openAddressForm()}
-                          className="bg-red-500 text-white px-6 py-2 rounded font-semibold text-sm hover:bg-red-600"
+                          className="bg-brand-500 text-white px-6 py-2 rounded font-semibold text-sm hover:bg-brand-600"
                         >
                           Add Address
                         </button>
@@ -525,7 +525,7 @@ export default function AccountDashboard() {
                               <button onClick={() => openAddressForm(address)} className="text-brand-500 hover:text-brand-900 transition-colors">
                                 Edit
                               </button>
-                              <button onClick={() => handleAddressDelete(address.id)} className="text-red-400 hover:text-red-600 transition-colors">
+                              <button onClick={() => handleAddressDelete(address.id)} className="text-brand-400 hover:text-brand-600 transition-colors">
                                 Remove
                               </button>
                             </div>
@@ -557,11 +557,11 @@ export default function AccountDashboard() {
                           <h2 className="text-2xl font-bold font-heading text-brand-900">Profile Settings</h2>
                           <p className="text-sm text-brand-500">Update your personal details for orders and account communication.</p>
                         </div>
-                        {profileLoading && <Loader2 className="animate-spin text-red-500" size={20} />}
+                        {profileLoading && <Loader2 className="animate-spin text-brand-500" size={20} />}
                       </div>
 
                       {profileMessage && (
-                        <div className={`rounded-2xl px-4 py-3 text-sm font-medium mb-5 ${profileMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                        <div className={`rounded-2xl px-4 py-3 text-sm font-medium mb-5 ${profileMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-brand-50 text-brand-600 border border-brand-200'}`}>
                           {profileMessage.text}
                         </div>
                       )}
@@ -613,7 +613,7 @@ export default function AccountDashboard() {
                       </div>
 
                       {passwordMessage && (
-                        <div className={`rounded-2xl px-4 py-3 text-sm font-medium mb-5 ${passwordMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                        <div className={`rounded-2xl px-4 py-3 text-sm font-medium mb-5 ${passwordMessage.type === 'success' ? 'bg-green-50 text-green-700 border border-green-200' : 'bg-brand-50 text-brand-600 border border-brand-200'}`}>
                           {passwordMessage.text}
                         </div>
                       )}
@@ -646,7 +646,7 @@ export default function AccountDashboard() {
                         <button
                           onClick={handlePasswordSave}
                           disabled={passwordSaving}
-                          className="bg-red-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-red-600 transition-colors disabled:opacity-70"
+                          className="bg-brand-500 text-white px-6 py-3 rounded-2xl font-semibold hover:bg-brand-600 transition-colors disabled:opacity-70"
                         >
                           {passwordSaving ? 'Updating Password...' : 'Update Password'}
                         </button>
