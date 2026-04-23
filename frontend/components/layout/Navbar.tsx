@@ -44,17 +44,18 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
   return (
     <header className="w-full bg-white shadow-sm sticky top-0 z-50">
       {/* Top Banner Strip */}
-      <div className="bg-[#f7f7f7] text-[#333] hidden lg:block border-b border-gray-200">
-        <div className="container mx-auto px-4 md:px-6 h-8 flex items-center justify-between text-[11px] font-medium tracking-wide gap-4">
-          <div className="flex items-center gap-4 text-brand-600 font-semibold tracking-wider uppercase truncate">
-            <span>UP TO 20% OFF ON PERSONALIZED TIFFINS</span>
+      <div className="bg-brand-900 text-brand-100 hidden lg:block overflow-hidden relative">
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] pointer-events-none" />
+        <div className="container mx-auto px-4 md:px-6 h-10 flex items-center justify-between text-[10px] font-bold tracking-[0.2em] relative z-10">
+          <div className="flex items-center gap-4 text-brand-200">
+            <span className="animate-pulse">✨ ARTISANAL CRAFTSMANSHIP IN EVERY PIECE</span>
           </div>
-          <div className="flex items-center gap-4 xl:gap-6 text-gray-600 shrink-0">
-            <Link href="/track" className="hover:text-brand-500 flex items-center gap-1 transition-colors">
-              <Truck size={12} /> Track Order
+          <div className="flex items-center gap-8 text-brand-200">
+            <Link href="/track" className="hover:text-white flex items-center gap-2 transition-colors">
+              <Truck size={12} /> TRACK YOUR TREASURE
             </Link>
-            <div className="hidden xl:flex items-center gap-1 text-gray-500">
-              <MapPin size={12} /> Deliver to: <span className="text-gray-900 font-semibold ml-1">India</span>
+            <div className="hidden xl:flex items-center gap-2">
+              <MapPin size={12} /> SHIPS FROM <span className="text-white">INDIA</span>
             </div>
           </div>
         </div>
@@ -70,21 +71,21 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
           >
             <Menu size={24} />
           </button>
-          <Link href="/" className="flex-shrink-0">
-            <span className="font-heading font-extrabold text-2xl sm:text-3xl tracking-tight text-gray-900">
+          <Link href="/" className="flex-shrink-0 group">
+            <span className="font-heading italic text-3xl sm:text-4xl text-stone-800 group-hover:text-brand-700 transition-colors">
               Pretty<span className="text-brand-500">Tiffin</span>
             </span>
           </Link>
         </div>
 
         {/* Search Bar */}
-        <div className="hidden md:flex flex-1 min-w-0 max-w-[min(34rem,46vw)] lg:max-w-[min(44rem,52vw)] relative">
-          <div className={`w-full flex items-center border ${searchFocused ? 'border-brand-500 shadow-md' : 'border-gray-300'} rounded text-sm transition-all bg-white`}>
+        <div className="hidden md:flex flex-1 min-w-0 max-w-xl relative">
+          <div className={`w-full flex items-center border-2 ${searchFocused ? 'border-brand-500 bg-white' : 'border-brand-50 bg-brand-50'} rounded-full text-sm transition-all duration-500 px-2`}>
             <input
               ref={searchRef}
               type="text"
-              placeholder="Search for custom tiffins, specific gifts, occasions..."
-              className="w-full py-2.5 px-3 lg:px-4 outline-none rounded-l text-gray-800 placeholder-gray-400 min-w-0"
+              placeholder="Seeking something special?"
+              className="w-full py-2.5 px-5 outline-none rounded-full text-stone-800 placeholder-stone-400 bg-transparent"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               value={searchQuery}
@@ -93,7 +94,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             />
             <button
               onClick={() => handleSearch(searchQuery)}
-              className="bg-brand-500 hover:bg-brand-600 text-white px-4 lg:px-6 py-2.5 rounded-r transition-colors flex items-center justify-center shrink-0"
+              className="w-10 h-10 bg-brand-900 hover:bg-brand-700 text-white rounded-full transition-all duration-500 flex items-center justify-center shrink-0 shadow-lg hover:scale-105 active:scale-95"
               aria-label="Search"
             >
               <Search size={18} />
@@ -157,18 +158,18 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
       </div>
 
       {/* Category Nav */}
-      <nav className="hidden md:block bg-white border-t border-gray-100 shadow-sm">
+      <nav className="hidden md:block bg-white border-t border-stone-50">
         <div className="container mx-auto px-4 md:px-6 overflow-x-auto no-scrollbar">
-          <ul className="flex min-w-max items-center gap-5 lg:gap-8 text-xs lg:text-[13px] font-semibold text-gray-700">
+          <ul className="flex min-w-max items-center justify-center gap-10 lg:gap-14 text-xs font-bold text-stone-500 tracking-[0.15em] uppercase">
             {navCategories.map((cat, idx) => (
               <li key={idx} className="relative group">
                 <Link
                   href={cat.href}
-                  className={`block py-3 hover:text-brand-500 transition-colors flex items-center gap-1 ${cat.highlight ? 'text-brand-600' : ''}`}
+                  className={`block py-5 hover:text-brand-900 transition-all duration-500 ${cat.highlight ? 'text-brand-700' : ''}`}
                 >
                   {cat.label}
                 </Link>
-                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform origin-left" />
+                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center organic-shape-1" />
               </li>
             ))}
           </ul>

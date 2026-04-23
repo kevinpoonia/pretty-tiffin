@@ -55,26 +55,27 @@ export default function ProductCard({ product, showBadge = false, priority = fal
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300 border border-brand-100 flex flex-col h-full relative w-full"
+      className="group bg-white rounded-[2rem] organic-shape-1 overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-700 border border-brand-100 flex flex-col h-full relative w-full hover:-translate-y-2"
     >
-      <Link href={`/shop/${product.slug}`} className="block relative aspect-[4/5] bg-brand-50 overflow-hidden">
+      <Link href={`/shop/${product.slug}`} className="block relative aspect-[4/5] bg-brand-50/50 overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentImg}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
             className="absolute inset-0"
           >
             <Image
               src={images[currentImg]}
               alt={product.name}
               fill
-              className="object-contain p-4 group-hover:scale-105 transition-transform duration-500"
+              className="object-contain p-6 group-hover:scale-110 transition-transform duration-1000"
               sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
               priority={priority}
             />
@@ -82,14 +83,14 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         </AnimatePresence>
 
         {/* Badges */}
-        <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5">
+        <div className="absolute top-4 left-4 z-10 flex flex-col gap-2">
           {showBadge && (
-            <span className="bg-brand-500 text-white text-[9px] font-bold px-2 py-1 flex items-center gap-1 rounded shadow-sm">
-              <Truck size={9} /> Same Day
+            <span className="bg-brand-900 text-brand-100 text-[10px] font-bold px-3 py-1.5 flex items-center gap-2 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">
+              <Truck size={10} /> PRIORITY
             </span>
           )}
           {discount && (
-            <span className="bg-amber-500 text-white text-[9px] font-bold px-2 py-1 rounded shadow-sm">
+            <span className="bg-stone-800 text-white text-[10px] font-bold px-3 py-1.5 rounded-full shadow-lg backdrop-blur-sm bg-opacity-90">
               {discount}% OFF
             </span>
           )}
@@ -98,76 +99,75 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         {/* Wishlist Button */}
         <button
           onClick={toggleWishlist}
-          className="absolute top-3 right-3 z-10 w-8 h-8 bg-white/90 hover:bg-white rounded-full flex items-center justify-center shadow-sm transition-all"
+          className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/80 hover:bg-white text-stone-800 rounded-full flex items-center justify-center shadow-lg backdrop-blur-md transition-all duration-500 hover:scale-110 active:scale-90"
           aria-label="Add to wishlist"
         >
           <Heart
-            size={15}
-            className={`transition-colors ${wishlisted ? 'fill-brand-500 text-brand-500' : 'text-gray-400'}`}
+            size={18}
+            className={`transition-all duration-500 ${wishlisted ? 'fill-red-500 text-red-500 scale-110' : 'text-stone-400'}`}
           />
         </button>
 
-        {/* Gallery Controls - always visible on mobile, hover on desktop */}
+        {/* Gallery Controls */}
         {images.length > 1 && (
-          <div className={`absolute inset-0 flex items-center justify-between px-1.5 z-20 transition-opacity ${isHovered ? 'opacity-100' : 'opacity-0 md:opacity-0'} sm:opacity-100`}>
-            <button onClick={prevImage} className="bg-white/85 hover:bg-white p-1 rounded-full shadow-md text-brand-900 transition-colors">
-              <ChevronLeft size={14} />
+          <div className={`absolute inset-x-0 bottom-4 flex items-center justify-between px-4 z-20 transition-all duration-500 ${isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'}`}>
+            <button onClick={prevImage} className="w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center text-stone-800 transition-all hover:scale-110">
+              <ChevronLeft size={16} />
             </button>
-            <button onClick={nextImage} className="bg-white/85 hover:bg-white p-1 rounded-full shadow-md text-brand-900 transition-colors">
-              <ChevronRight size={14} />
-            </button>
-          </div>
-        )}
+            
+            <div className="flex gap-1.5 bg-white/60 backdrop-blur-md px-2 py-1.5 rounded-full">
+              {images.map((_, idx) => (
+                <div
+                  key={idx}
+                  className={`h-1 rounded-full transition-all duration-500 ${currentImg === idx ? 'w-4 bg-brand-900' : 'w-1 bg-brand-900/20'}`}
+                />
+              ))}
+            </div>
 
-        {/* Dot Indicators */}
-        {images.length > 1 && (
-          <div className="absolute bottom-2.5 w-full flex justify-center gap-1 z-20">
-            {images.map((_, idx) => (
-              <div
-                key={idx}
-                className={`h-1 rounded-full transition-all ${currentImg === idx ? 'w-4 bg-brand-500' : 'w-1 bg-gray-300'}`}
-              />
-            ))}
+            <button onClick={nextImage} className="w-8 h-8 bg-white/90 hover:bg-white rounded-full shadow-xl flex items-center justify-center text-stone-800 transition-all hover:scale-110">
+              <ChevronRight size={16} />
+            </button>
           </div>
         )}
       </Link>
 
-      <div className="p-4 flex-1 flex flex-col">
-        <p className="text-[9px] text-brand-500 font-bold mb-1 uppercase tracking-widest line-clamp-1">
+      <div className="p-6 flex-1 flex flex-col">
+        <p className="text-[10px] text-brand-500 font-bold mb-2 uppercase tracking-[0.2em] line-clamp-1">
           {product.category}
         </p>
         <Link href={`/shop/${product.slug}`}>
-          <h3 className="font-heading font-bold text-sm text-gray-800 mb-2 group-hover:text-brand-600 transition-colors line-clamp-2 leading-snug">
+          <h3 className="font-heading italic text-xl text-stone-800 mb-3 group-hover:text-brand-700 transition-colors line-clamp-2 leading-snug">
             {product.name}
           </h3>
         </Link>
 
-        <div className="flex items-center gap-1 mb-3">
+        <div className="flex items-center gap-1.5 mb-6">
           {[1, 2, 3, 4, 5].map(star => (
-            <Star key={star} size={11} className="fill-yellow-400 text-yellow-400" />
+            <Star key={star} size={12} className="fill-brand-300 text-brand-300" />
           ))}
-          <span className="text-[9px] text-gray-400 ml-1">(42)</span>
+          <span className="text-[10px] text-stone-400 font-medium ml-1">4.9 (24)</span>
         </div>
 
-        <div className="mt-auto flex items-center justify-between pt-3 border-t border-gray-50">
-          <div>
-            <span className="font-bold text-gray-900 text-base">
+        <div className="mt-auto flex items-center justify-between pt-5 border-t border-stone-50">
+          <div className="flex flex-col">
+            <span className="font-sans font-bold text-stone-900 text-lg">
               ₹{product.price.toLocaleString('en-IN')}
             </span>
             {product.compareAtPrice && product.compareAtPrice > product.price && (
-              <span className="text-xs text-gray-400 line-through ml-1.5">
+              <span className="text-xs text-stone-400 line-through">
                 ₹{product.compareAtPrice.toLocaleString('en-IN')}
               </span>
             )}
           </div>
           <Link
             href={`/shop/${product.slug}`}
-            className="bg-brand-900 text-white px-3 py-1.5 rounded-lg text-[10px] font-bold hover:bg-brand-500 transition-colors uppercase tracking-wider"
+            className="bg-brand-900 text-white px-5 py-2.5 rounded-full text-xs font-bold hover:bg-stone-800 transition-all duration-500 uppercase tracking-widest shadow-lg hover:shadow-xl hover:scale-105 active:scale-95"
           >
-            Customize
+            Personalize
           </Link>
         </div>
       </div>
     </motion.div>
+
   );
 }

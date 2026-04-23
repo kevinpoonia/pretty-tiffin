@@ -176,33 +176,33 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   const hasActiveFilters = !!(activeCategory || activeRelationship || activeMinPrice || activeMaxPrice || activeSearch);
 
   const FilterPanel = () => (
-    <div className="space-y-6">
-      <div className="flex justify-between items-center">
-        <h3 className="font-heading font-semibold text-lg text-brand-900 flex items-center gap-2">
-          <SlidersHorizontal size={18} /> Filters
+    <div className="space-y-8">
+      <div className="flex justify-between items-center pb-4 border-b border-brand-50">
+        <h3 className="font-heading italic text-2xl text-stone-800 flex items-center gap-3">
+          <SlidersHorizontal size={20} className="text-brand-400" /> Refine
         </h3>
         {hasActiveFilters && (
-          <button onClick={clearAllFilters} className="text-xs text-brand-500 hover:text-brand-700 font-semibold underline underline-offset-2">
-            Clear All
+          <button onClick={clearAllFilters} className="text-xs text-brand-500 hover:text-brand-700 font-bold uppercase tracking-widest border-b border-brand-200">
+            Reset
           </button>
         )}
       </div>
 
       {/* Collections */}
       <div>
-        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Shop by Collection</h4>
-        <div className="space-y-2">
+        <h4 className="font-bold text-stone-800 mb-4 text-xs uppercase tracking-[0.2em]">Collections</h4>
+        <div className="space-y-3">
           {curatedCollections.map(col => {
             const isSelected = normalizedCategory === col.value;
             return (
-              <label key={col.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={col.value} className="flex items-center gap-3 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => updateSearchParams({ category: isSelected ? null : col.value, for: null })}
-                  className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                  className="w-4 h-4 rounded-full border-brand-200 text-brand-900 focus:ring-brand-500 cursor-pointer transition-all"
                 />
-                <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                <span className={`text-sm tracking-wide transition-colors ${isSelected ? 'text-brand-900 font-bold' : 'text-stone-500 group-hover:text-stone-800'}`}>
                   {col.label}
                 </span>
               </label>
@@ -292,16 +292,23 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-brand-50 min-h-screen pb-20">
+      <main className="flex-1 bg-[#fdfaf6] min-h-screen pb-20 selection:bg-brand-200">
         {/* Page Header */}
-        <div className="bg-white border-b border-brand-100 py-8 md:py-12 mb-8">
-          <div className="container mx-auto px-4 md:px-6 text-center">
-            <h1 className="text-3xl md:text-4xl font-bold font-heading text-brand-900 mb-2">{activeHeading}</h1>
-            <p className="text-brand-500 text-sm max-w-lg mx-auto">
+        <div className="bg-white py-16 md:py-24 relative overflow-hidden">
+          <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
+            <h1 className="text-4xl md:text-6xl font-heading italic text-stone-800 mb-6">{activeHeading}</h1>
+            <p className="text-stone-500 text-base md:text-lg italic max-w-lg mx-auto font-medium">
               {activeSearch
-                ? `Showing results for "${activeSearch}"`
-                : 'Premium personalized tiffins crafted with care'}
+                ? `Discovering artisanal treasures for "${activeSearch}"`
+                : 'Hand-guided laser engravings on premium stainless steel, crafted for a lifetime of memories.'}
             </p>
+          </div>
+          
+          {/* Wavy Separator */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
+            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+            </svg>
           </div>
         </div>
 
@@ -309,8 +316,8 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
           <div className="flex flex-col md:flex-row gap-8">
 
             {/* Desktop Sidebar */}
-            <aside className="hidden md:block w-64 lg:w-72 flex-shrink-0">
-              <div className="bg-white p-5 rounded-2xl shadow-sm border border-brand-100 lg:sticky lg:top-28">
+            <aside className="hidden md:block w-72 lg:w-80 flex-shrink-0">
+              <div className="bg-white p-8 rounded-[2.5rem] organic-shape-1 shadow-xl border border-brand-50 lg:sticky lg:top-32">
                 <FilterPanel />
               </div>
             </aside>
@@ -335,12 +342,12 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
                   <p className="text-sm text-brand-600">{visibleProducts.length} products</p>
                 </div>
 
-                <div className="flex items-center gap-2 text-sm bg-white border border-brand-200 rounded-full px-4 py-2 w-fit">
-                  <span className="text-brand-500 shrink-0">Sort:</span>
+                <div className="flex items-center gap-3 bg-white border border-brand-100 rounded-full px-6 py-2 shadow-sm">
+                  <span className="text-stone-400 text-xs font-bold uppercase tracking-widest shrink-0">Sort By</span>
                   <select
                     value={activeSort}
                     onChange={e => updateSearchParams({ sort: e.target.value })}
-                    className="bg-transparent text-brand-900 font-semibold focus:outline-none cursor-pointer"
+                    className="bg-transparent text-stone-800 text-sm font-bold focus:outline-none cursor-pointer pr-4 italic"
                   >
                     {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>

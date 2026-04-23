@@ -63,7 +63,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
   ];
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen">
+    <div className="bg-[#fdfaf6] min-h-screen selection:bg-brand-200 selection:text-brand-900">
       <Navbar alwaysSolid />
       <main className="w-full">
 
@@ -91,14 +91,14 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                 </div>
                 <div className="absolute inset-0 z-20 flex items-end sm:items-center">
                   <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-10 sm:pb-0">
-                    <div className="max-w-xl rounded-[1.5rem] bg-black/25 p-5 sm:p-7 md:p-9 backdrop-blur-[3px] shadow-2xl">
-                      <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 leading-tight">{banner.title}</h2>
-                      <p className="text-sm sm:text-base md:text-lg mb-5 text-white/85 max-w-md">{banner.subtitle}</p>
+                    <div className="max-w-xl rounded-[2rem] organic-shape-1 bg-brand-900/40 p-8 sm:p-10 md:p-12 backdrop-blur-md shadow-2xl border border-white/10">
+                      <h2 className="text-3xl sm:text-4xl md:text-6xl font-heading italic text-white mb-4 leading-tight">{banner.title}</h2>
+                      <p className="text-sm sm:text-base md:text-xl mb-8 text-white/90 font-sans max-w-md leading-relaxed">{banner.subtitle}</p>
                       <Link
                         href={banner.link || '/shop'}
-                        className="inline-flex items-center bg-brand-500 hover:bg-brand-600 px-6 sm:px-8 py-3 rounded-lg text-xs sm:text-sm font-bold tracking-wider transition-colors shadow-lg"
+                        className="inline-flex items-center bg-brand-100 text-brand-900 hover:bg-white px-8 sm:px-10 py-3.5 rounded-full text-xs sm:text-sm font-bold tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95"
                       >
-                        SHOP NOW <ChevronRight size={14} className="ml-1" />
+                        DISCOVER COLLECTION <ChevronRight size={14} className="ml-2" />
                       </Link>
                     </div>
                   </div>
@@ -147,18 +147,21 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Trust Badges */}
-        <section className="bg-brand-900 py-4">
-          <div className="container mx-auto px-4 md:px-6">
-            <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-3 gap-x-6 text-brand-200 text-[10px] sm:text-xs font-semibold">
+        <section className="bg-brand-900 py-6 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-10 mix-blend-overlay pointer-events-none">
+            <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/felt.png')]" />
+          </div>
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-4 gap-x-10 text-brand-100 text-[11px] sm:text-xs font-medium tracking-[0.2em]">
               {[
-                { icon: '🚚', text: 'Free Shipping on All Orders' },
-                { icon: '⚡', text: 'Same Day Delivery Available' },
-                { icon: '✏️', text: 'Laser Engraved Personalization' },
-                { icon: '🔒', text: '100% Secure Payments' },
+                { icon: '🚚', text: 'Complimentary Shipping' },
+                { icon: '⚡', text: 'Express Priority Delivery' },
+                { icon: '✏️', text: 'Artisanal Laser Engraving' },
+                { icon: '🔒', text: 'Secured Checkout' },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-2">
-                  <span className="text-base">{badge.icon}</span>
-                  <span className="uppercase tracking-wide">{badge.text}</span>
+                <div key={i} className="flex items-center gap-3 group">
+                  <span className="text-lg grayscale group-hover:grayscale-0 transition-all duration-500">{badge.icon}</span>
+                  <span className="uppercase">{badge.text}</span>
                 </div>
               ))}
             </div>
@@ -166,43 +169,52 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Shop By Category */}
-        <section className="bg-white py-10 md:py-12 shadow-sm mb-6">
+        <section className="bg-white py-16 md:py-20 relative">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mb-8">Shop By Category</h2>
-            <div className="flex overflow-x-auto pb-2 md:pb-0 md:flex-wrap md:justify-center gap-5 md:gap-10 no-scrollbar snap-x">
+            <h2 className="text-3xl md:text-4xl text-center text-stone-800 mb-12">
+              <span className="ink-underline">Browse by Category</span>
+            </h2>
+            <div className="flex overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center gap-8 md:gap-14 no-scrollbar snap-x">
               {categories.length > 0 ? categories.map((cat, idx) => (
                 <Link
                   key={idx}
                   href={`/shop?category=${encodeURIComponent(cat.name)}`}
-                  className="flex flex-col items-center group cursor-pointer w-[4.5rem] sm:w-24 md:w-28 flex-shrink-0 snap-center"
+                  className="flex flex-col items-center group cursor-pointer w-[5rem] sm:w-28 md:w-32 flex-shrink-0 snap-center"
                 >
-                  <div className="w-[3.75rem] h-[3.75rem] sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-full bg-brand-50 overflow-hidden relative mb-3 group-hover:shadow-lg transition-all border-2 border-transparent group-hover:border-brand-500">
-                    <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 60px, 96px" className="object-cover group-hover:scale-110 transition-transform duration-500 p-2" />
+                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 ${idx % 2 === 0 ? 'organic-shape-1' : 'organic-shape-2'} bg-brand-50 overflow-hidden relative mb-4 group-hover:shadow-2xl transition-all duration-700 border border-brand-100 group-hover:border-brand-300 group-hover:-translate-y-2`}>
+                    <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 80px, 120px" className="object-cover group-hover:scale-110 transition-transform duration-700 p-3" />
                   </div>
-                  <span className="text-[10px] sm:text-xs font-semibold text-gray-700 text-center group-hover:text-brand-500 transition-colors leading-tight">{cat.name}</span>
+                  <span className="text-xs font-bold text-stone-600 text-center group-hover:text-brand-700 transition-colors tracking-wide">{cat.name}</span>
                 </Link>
               )) : ['Personalized', 'Corporate', 'Birthday', 'Anniversary', 'Wedding', 'Occasions'].map((cat, i) => (
-                <Link key={i} href={`/shop?category=${cat.toLowerCase()}`} className="flex flex-col items-center group cursor-pointer w-[4.5rem] flex-shrink-0">
-                  <div className="w-[3.75rem] h-[3.75rem] rounded-full bg-brand-100 mb-3 border-2 border-transparent animate-pulse" />
-                  <span className="text-[10px] font-semibold text-gray-600">{cat}</span>
+                <Link key={i} href={`/shop?category=${cat.toLowerCase()}`} className="flex flex-col items-center group cursor-pointer w-[5rem] flex-shrink-0">
+                  <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-brand-50 mb-4 animate-pulse" />
+                  <span className="text-xs font-semibold text-stone-400">{cat}</span>
                 </Link>
               ))}
             </div>
           </div>
+          
+          {/* Wavy Separator */}
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
+            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+            </svg>
+          </div>
         </section>
 
         {/* Trending Products */}
-        <section className="container mx-auto px-4 md:px-6 mb-12">
-          <div className="flex items-center justify-between gap-4 mb-6">
+        <section className="container mx-auto px-4 md:px-6 py-16 mb-8">
+          <div className="flex items-end justify-between gap-4 mb-10">
             <div>
-              <h2 className="text-xl md:text-2xl font-bold text-gray-800">Trending Personalized Gifts</h2>
-              <p className="text-xs text-gray-500 mt-0.5">Handpicked bestsellers loved across India</p>
+              <h2 className="text-3xl md:text-4xl text-stone-800 mb-2">Trending Treasures</h2>
+              <p className="text-sm text-stone-500 font-medium italic">Handpicked artisanal gifts loved across the country</p>
             </div>
-            <Link href="/shop" className="text-brand-500 font-semibold text-sm hover:underline shrink-0">View All</Link>
+            <Link href="/shop" className="text-brand-700 font-bold text-xs uppercase tracking-widest hover:text-brand-900 border-b-2 border-brand-200 pb-1 transition-all">View All Collections</Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-5">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
             {loading ? (
-              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white rounded-2xl h-72 animate-pulse border border-gray-100" />)
+              [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white organic-shape-1 h-80 animate-pulse border border-brand-50" />)
             ) : products.slice(0, 5).map((item, idx) => (
               <ProductCard key={item.id} product={item} showBadge={idx === 0} priority={idx < 2} />
             ))}
@@ -210,65 +222,89 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Gifts by Relationship */}
-        <section className="bg-white py-10 md:py-14 mb-10 border-y border-gray-100">
-          <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mb-8">Gifts by Relationship</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+        <section className="bg-brand-50 py-20 md:py-28 relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-[1px] rotate-180 text-white">
+            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+            </svg>
+          </div>
+
+          <div className="container mx-auto px-4 md:px-6 relative z-10">
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-16">Curated for Loved Ones</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
               {relationships.map((rel, idx) => (
                 <Link
                   key={idx}
                   href={rel.href}
-                  className="relative bg-gray-100 aspect-[3/4] md:aspect-square rounded-2xl overflow-hidden group cursor-pointer block"
+                  className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden group cursor-pointer block rounded-[2.5rem] organic-shape-1 shadow-lg hover:shadow-2xl transition-all duration-700 bg-white"
                 >
-                  <Image src={rel.img} alt={rel.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent flex flex-col justify-end p-4 md:p-5">
-                    <h3 className="text-white font-bold text-base md:text-lg group-hover:text-brand-300 transition-colors">{rel.title}</h3>
-                    <p className="text-white/70 text-xs mt-0.5 font-medium">Shop Now →</p>
+                  <Image src={rel.img} alt={rel.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[0.2] group-hover:grayscale-0" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent flex flex-col justify-end p-6 md:p-8">
+                    <h3 className="text-white italic text-xl md:text-2xl mb-2">{rel.title}</h3>
+                    <p className="text-brand-200 text-[10px] font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">Explore →</p>
                   </div>
                 </Link>
               ))}
             </div>
           </div>
+
+          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px] text-white">
+            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
+              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
+            </svg>
+          </div>
         </section>
 
         {/* Features Strip */}
-        <section className="container mx-auto px-4 md:px-6 mb-12">
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 md:gap-6">
+        <section className="container mx-auto px-4 md:px-6 py-16">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8 md:gap-12">
             {[
-              { icon: '🏅', title: 'Premium Quality', desc: 'Food-grade 304 stainless steel, built to last decades.' },
-              { icon: '✨', title: 'Personalized for You', desc: 'Laser-engraved names, dates, and custom messages.' },
-              { icon: '📦', title: 'Gift-Ready Packaging', desc: 'Arrives in premium gift packaging, perfect for gifting.' },
+              { icon: '🏅', title: 'Heritage Quality', desc: 'Sustainably sourced 304 stainless steel, designed to be passed down through generations.' },
+              { icon: '✨', title: 'Truly Personal', desc: 'Hand-guided laser engraving for a unique, soulful finish on every piece.' },
+              { icon: '📦', title: 'Artisan Packaging', desc: 'Delivered in hand-finished sustainable packaging, ready for the most special moments.' },
             ].map((f, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm flex items-start gap-4 hover:shadow-md transition-shadow">
-                <span className="text-3xl shrink-0">{f.icon}</span>
-                <div>
-                  <h3 className="font-bold text-gray-800 mb-1">{f.title}</h3>
-                  <p className="text-gray-500 text-sm leading-relaxed">{f.desc}</p>
+              <div key={i} className="flex flex-col items-center text-center group">
+                <div className="w-16 h-16 organic-shape-2 bg-brand-100 flex items-center justify-center text-3xl mb-6 group-hover:scale-110 transition-transform duration-500">
+                  {f.icon}
                 </div>
+                <h3 className="text-xl italic text-stone-800 mb-3">{f.title}</h3>
+                <p className="text-stone-500 text-sm leading-relaxed max-w-xs">{f.desc}</p>
               </div>
             ))}
           </div>
         </section>
 
         {/* FAQ */}
-        <section className="bg-brand-50 py-12 md:py-16 border-t border-brand-100">
-          <div className="container mx-auto px-4 md:px-6 max-w-3xl">
-            <h2 className="text-xl md:text-2xl font-bold text-center text-gray-800 mb-8">Frequently Asked Questions</h2>
-            <div className="space-y-3">
+        <section className="bg-white py-24 md:py-32 relative">
+          <div className="container mx-auto px-4 md:px-6 max-w-4xl">
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-16 italic">Curiosities & Answers</h2>
+            <div className="grid grid-cols-1 gap-6">
               {faqs.map((faq, i) => (
-                <div key={i} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                <div key={i} className="border-b border-stone-100 last:border-0">
                   <button
                     onClick={() => setOpenFaq(openFaq === i ? null : i)}
-                    className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors"
+                    className="w-full flex items-center justify-between py-8 text-left group"
                   >
-                    <span className="font-semibold text-gray-800 text-sm pr-4">{faq.q}</span>
-                    <ChevronDown className={`text-gray-400 transition-transform shrink-0 ${openFaq === i ? 'rotate-180 text-brand-500' : ''}`} size={18} />
-                  </button>
-                  {openFaq === i && (
-                    <div className="px-5 pb-5 text-sm text-gray-600 leading-relaxed border-t border-gray-50">
-                      {faq.a}
+                    <span className={`text-lg md:text-xl transition-all duration-300 ${openFaq === i ? 'text-brand-700 italic' : 'text-stone-700'}`}>{faq.q}</span>
+                    <div className={`w-8 h-8 rounded-full border border-stone-200 flex items-center justify-center transition-all duration-500 ${openFaq === i ? 'rotate-180 bg-brand-700 border-brand-700 text-white' : 'group-hover:border-stone-400'}`}>
+                      <ChevronDown size={16} />
                     </div>
-                  )}
+                  </button>
+                  <AnimatePresence>
+                    {openFaq === i && (
+                      <motion.div
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="pb-8 text-base text-stone-500 leading-relaxed max-w-3xl">
+                          {faq.a}
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
               ))}
             </div>

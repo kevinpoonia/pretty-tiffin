@@ -23,15 +23,15 @@ export default function Footer() {
 
           {/* Brand */}
           <div className="space-y-4 sm:col-span-2 xl:col-span-1">
-            <Link href="/" className="inline-block">
-              <span className="font-heading font-bold text-2xl text-white tracking-tight">
+            <Link href="/" className="inline-block group">
+              <span className="font-heading italic text-3xl text-white group-hover:text-brand-300 transition-colors">
                 Pretty<span className="text-brand-400">Tiffin</span>
               </span>
             </Link>
-            <p className="text-sm text-brand-200 leading-relaxed max-w-xs">
-              Premium, engraved stainless steel tiffins designed for modern Indian lifestyles. Combining heritage with personalization.
+            <p className="text-base text-brand-200 italic leading-relaxed max-w-xs">
+              Hand-guided laser engravings on premium stainless steel. A legacy of love, crafted for your most cherished moments.
             </p>
-            <div className="flex items-center gap-3 pt-1">
+            <div className="flex items-center gap-4 pt-4">
               {[
                 { label: 'Instagram', href: 'https://instagram.com', icon: '📸' },
                 { label: 'Facebook', href: 'https://facebook.com', icon: '👍' },
@@ -43,7 +43,7 @@ export default function Footer() {
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={s.label}
-                  className="w-9 h-9 bg-brand-800 hover:bg-brand-500 rounded-lg flex items-center justify-center transition-colors text-sm"
+                  className="w-11 h-11 organic-shape-2 bg-brand-800 hover:bg-brand-400 flex items-center justify-center transition-all duration-500 text-lg hover:scale-110 shadow-lg"
                 >
                   {s.icon}
                 </a>
@@ -80,25 +80,25 @@ export default function Footer() {
             <h4 className="font-heading font-semibold text-white mb-4">Newsletter</h4>
             <p className="text-sm text-brand-200 mb-4">Subscribe for exclusive offers and new product drops.</p>
             {subscribed ? (
-              <div className="flex items-center gap-2 text-brand-300 text-sm font-medium bg-brand-800 rounded-xl px-4 py-3 border border-brand-700">
-                <Send size={14} className="text-brand-400" />
-                Thanks for subscribing!
+              <div className="flex flex-col items-center justify-center py-6 px-4 bg-brand-800 organic-shape-1 border border-brand-700 animate-fade-in">
+                <Send size={24} className="text-brand-400 mb-3" />
+                <p className="text-white font-heading italic text-lg">Welcome to the family!</p>
               </div>
             ) : (
-              <form onSubmit={handleNewsletter} className="flex flex-col gap-2">
+              <form onSubmit={handleNewsletter} className="flex flex-col gap-4">
                 <input
                   type="email"
                   required
-                  placeholder="Enter your email"
+                  placeholder="Your favorite email"
                   value={email}
                   onChange={e => setEmail(e.target.value)}
-                  className="bg-brand-800 text-white px-4 py-2.5 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 placeholder-brand-400 border border-brand-700"
+                  className="bg-brand-800/50 text-white px-6 py-3.5 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 placeholder-brand-400 border border-brand-700 transition-all"
                 />
                 <button
                   type="submit"
-                  className="bg-brand-500 hover:bg-brand-400 text-white px-4 py-2.5 text-sm font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+                  className="bg-brand-100 text-brand-900 hover:bg-white px-6 py-3.5 text-xs font-bold uppercase tracking-widest rounded-full transition-all duration-500 flex items-center justify-center gap-3 shadow-xl hover:scale-105 active:scale-95"
                 >
-                  Subscribe <Send size={14} />
+                  Join the Circle <Send size={14} />
                 </button>
               </form>
             )}

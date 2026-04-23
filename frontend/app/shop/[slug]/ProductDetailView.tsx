@@ -77,19 +77,20 @@ export default function ProductDetailClient({ product }: { product: any }) {
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pt-6 md:pt-8">
             {/* Left: Product Images & Customizer Preview */}
-            <div className="w-full lg:w-1/2 flex flex-col gap-6">
-              <div className="relative aspect-square w-full rounded-[28px] md:rounded-[40px] overflow-hidden bg-brand-50 flex items-center justify-center p-4 sm:p-6 md:p-8 lg:sticky lg:top-24 shadow-inner border border-brand-100">
+            <div className="w-full lg:w-1/2 flex flex-col gap-8">
+              <div className="relative aspect-square w-full rounded-[3rem] organic-shape-1 overflow-hidden bg-brand-50/50 flex items-center justify-center p-8 lg:sticky lg:top-32 shadow-2xl border border-brand-100 group">
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] pointer-events-none" />
                 {product.images?.[0] ? (
                   <div className="relative w-full h-full">
-                     <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-contain p-3 sm:p-5 md:p-8 z-10" />
+                     <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-contain p-8 group-hover:scale-105 transition-transform duration-1000 z-10" />
                      <AnimatePresence>
                         {selectedOptions['Engraving'] && (
                           <motion.div 
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
-                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mix-blend-overlay opacity-60"
+                            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mix-blend-overlay opacity-50"
                           >
-                             <p className="font-serif italic font-bold text-2xl text-black select-none tracking-widest uppercase">
+                             <p className="font-heading italic font-bold text-3xl text-black select-none tracking-widest uppercase">
                                {selectedOptions['Engraving']}
                              </p>
                           </motion.div>
@@ -99,12 +100,10 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 ) : (
                   <motion.div 
                     layout
-                    className={`relative w-64 h-80 rounded-[40px] shadow-2xl flex flex-col items-center justify-center transition-all duration-500 ${getTiffinColor()}`}
-                    style={{ boxShadow: 'inset -10px -10px 30px rgba(0,0,0,0.1), 10px 10px 30px rgba(0,0,0,0.15), inset 10px 10px 20px rgba(255,255,255,0.8)' }}
+                    className={`relative w-72 h-96 rounded-[3rem] organic-shape-2 shadow-2xl flex flex-col items-center justify-center transition-all duration-700 ${getTiffinColor()}`}
                   >
-                    <div className="absolute top-1/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
-                    <div className="absolute top-2/3 w-full h-[2px] bg-black/10 backdrop-blur-sm" />
-                    <div className="absolute -top-6 w-32 h-12 border-4 border-gray-400 rounded-t-full" />
+                    <div className="absolute top-1/3 w-full h-[1px] bg-black/5" />
+                    <div className="absolute top-2/3 w-full h-[1px] bg-black/5" />
                     <AnimatePresence mode="popLayout">
                       {selectedOptions['Engraving'] && (
                         <motion.div
@@ -113,7 +112,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                           exit={{ opacity: 0, scale: 0.8 }}
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] text-center mix-blend-overlay"
                         >
-                          <p className="font-heading font-semibold text-2xl text-black/60 tracking-wider font-serif" style={{ textShadow: '1px 1px 0px rgba(255,255,255,0.4)' }}>
+                          <p className="font-heading italic font-bold text-3xl text-black/40 tracking-wider">
                             {selectedOptions['Engraving']}
                           </p>
                         </motion.div>
@@ -133,18 +132,18 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
             {/* Right: Product Info & Configurator */}
             <div className="w-full lg:w-1/2 flex flex-col pt-0 lg:pt-4">
-              <div className="mb-6">
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="flex items-center text-brand-500">
-                    {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className="fill-brand-500" />)}
+              <div className="mb-10">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="flex items-center text-brand-300">
+                    {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className="fill-brand-300" />)}
                   </div>
-                  <span className="text-[10px] font-black text-brand-400 uppercase tracking-widest">42 Verified Reviews</span>
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">Crafted for Excellence — 42 Reviews</span>
                 </div>
-                <h1 className="text-2xl sm:text-3xl md:text-5xl font-black font-heading text-brand-900 mb-4 tracking-tighter leading-tight">{product.name}</h1>
-                <div className="flex flex-wrap items-center gap-3 sm:gap-4">
-                   <p className="text-2xl sm:text-3xl font-black text-brand-900 tracking-tighter">₹{Number(product.price).toLocaleString('en-IN')}</p>
-                   {product.compareAtPrice && <p className="text-lg text-brand-300 line-through font-bold">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</p>}
-                   <span className="bg-green-100 text-green-700 text-[10px] font-black px-2 py-1 rounded uppercase tracking-widest">In Stock</span>
+                <h1 className="text-4xl sm:text-5xl md:text-7xl font-heading italic text-stone-800 mb-6 leading-tight">{product.name}</h1>
+                <div className="flex flex-wrap items-center gap-6">
+                   <p className="text-3xl font-sans font-bold text-stone-900">₹{Number(product.price).toLocaleString('en-IN')}</p>
+                   {product.compareAtPrice && <p className="text-xl text-stone-300 line-through font-medium">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</p>}
+                   <span className="bg-brand-50 text-brand-700 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-brand-100">Artisanal Stock</span>
                 </div>
               </div>
 
@@ -165,11 +164,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 />
               </div>
 
-              <div className="mt-8 md:mt-10 bg-white/95 backdrop-blur-xl p-4 rounded-[24px] md:rounded-[32px] border border-brand-100 shadow-2xl flex flex-col sm:flex-row gap-4 z-20 2xl:sticky 2xl:bottom-6">
-                <div className="flex items-center border border-brand-200 rounded-2xl bg-brand-50 overflow-hidden w-full sm:w-32 shrink-0">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-4 py-3 text-brand-600 hover:text-brand-900 transition-colors font-black">-</button>
-                  <span className="flex-1 text-center font-black text-sm">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="px-4 py-3 text-brand-600 hover:text-brand-900 transition-colors font-black">+</button>
+              <div className="mt-10 md:mt-14 bg-white/80 backdrop-blur-2xl p-6 rounded-[2.5rem] organic-shape-1 border border-brand-50 shadow-2xl flex flex-col sm:flex-row gap-6 z-20 2xl:sticky 2xl:bottom-10">
+                <div className="flex items-center border border-brand-100 rounded-full bg-brand-50/50 overflow-hidden w-full sm:w-40 shrink-0 h-16">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-6 h-full text-stone-500 hover:text-brand-900 transition-all font-bold text-xl">-</button>
+                  <span className="flex-1 text-center font-bold text-base text-stone-800">{quantity}</span>
+                  <button onClick={() => setQuantity(quantity + 1)} className="px-6 h-full text-stone-500 hover:text-brand-900 transition-all font-bold text-xl">+</button>
                 </div>
                 <button 
                   onClick={async () => {
@@ -192,17 +191,14 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     }
                   }}
                   disabled={isAdding}
-                  className="w-full sm:flex-1 bg-brand-900 text-white font-black rounded-2xl py-4 md:py-5 px-5 md:px-8 hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/10 flex items-center justify-center gap-3 cursor-pointer disabled:opacity-75 relative overflow-hidden group"
+                  className="w-full sm:flex-1 bg-brand-900 text-white font-bold rounded-full py-5 px-10 hover:bg-stone-800 transition-all duration-700 shadow-2xl shadow-brand-900/20 flex items-center justify-center gap-4 cursor-pointer disabled:opacity-75 hover:scale-105 active:scale-95"
                 >
-                  {isAdding ? <><Loader2 size={18} className="animate-spin" /> SYNCHRONIZING...</> : (
-                    <div className="flex items-center gap-3 relative z-10">
-                       <Gift size={18} />
-                       <span className="uppercase text-[11px] sm:text-xs tracking-widest text-center">Express Checkout — ₹{calculateTotalPrice().toLocaleString('en-IN')}</span>
+                  {isAdding ? <><Loader2 size={20} className="animate-spin" /> CRAFTING...</> : (
+                    <div className="flex items-center gap-4">
+                       <Gift size={20} />
+                       <span className="uppercase text-[11px] font-bold tracking-[0.2em]">Personalize Now — ₹{calculateTotalPrice().toLocaleString('en-IN')}</span>
                     </div>
                   )}
-                </button>
-                <button className="hidden sm:flex w-14 h-14 rounded-2xl border border-brand-200 items-center justify-center text-brand-600 hover:text-brand-500 hover:border-brand-500 hover:bg-brand-50 transition-all shrink-0">
-                  <Heart size={20} />
                 </button>
               </div>
 

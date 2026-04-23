@@ -146,15 +146,20 @@ export default function CheckoutPage() {
     }
   };
 
-  if (cartLoading || authLoading) return <div className="min-h-screen bg-[#faf8f4] flex items-center justify-center p-8"><p className="animate-pulse font-bold text-gray-500">Loading Secure Checkout...</p></div>;
+  if (cartLoading || authLoading) return (
+    <div className="min-h-screen bg-[#fdfaf6] flex flex-col items-center justify-center p-8 gap-4">
+      <div className="w-12 h-12 rounded-full border-2 border-brand-200 border-t-brand-900 animate-spin" />
+      <p className="font-heading italic text-lg text-stone-500">Preparing your secure circle...</p>
+    </div>
+  );
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen">
+    <div className="bg-[#fdfaf6] min-h-screen selection:bg-brand-200">
       <Navbar alwaysSolid />
-      <main className="container mx-auto px-4 md:px-6 py-6 md:py-8">
+      <main className="container mx-auto px-4 md:px-6 py-12 md:py-16">
         
-        <h1 className="text-2xl font-bold text-gray-800 mb-6">Secure Checkout</h1>
-        {error && <div className="mb-4 bg-brand-100 text-brand-600 p-3 rounded text-sm font-semibold">{error}</div>}
+        <h1 className="text-4xl md:text-5xl font-heading italic text-stone-800 mb-10">Secure Checkout</h1>
+        {error && <div className="mb-8 bg-red-50 text-red-600 p-4 rounded-2xl organic-shape-1 text-sm font-bold border border-red-100">{error}</div>}
 
         <div className="flex flex-col lg:flex-row gap-8">
           
@@ -162,83 +167,83 @@ export default function CheckoutPage() {
           <div className="flex-1 space-y-6">
             
             {/* Contact Info (Step 1) */}
-            <div className="bg-white rounded shadow-sm border border-gray-100 p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="font-bold text-lg text-gray-800">1. Contact Information</h2>
-                {step > 1 && <button onClick={() => setStep(1)} className="text-brand-500 text-sm font-semibold hover:underline">Edit</button>}
+            <div className="bg-white rounded-[2.5rem] organic-shape-1 shadow-xl border border-brand-50 p-8">
+              <div className="flex justify-between items-center mb-6">
+                <h2 className="font-heading italic text-2xl text-stone-800">1. Information</h2>
+                {step > 1 && <button onClick={() => setStep(1)} className="text-brand-500 text-xs font-bold uppercase tracking-widest hover:text-brand-700">Change</button>}
               </div>
               
               {step === 1 ? (
-                 <div className="space-y-4">
-                   <div className="p-4 bg-green-50 text-green-700 font-semibold rounded border border-green-200">
-                     ✓ Logged in as: {user?.email}
+                 <div className="space-y-6">
+                   <div className="p-6 bg-brand-50/50 text-stone-600 font-medium rounded-3xl border border-brand-100 italic">
+                     Welcome back, {user?.email}. We&apos;re ready when you are.
                    </div>
-                   <button onClick={() => setStep(2)} className="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm">
-                     CONTINUE TO SHIPPING
+                   <button onClick={() => setStep(2)} className="bg-brand-900 hover:bg-stone-800 text-white font-bold py-4 px-10 rounded-full transition-all duration-500 shadow-xl hover:scale-105 active:scale-95 tracking-widest text-xs uppercase">
+                     Continue to Shipping
                    </button>
                  </div>
               ) : (
-                <div className="text-sm text-gray-600">{user?.email}</div>
+                <div className="text-sm text-stone-500 font-medium italic">{user?.email}</div>
               )}
             </div>
 
             {/* Shipping Address (Step 2) */}
-            <div className={`bg-white rounded shadow-sm border p-6 ${step === 2 ? 'border-brand-500' : 'border-gray-100'}`}>
-              <div className="flex justify-between items-center mb-4">
-                <h2 className={`font-bold text-lg ${step >= 2 ? 'text-gray-800' : 'text-gray-400'}`}>2. Delivery Address</h2>
-                {step > 2 && <button onClick={() => setStep(2)} className="text-brand-500 text-sm font-semibold hover:underline">Edit</button>}
+            <div className={`bg-white rounded-[2.5rem] organic-shape-1 shadow-xl border p-8 transition-all duration-700 ${step === 2 ? 'border-brand-100 ring-4 ring-brand-50' : 'border-brand-50'}`}>
+              <div className="flex justify-between items-center mb-6">
+                <h2 className={`font-heading italic text-2xl ${step >= 2 ? 'text-stone-800' : 'text-stone-300'}`}>2. Delivery</h2>
+                {step > 2 && <button onClick={() => setStep(2)} className="text-brand-500 text-xs font-bold uppercase tracking-widest hover:text-brand-700">Change</button>}
               </div>
 
               {step === 2 && (
-                <div className="space-y-4">
+                <div className="space-y-5">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
-                    <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                    <input type="text" placeholder="First Name" value={shipping.firstName} onChange={(e) => setShipping({...shipping, firstName: e.target.value})} className="bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
+                    <input type="text" placeholder="Last Name" value={shipping.lastName} onChange={(e) => setShipping({...shipping, lastName: e.target.value})} className="bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
                   </div>
-                  <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                  <input type="text" placeholder="Street Address" value={shipping.address} onChange={(e) => setShipping({...shipping, address: e.target.value})} className="w-full bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
-                    <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                    <input type="text" placeholder="City" value={shipping.city} onChange={(e) => setShipping({...shipping, city: e.target.value})} className="bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
+                    <input type="text" placeholder="PIN Code" value={shipping.pincode} onChange={(e) => setShipping({...shipping, pincode: e.target.value})} className="bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
                   </div>
-                  <input type="tel" placeholder="Mobile Number" value={shipping.phone} onChange={(e) => setShipping({...shipping, phone: e.target.value})} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
+                  <input type="tel" placeholder="Mobile Number" value={shipping.phone} onChange={(e) => setShipping({...shipping, phone: e.target.value})} className="w-full bg-brand-50/30 border border-brand-100 px-6 py-4 rounded-full focus:outline-none focus:ring-2 focus:ring-brand-200 text-stone-800 placeholder-stone-400" />
                   
-                  <button onClick={handleContinueToPayment} className="bg-brand-500 hover:bg-brand-600 text-white font-bold py-3 px-8 rounded transition-colors text-sm mt-4">
-                    CONTINUE TO PAYMENT
+                  <button onClick={handleContinueToPayment} className="bg-brand-900 hover:bg-stone-800 text-white font-bold py-4 px-10 rounded-full transition-all duration-500 shadow-xl hover:scale-105 active:scale-95 tracking-widest text-xs uppercase mt-4">
+                    Continue to Payment
                   </button>
                 </div>
               )}
               {step > 2 && (
-                <div className="text-sm text-gray-600">
+                <div className="text-sm text-stone-500 font-medium italic">
                   {shipping.firstName} {shipping.lastName}, {shipping.address}, {shipping.city} - {shipping.pincode}
                 </div>
               )}
             </div>
 
             {/* Payment Options (Step 3) */}
-            <div className={`bg-white rounded shadow-sm border p-6 ${step === 3 ? 'border-brand-500' : 'border-gray-100'}`}>
-              <h2 className={`font-bold text-lg mb-4 ${step === 3 ? 'text-gray-800' : 'text-gray-400'}`}>3. Payment</h2>
+            <div className={`bg-white rounded-[2.5rem] organic-shape-1 shadow-xl border p-8 transition-all duration-700 ${step === 3 ? 'border-brand-100 ring-4 ring-brand-50' : 'border-brand-50'}`}>
+              <h2 className={`font-heading italic text-2xl mb-6 ${step === 3 ? 'text-stone-800' : 'text-stone-300'}`}>3. Secure Payment</h2>
               
               {step === 3 && (
-                <div className="space-y-4">
-                  <div className="border border-brand-500 bg-brand-50 rounded p-4 flex items-center justify-between cursor-pointer">
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full bg-brand-500 border-2 border-white shadow-[0_0_0_1px_#628f57]"></div>
-                      <span className="font-semibold text-gray-800">Razorpay (UPI, Cards, NetBanking, Wallets)</span>
+                <div className="space-y-6">
+                  <div className="border-2 border-brand-900 bg-brand-50/30 rounded-3xl p-6 flex items-center justify-between cursor-pointer shadow-inner">
+                    <div className="flex items-center gap-4">
+                      <div className="w-5 h-5 rounded-full bg-brand-900 border-4 border-white shadow-lg"></div>
+                      <span className="font-bold text-stone-800">Artisanal Checkout (UPI, Cards, Wallets)</span>
                     </div>
                   </div>
-                  <div className="border border-gray-200 rounded p-4 flex items-center justify-between opacity-50 cursor-not-allowed">
-                    <div className="flex items-center gap-3">
-                      <div className="w-4 h-4 rounded-full border border-gray-400"></div>
-                      <span className="font-medium text-gray-600">Cash on Delivery (Unavailable for Customized Items)</span>
+                  <div className="border border-brand-50 rounded-3xl p-6 flex items-center justify-between opacity-30 cursor-not-allowed">
+                    <div className="flex items-center gap-4">
+                      <div className="w-5 h-5 rounded-full border-2 border-stone-300"></div>
+                      <span className="font-medium text-stone-400">Cash on Delivery (Unavailable for Customized Items)</span>
                     </div>
                   </div>
 
                   <button 
                     disabled={loading || items.length === 0 || !razorpayReady}
                     onClick={handlePayment} 
-                    className="w-full bg-brand-500 hover:bg-brand-600 focus:bg-brand-700 disabled:opacity-50 text-white font-bold py-4 px-4 rounded transition-colors text-sm mt-6 shadow-md"
+                    className="w-full bg-brand-900 hover:bg-stone-800 focus:ring-4 focus:ring-brand-100 disabled:opacity-50 text-white font-bold py-5 px-6 rounded-full transition-all duration-700 text-xs uppercase tracking-widest mt-8 shadow-2xl hover:scale-[1.02] active:scale-95"
                   >
-                    {loading ? 'INITIALIZING PAYMENT...' : !razorpayReady ? 'LOADING PAYMENT...' : `PAY ₹${total} SECURELY`}
+                    {loading ? 'INITIATING CIRCLE...' : !razorpayReady ? 'CRAFTING GATEWAY...' : `AUTHORIZE ₹${total.toLocaleString('en-IN')}`}
                   </button>
                 </div>
               )}
@@ -247,43 +252,42 @@ export default function CheckoutPage() {
           </div>
 
           {/* Cart Summary Side Panel */}
-          <div className="w-full lg:w-96 flex-shrink-0">
-            <div className="bg-white rounded shadow-sm border border-gray-100 p-6 xl:sticky xl:top-28">
-              <h2 className="font-bold text-gray-800 mb-4 border-b border-gray-100 pb-2">Order Summary</h2>
+          <div className="w-full lg:w-[26rem] flex-shrink-0">
+            <div className="bg-white rounded-[2.5rem] organic-shape-1 shadow-2xl border border-brand-50 p-8 xl:sticky xl:top-32">
+              <h2 className="font-heading italic text-2xl text-stone-800 mb-6 pb-4 border-b border-brand-50">Treasures</h2>
               
-              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto">
+              <div className="space-y-6 mb-8 max-h-[40vh] overflow-y-auto no-scrollbar">
                 {items.map((item, idx) => (
-                  <div key={idx} className="flex gap-4">
-                    <div className="w-16 h-16 bg-brand-50 rounded flex-shrink-0 relative overflow-hidden">
-                      <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill sizes="64px" className="object-contain p-1 bg-white" />
-                      <span className="absolute -top-2 -right-2 bg-gray-500 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold">{item.quantity}</span>
+                  <div key={idx} className="flex gap-4 group">
+                    <div className="w-20 h-20 bg-brand-50 organic-shape-2 flex-shrink-0 relative overflow-hidden shadow-sm group-hover:scale-105 transition-transform duration-700">
+                      <Image src={item.imageUrl || "/images/product-1.png"} alt={item.name} fill sizes="80px" className="object-contain p-2" />
+                      <span className="absolute -top-1 -right-1 bg-stone-800 text-white text-[10px] w-6 h-6 flex items-center justify-center rounded-full font-bold shadow-lg">{item.quantity}</span>
                     </div>
-                    <div>
-                      <h4 className="font-medium text-sm text-gray-800 line-clamp-2">{item.name}</h4>
-                      <p className="font-bold text-sm mt-1 text-gray-900">₹{item.price}</p>
+                    <div className="flex-1 min-w-0 flex flex-col justify-center">
+                      <h4 className="font-heading italic text-base text-stone-800 line-clamp-1">{item.name}</h4>
+                      <p className="font-sans font-bold text-sm text-stone-900 mt-1">₹{item.price.toLocaleString('en-IN')}</p>
                     </div>
                   </div>
                 ))}
               </div>
 
-              <div className="space-y-3 mb-6 pt-4 border-t border-gray-100">
-                <div className="flex justify-between text-sm text-gray-600">
+              <div className="space-y-4 mb-8 pt-6 border-t border-brand-50">
+                <div className="flex justify-between text-sm text-stone-500 font-medium">
                   <span>Subtotal</span>
-                  <span>₹{total}</span>
+                  <span className="text-stone-800">₹{total.toLocaleString('en-IN')}</span>
                 </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Shipping charges</span>
-                  <span className="text-green-600 font-semibold">FREE</span>
+                <div className="flex justify-between text-sm text-stone-500 font-medium">
+                  <span>Artisanal Shipping</span>
+                  <span className="text-green-600 font-bold uppercase tracking-widest text-[10px]">Complimentary</span>
                 </div>
-                <div className="flex justify-between font-bold text-xl text-brand-600 border-t border-gray-100 pt-3">
+                <div className="flex justify-between font-sans font-bold text-2xl text-stone-900 border-t border-brand-50 pt-6 mt-6">
                   <span>Total Due</span>
-                  <span>₹{total}</span>
+                  <span>₹{total.toLocaleString('en-IN')}</span>
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-500">
-                 <span>100% Secure Checkout</span>
-                 <Image src="/images/hero.png" width={100} height={20} alt="Payment Methods" className="opacity-50" />
+              <div className="pt-6 border-t border-brand-50 flex items-center justify-center text-[10px] text-stone-400 font-bold uppercase tracking-widest gap-3 opacity-60">
+                 <span>Safe & Secured Checkout</span>
               </div>
             </div>
           </div>
