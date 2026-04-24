@@ -1,7 +1,8 @@
 'use client';
 
 import React, { createContext, useState, useEffect, useContext } from 'react';
-import api from '../lib/api';
+import { useAuth as useClerkAuth, useUser } from '@clerk/nextjs';
+import api, { setApiToken } from '../lib/api';
 
 interface User {
   id: string;
@@ -15,8 +16,6 @@ interface AuthContextType {
   user: User | null;
   token: string | null;
   loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
   updateUser: (patch: Partial<User>) => void;
 }
@@ -24,66 +23,52 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const { getToken, signOut } = useClerkAuth();
+  const { user: clerkUser, isLoaded } = useUser();
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Initialize auth state from localStorage on load
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
-    
-    if (storedToken && storedUser) {
-      setToken(storedToken);
-      setUser(JSON.parse(storedUser));
-    }
-    setLoading(false);
-  }, []);
+    if (!isLoaded) return;
 
-  const login = async (email: string, password: string) => {
-    const response = await api.post('/auth/login', { email, password });
-    const { token, user } = response.data;
-    
-    // Save state
-    setToken(token);
-    setUser(user);
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-  };
+    const sync = async () => {
+      if (!clerkUser) {
+        setUser(null);
+        setToken(null);
+        setApiToken(null);
+        setLoading(false);
+        return;
+      }
+      try {
+        const clerkToken = await getToken();
+        setToken(clerkToken);
+        setApiToken(clerkToken);
+        const res = await api.post('/auth/sync', {}, {
+          headers: { Authorization: `Bearer ${clerkToken}` }
+        });
+        setUser(res.data);
+      } catch (err) {
+        console.error('Auth sync failed:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const register = async (name: string, email: string, password: string) => {
-    const response = await api.post('/auth/register', { name, email, password });
-    const { token, user } = response.data;
-    
-    setToken(token);
-    setUser(user);
-    localStorage.setItem('token', token);
-    localStorage.setItem('user', JSON.stringify(user));
-  };
+    sync();
+  }, [isLoaded, clerkUser]);
 
-  const logout = () => {
-    setToken(null);
-    setUser(null);
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = '/login';
-  };
+  const logout = () => signOut({ redirectUrl: '/' });
 
   const updateUser = (patch: Partial<User>) => {
-    setUser((currentUser) => {
-      if (!currentUser) return currentUser;
-      const nextUser = { ...currentUser, ...patch };
-      const didChange = Object.keys(nextUser).some((key) => nextUser[key as keyof User] !== currentUser[key as keyof User]);
-      if (!didChange) {
-        return currentUser;
-      }
-      localStorage.setItem('user', JSON.stringify(nextUser));
-      return nextUser;
+    setUser((current) => {
+      if (!current) return current;
+      return { ...current, ...patch };
     });
   };
 
   return (
-    <AuthContext.Provider value={{ user, token, loading, login, register, logout, updateUser }}>
+    <AuthContext.Provider value={{ user, token, loading, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

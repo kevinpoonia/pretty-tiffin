@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
+import { verifyToken } from '@clerk/backend';
+import { prisma } from '../prisma';
 
 export interface AuthRequest extends Request {
   user?: { id: string; role: string };
 }
 
-export const authenticate = (req: AuthRequest, res: Response, next: NextFunction): void => {
+export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
   const token = req.headers.authorization?.split(' ')[1];
   if (!token) {
     res.status(401).json({ error: 'Unauthorized' });
@@ -13,10 +14,18 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET as string) as { id: string; role: string };
-    req.user = decoded;
+    const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
+    const clerkId = payload.sub;
+
+    const user = await prisma.user.findUnique({ where: { clerkId } });
+    if (!user) {
+      res.status(401).json({ error: 'User not found. Please sync account.' });
+      return;
+    }
+
+    req.user = { id: user.id, role: user.role };
     next();
-  } catch (error) {
+  } catch {
     res.status(401).json({ error: 'Invalid token' });
   }
 };

@@ -1,22 +1,26 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.requireAdmin = exports.authenticate = void 0;
-const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const authenticate = (req, res, next) => {
+const backend_1 = require("@clerk/backend");
+const prisma_1 = require("../prisma");
+const authenticate = async (req, res, next) => {
     const token = req.headers.authorization?.split(' ')[1];
     if (!token) {
         res.status(401).json({ error: 'Unauthorized' });
         return;
     }
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        req.user = decoded;
+        const payload = await (0, backend_1.verifyToken)(token, { secretKey: process.env.CLERK_SECRET_KEY });
+        const clerkId = payload.sub;
+        const user = await prisma_1.prisma.user.findUnique({ where: { clerkId } });
+        if (!user) {
+            res.status(401).json({ error: 'User not found. Please sync account.' });
+            return;
+        }
+        req.user = { id: user.id, role: user.role };
         next();
     }
-    catch (error) {
+    catch {
         res.status(401).json({ error: 'Invalid token' });
     }
 };

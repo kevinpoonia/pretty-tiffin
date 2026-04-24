@@ -1,90 +1,29 @@
-'use client';
-
+import { SignIn } from '@clerk/nextjs';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import Link from 'next/link';
-import { useState } from 'react';
-import { useAuth } from '@/context/AuthContext';
 
 export default function LoginPage() {
-  const [isLogin, setIsLogin] = useState(true);
-  const { login, register } = useAuth();
-  
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
-    try {
-      if (isLogin) {
-        await login(email, password);
-      } else {
-        await register(name, email, password);
-      }
-      window.location.href = '/account';
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Authentication failed. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="bg-[#faf8f4] min-h-screen flex flex-col">
       <Navbar alwaysSolid />
-      <main className="flex-1 flex items-center justify-center py-12 px-4">
-        
-        <div className="w-full max-w-md bg-white rounded shadow-sm border border-gray-100 p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-              Pretty<span className="text-brand-500">Tiffin</span>
-            </h1>
-            <p className="text-gray-500 text-sm mt-2">
-              {isLogin ? 'Login to access your orders and wishlist.' : 'Create an account to personalize your gifting.'}
-            </p>
-          </div>
-
-          <form className="space-y-5" onSubmit={handleSubmit}>
-            
-            {error && <div className="p-3 bg-brand-50 border border-brand-200 text-brand-600 text-sm rounded">{error}</div>}
-
-            {!isLogin && (
-              <div>
-                <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Full Name</label>
-                <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="John Doe" required={!isLogin} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
-              </div>
-            )}
-
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase mb-1">Email Address</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" required className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
-            </div>
-
-            <div>
-              <div className="flex justify-between items-center mb-1">
-                <label className="block text-xs font-bold text-gray-700 uppercase">Password</label>
-                {isLogin && <a href="#" className="text-xs text-brand-500 hover:underline">Forgot?</a>}
-              </div>
-              <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="••••••••" required minLength={6} className="w-full border border-gray-300 px-4 py-2.5 rounded focus:outline-none focus:border-brand-500" />
-            </div>
-
-            <button type="submit" disabled={loading} className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-70 text-white font-bold py-3 px-4 rounded transition-colors shadow-sm">
-              {loading ? 'PROCESSING...' : (isLogin ? 'SECURE LOGIN' : 'CREATE ACCOUNT')}
-            </button>
-          </form>
-
-          <div className="mt-6 text-center text-sm text-gray-600">
-            {isLogin ? "Don't have an account? " : "Already have an account? "}
-            <button onClick={() => setIsLogin(!isLogin)} className="text-brand-500 font-bold hover:underline">
-              {isLogin ? 'Register' : 'Login'}
-            </button>
-          </div>
-        </div>
+      <main className="flex-1 flex items-center justify-center py-16 px-4">
+        <SignIn
+          routing="hash"
+          fallbackRedirectUrl="/account"
+          appearance={{
+            variables: {
+              colorPrimary: '#4a7c59',
+              colorBackground: '#ffffff',
+              borderRadius: '0.75rem',
+            },
+            elements: {
+              card: 'shadow-sm border border-gray-100',
+              headerTitle: 'font-heading text-stone-800',
+              formButtonPrimary: 'bg-brand-500 hover:bg-brand-600',
+              footerActionLink: 'text-brand-600 hover:text-brand-700',
+            },
+          }}
+        />
       </main>
       <Footer />
     </div>
