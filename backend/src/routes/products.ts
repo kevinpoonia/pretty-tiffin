@@ -30,7 +30,7 @@ router.get('/:slug/reviews', async (req: Request, res: Response) => {
       orderBy: { createdAt: 'desc' }
     });
     const avgRating = reviews.length
-      ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+      ? reviews.reduce((s: number, r: { rating: number }) => s + r.rating, 0) / reviews.length
       : 0;
     res.json({ reviews, avgRating: Math.round(avgRating * 10) / 10, total: reviews.length });
   } catch (error) {

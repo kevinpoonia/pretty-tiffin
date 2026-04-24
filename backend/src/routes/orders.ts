@@ -96,7 +96,7 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
     // Send order confirmation email (fire-and-forget)
     const user = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { email: true, name: true } });
     if (user) {
-      const emailItems = newOrder.items.map(i => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
+      const emailItems = newOrder.items.map((i: { product: { name: string }; quantity: number; price: unknown }) => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
       sendEmail(
         user.email,
         'Your Pretty Tiffin Order is Confirmed! 🎉',
