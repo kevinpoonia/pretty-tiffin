@@ -177,6 +177,53 @@ router.put('/profile', auth_1.authenticate, async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 });
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
+// GET /api/users/wishlist
+router.get('/wishlist', auth_1.authenticate, async (req, res) => {
+    try {
+        const wishlist = await prisma_1.prisma.wishlist.findMany({
+            where: { userId: req.user.id },
+            include: { product: { include: { customizationOptions: true } } },
+            orderBy: { createdAt: 'desc' }
+        });
+        res.json(wishlist);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+// POST /api/users/wishlist
+router.post('/wishlist', auth_1.authenticate, async (req, res) => {
+    try {
+        const { productId } = req.body;
+        if (!productId) {
+            res.status(400).json({ error: 'productId required' });
+            return;
+        }
+        const item = await prisma_1.prisma.wishlist.upsert({
+            where: { userId_productId: { userId: req.user.id, productId } },
+            update: {},
+            create: { userId: req.user.id, productId }
+        });
+        res.status(201).json(item);
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+// DELETE /api/users/wishlist/:productId
+router.delete('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
+    try {
+        await prisma_1.prisma.wishlist.deleteMany({
+            where: { userId: req.user.id, productId: req.params.productId }
+        });
+        res.json({ success: true });
+    }
+    catch (error) {
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+// ─── Password ─────────────────────────────────────────────────────────────────
 // Update password
 router.put('/password', auth_1.authenticate, async (req, res) => {
     try {

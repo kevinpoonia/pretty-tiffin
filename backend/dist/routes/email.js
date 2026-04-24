@@ -1,18 +1,108 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.sendEmail = sendEmail;
+exports.orderConfirmationEmail = orderConfirmationEmail;
+exports.welcomeEmail = welcomeEmail;
 const express_1 = require("express");
 const router = (0, express_1.Router)();
-// Mock Brevo email send
+const BREVO_URL = 'https://api.brevo.com/v3/smtp/email';
+const API_KEY = process.env.BREVO_API_KEY || '';
+const SENDER = {
+    name: process.env.BREVO_SENDER_NAME || 'Pretty Tiffin',
+    email: process.env.BREVO_SENDER_EMAIL || 'noreply@prettytiffin.in'
+};
+async function sendEmail(to, subject, htmlContent) {
+    if (!API_KEY) {
+        console.log(`[Email Mock] To: ${to} | Subject: ${subject}`);
+        return true;
+    }
+    try {
+        const res = await fetch(BREVO_URL, {
+            method: 'POST',
+            headers: { 'api-key': API_KEY, 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sender: SENDER, to: [{ email: to }], subject, htmlContent })
+        });
+        return res.ok;
+    }
+    catch (err) {
+        console.error('[Email] Send failed:', err);
+        return false;
+    }
+}
+function orderConfirmationEmail(name, orderId, total, items) {
+    const itemRows = items.map(i => `
+    <tr>
+      <td style="padding:8px 0;border-bottom:1px solid #f0ebe4;">${i.name || 'Item'}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0ebe4;text-align:center;">${i.quantity}</td>
+      <td style="padding:8px 0;border-bottom:1px solid #f0ebe4;text-align:right;">₹${Number(i.price).toLocaleString('en-IN')}</td>
+    </tr>`).join('');
+    return `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#faf8f4;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+    <div style="background:#2a3d25;padding:32px 40px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:-0.5px;">Pretty<span style="color:#83aa79;">Tiffin</span></h1>
+      <p style="color:#adc8a5;margin:8px 0 0;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Order Confirmed</p>
+    </div>
+    <div style="padding:40px;">
+      <h2 style="color:#2a3d25;font-size:22px;margin:0 0 8px;">Thank you, ${name}! 🎉</h2>
+      <p style="color:#628f57;margin:0 0 24px;font-size:14px;">Your order <strong>#${orderId.slice(-8).toUpperCase()}</strong> has been confirmed and is being prepared with care.</p>
+      <table style="width:100%;border-collapse:collapse;margin-bottom:24px;">
+        <thead>
+          <tr style="border-bottom:2px solid #e8f0e4;">
+            <th style="text-align:left;padding:8px 0;font-size:12px;color:#628f57;text-transform:uppercase;letter-spacing:0.1em;">Item</th>
+            <th style="text-align:center;padding:8px 0;font-size:12px;color:#628f57;text-transform:uppercase;letter-spacing:0.1em;">Qty</th>
+            <th style="text-align:right;padding:8px 0;font-size:12px;color:#628f57;text-transform:uppercase;letter-spacing:0.1em;">Price</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+      <div style="background:#f5f8f3;border-radius:12px;padding:16px 20px;margin-bottom:32px;display:flex;justify-content:space-between;">
+        <span style="font-weight:700;color:#2a3d25;">Total Paid</span>
+        <span style="font-weight:900;color:#2a3d25;font-size:18px;">₹${Number(total).toLocaleString('en-IN')}</span>
+      </div>
+      <a href="https://prettytiffin.in/account/orders" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px;">Track Your Order →</a>
+    </div>
+    <div style="background:#f5f8f3;padding:24px 40px;text-align:center;border-top:1px solid #e8f0e4;">
+      <p style="color:#83aa79;font-size:12px;margin:0;">Questions? <a href="mailto:support@prettytiffin.in" style="color:#628f57;">support@prettytiffin.in</a></p>
+      <p style="color:#adc8a5;font-size:11px;margin:8px 0 0;">© ${new Date().getFullYear()} Pretty Tiffin. Crafted with love in India.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+function welcomeEmail(name) {
+    return `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#faf8f4;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;">
+    <div style="background:#2a3d25;padding:32px 40px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:28px;">Pretty<span style="color:#83aa79;">Tiffin</span></h1>
+    </div>
+    <div style="padding:40px;">
+      <h2 style="color:#2a3d25;">Welcome, ${name}! ✨</h2>
+      <p style="color:#628f57;line-height:1.6;">Your account is ready. Explore our premium collection of personalized, laser-engraved stainless steel tiffins — perfect for gifting or everyday use.</p>
+      <a href="https://prettytiffin.in/shop" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;margin-top:16px;">Shop Now →</a>
+    </div>
+    <div style="background:#f5f8f3;padding:24px 40px;text-align:center;">
+      <p style="color:#adc8a5;font-size:11px;margin:0;">© ${new Date().getFullYear()} Pretty Tiffin. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+// POST /api/email/send
 router.post('/send', async (req, res) => {
     try {
-        const { to, subject, templateId, params } = req.body;
-        // In a real implementation we would call:
-        // fetch('https://api.brevo.com/v3/smtp/email', { ... })
-        console.log(`[Email] Sending to ${to} | Subject: ${subject} | Template: ${templateId}`);
-        res.json({ success: true, message: 'Email sent successfully (mock)' });
+        const { to, subject, htmlContent } = req.body;
+        if (!to || !subject || !htmlContent) {
+            res.status(400).json({ error: 'to, subject, htmlContent are required' });
+            return;
+        }
+        const success = await sendEmail(to, subject, htmlContent);
+        res.json({ success });
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });

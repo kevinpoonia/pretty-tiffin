@@ -4,8 +4,9 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Star, Truck, ChevronLeft, ChevronRight, Heart, Sparkles } from 'lucide-react';
+import { Star, ChevronRight, Heart, Sparkles } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import api from '@/lib/api';
 
 interface ProductCardProps {
   product: {
@@ -22,30 +23,28 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product, showBadge = false, priority = false }: ProductCardProps) {
-  const [currentImg, setCurrentImg] = useState(0);
+  const currentImg = 0;
   const [isHovered, setIsHovered] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const { showToast } = useToast();
 
   const images = product.images?.length > 0 ? product.images : ['/images/product-1.png'];
 
-  const nextImage = (e: React.MouseEvent) => {
+  const toggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setCurrentImg(prev => (prev + 1) % images.length);
-  };
-
-  const prevImage = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setCurrentImg(prev => (prev - 1 + images.length) % images.length);
-  };
-
-  const toggleWishlist = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setWishlisted(prev => !prev);
-    showToast(wishlisted ? 'Removed from wishlist' : `${product.name} added to wishlist`, wishlisted ? 'info' : 'success');
+    const next = !wishlisted;
+    setWishlisted(next);
+    showToast(next ? `${product.name} added to wishlist` : 'Removed from wishlist', next ? 'success' : 'info');
+    try {
+      if (next) {
+        await api.post(`/user/wishlist/${product.id}`);
+      } else {
+        await api.delete(`/user/wishlist/${product.id}`);
+      }
+    } catch {
+      setWishlisted(!next);
+    }
   };
 
   const discount = product.compareAtPrice && product.compareAtPrice > product.price
@@ -145,7 +144,6 @@ export default function ProductCard({ product, showBadge = false, priority = fal
 
         <div className="mt-auto flex items-end justify-between pt-5 border-t border-stone-50">
           <div className="flex flex-col">
-            <span className="text-[10px] text-stone-400 font-medium uppercase tracking-wider mb-0.5">Investment</span>
             <div className="flex items-baseline gap-2">
               <span className="font-sans font-bold text-stone-900 text-xl">
                 ₹{product.price.toLocaleString('en-IN')}

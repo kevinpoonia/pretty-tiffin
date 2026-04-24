@@ -8,20 +8,24 @@ const prisma_1 = require("../prisma");
 const auth_1 = require("../middleware/auth");
 const razorpay_1 = require("../razorpay");
 const crypto_1 = __importDefault(require("crypto"));
+const email_1 = require("./email");
 const router = (0, express_1.Router)();
 const getUserOrders = async (userId) => {
     return prisma_1.prisma.order.findMany({
         where: { userId },
-        include: { items: { include: { product: true } } },
+        include: {
+            items: { include: { product: { select: { name: true, images: true, slug: true } } } },
+            giftOption: true
+        },
         orderBy: { createdAt: 'desc' }
     });
 };
-// Create Payment Intent (Razorpay Order)
+// POST /api/orders/create-intent — Create Razorpay order
 router.post('/create-intent', auth_1.authenticate, async (req, res) => {
     try {
         const { amount, currency = 'INR', receipt } = req.body;
         const options = {
-            amount: parseInt(amount, 10) * 100, // amount in the smallest currency unit
+            amount: Math.round(Number(amount) * 100),
             currency,
             receipt: receipt || `receipt_${Date.now()}`
         };
@@ -33,26 +37,22 @@ router.post('/create-intent', auth_1.authenticate, async (req, res) => {
         res.status(500).json({ error: 'Error creating Razorpay order' });
     }
 });
-// Verify Payment and Create DB Order
+// POST /api/orders/verify — Verify payment & create DB order
 router.post('/verify', auth_1.authenticate, async (req, res) => {
     try {
-        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, totalAmount, items, // array of { productId, quantity, price, customizationDetails }
-        paymentMethod, shippingAddress, giftDetails // { occasion, message, scheduledFor, packaging }
-         } = req.body;
-        const secret = process.env.RAZORPAY_KEY_SECRET || 'dummy_key_secret';
+        const { razorpay_order_id, razorpay_payment_id, razorpay_signature, totalAmount, items, paymentMethod, shippingAddress, giftDetails } = req.body;
         if (paymentMethod === 'RAZORPAY') {
+            const secret = process.env.RAZORPAY_KEY_SECRET || '';
             const shasum = crypto_1.default.createHmac('sha256', secret);
             shasum.update(`${razorpay_order_id}|${razorpay_payment_id}`);
-            const digest = shasum.digest('hex');
-            if (digest !== razorpay_signature) {
-                res.status(400).json({ error: 'Transaction not legit!' });
+            if (shasum.digest('hex') !== razorpay_signature) {
+                res.status(400).json({ error: 'Payment signature mismatch' });
                 return;
             }
         }
-        // Create GiftOption if details provided
-        let giftOption = null;
+        let giftOptionId = null;
         if (giftDetails && (giftDetails.occasion || giftDetails.message)) {
-            giftOption = await prisma_1.prisma.giftOption.create({
+            const go = await prisma_1.prisma.giftOption.create({
                 data: {
                     occasion: giftDetails.occasion,
                     message: giftDetails.message,
@@ -60,27 +60,34 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
                     packaging: giftDetails.packaging
                 }
             });
+            giftOptionId = go.id;
         }
         const newOrder = await prisma_1.prisma.order.create({
             data: {
                 userId: req.user.id,
-                totalAmount,
+                totalAmount: Number(totalAmount),
                 paymentMethod,
                 paymentRef: paymentMethod === 'RAZORPAY' ? razorpay_payment_id : null,
                 shippingAddress: JSON.stringify(shippingAddress),
-                giftOptionId: giftOption ? giftOption.id : null,
+                giftOptionId,
                 status: 'CONFIRMED',
                 items: {
-                    create: items.map((item) => ({
+                    create: (items || []).map((item) => ({
                         productId: item.productId,
                         quantity: item.quantity,
-                        price: item.price,
+                        price: Number(item.price),
                         customizationDetails: JSON.stringify(item.customizationDetails || {})
                     }))
                 }
             },
-            include: { items: true, giftOption: true }
+            include: { items: { include: { product: { select: { name: true } } } }, giftOption: true }
         });
+        // Send order confirmation email (fire-and-forget)
+        const user = await prisma_1.prisma.user.findUnique({ where: { id: req.user.id }, select: { email: true, name: true } });
+        if (user) {
+            const emailItems = newOrder.items.map(i => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
+            (0, email_1.sendEmail)(user.email, 'Your Pretty Tiffin Order is Confirmed! 🎉', (0, email_1.orderConfirmationEmail)(user.name, newOrder.id, totalAmount, emailItems)).catch(console.error);
+        }
         res.json(newOrder);
     }
     catch (error) {
@@ -88,24 +95,40 @@ router.post('/verify', auth_1.authenticate, async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-// Get User Orders
+// GET /api/orders — current user's orders
 router.get('/', auth_1.authenticate, async (req, res) => {
     try {
         const orders = await getUserOrders(req.user.id);
         res.json(orders);
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// GET /api/orders/my-orders — alias
 router.get('/my-orders', auth_1.authenticate, async (req, res) => {
     try {
         const orders = await getUserOrders(req.user.id);
         res.json(orders);
     }
     catch (error) {
-        console.error(error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+// PATCH /api/orders/:id/status — admin update order status
+router.patch('/:id/status', auth_1.authenticate, async (req, res) => {
+    try {
+        const { status, trackingNumber } = req.body;
+        const updated = await prisma_1.prisma.order.update({
+            where: { id: req.params.id },
+            data: {
+                ...(status && { status }),
+                ...(trackingNumber !== undefined && { trackingNumber })
+            }
+        });
+        res.json(updated);
+    }
+    catch (error) {
         res.status(500).json({ error: 'Internal server error' });
     }
 });

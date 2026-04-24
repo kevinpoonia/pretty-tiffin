@@ -4,15 +4,15 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
-import { Star, ShieldCheck, Heart, Truck, Info, Loader2, Gift } from 'lucide-react';
+import { Star, ShieldCheck, Truck, Info, Loader2, Gift, MessageSquare, Send, ThumbsUp } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
-import Link from 'next/link';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import ProductCustomizer from '@/components/products/ProductCustomizer';
 import GiftSelector from '@/components/products/GiftSelector';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import api from '@/lib/api';
 
 export default function ProductDetailClient({ product }: { product: any }) {
   const { addItem } = useCart();
@@ -29,6 +29,40 @@ export default function ProductDetailClient({ product }: { product: any }) {
   });
   const [quantity, setQuantity] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [reviews, setReviews] = useState<any[]>([]);
+  const [avgRating, setAvgRating] = useState(0);
+  const [reviewsTotal, setReviewsTotal] = useState(0);
+  const [newRating, setNewRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [newComment, setNewComment] = useState('');
+  const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    api.get(`/products/${product.slug}/reviews`).then((r) => {
+      setReviews(r.data.reviews || []);
+      setAvgRating(r.data.avgRating || 0);
+      setReviewsTotal(r.data.total || 0);
+    }).catch(() => {});
+  }, [product.slug]);
+
+  const submitReview = async () => {
+    if (!newRating) { showToast('Please select a star rating', 'error'); return; }
+    if (!user) { showToast('Please log in to leave a review', 'error'); router.push('/login'); return; }
+    setSubmitting(true);
+    try {
+      const r = await api.post(`/products/${product.slug}/reviews`, { rating: newRating, comment: newComment });
+      setReviews(prev => [r.data, ...prev]);
+      setReviewsTotal(prev => prev + 1);
+      setAvgRating(prev => Math.round(((prev * (reviewsTotal) + newRating) / (reviewsTotal + 1)) * 10) / 10);
+      setNewRating(0);
+      setNewComment('');
+      showToast('Review submitted. Thank you!', 'success');
+    } catch (err: any) {
+      showToast(err?.response?.data?.error || 'Failed to submit review', 'error');
+    } finally {
+      setSubmitting(false);
+    }
+  };
 
   useEffect(() => {
     // Initialize default options
@@ -222,6 +256,96 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   </div>
                 ))}
               </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-20 border-t border-brand-50 pt-16">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-10">
+            <div>
+              <h2 className="text-3xl md:text-4xl font-heading italic text-stone-800 mb-2">Customer Reviews</h2>
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-0.5">
+                  {[1,2,3,4,5].map(s => (
+                    <Star key={s} size={16} className={s <= Math.round(avgRating) ? 'fill-brand-400 text-brand-400' : 'text-brand-200 fill-brand-200'} />
+                  ))}
+                </div>
+                <span className="font-bold text-stone-700">{avgRating > 0 ? avgRating.toFixed(1) : '—'}</span>
+                <span className="text-sm text-stone-400">({reviewsTotal} review{reviewsTotal !== 1 ? 's' : ''})</span>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-8">
+            {/* Write a review */}
+            <div className="bg-brand-50/50 rounded-[2rem] border border-brand-100 p-6 h-fit">
+              <h3 className="font-heading italic text-xl text-stone-800 mb-5">Write a Review</h3>
+              <div className="flex items-center gap-2 mb-5">
+                {[1,2,3,4,5].map(s => (
+                  <button
+                    key={s}
+                    onMouseEnter={() => setHoverRating(s)}
+                    onMouseLeave={() => setHoverRating(0)}
+                    onClick={() => setNewRating(s)}
+                    className="transition-transform hover:scale-125 active:scale-95"
+                  >
+                    <Star size={28} className={(hoverRating || newRating) >= s ? 'fill-brand-400 text-brand-400' : 'text-stone-200 fill-stone-200'} />
+                  </button>
+                ))}
+                <span className="ml-2 text-sm text-stone-500 font-medium">
+                  {newRating === 1 ? 'Poor' : newRating === 2 ? 'Fair' : newRating === 3 ? 'Good' : newRating === 4 ? 'Very Good' : newRating === 5 ? 'Excellent' : 'Select rating'}
+                </span>
+              </div>
+              <textarea
+                value={newComment}
+                onChange={e => setNewComment(e.target.value)}
+                placeholder="Share your experience with this product..."
+                rows={4}
+                className="w-full border border-brand-100 rounded-2xl px-4 py-3 text-sm text-stone-700 focus:outline-none focus:border-brand-300 resize-none bg-white"
+              />
+              <button
+                onClick={submitReview}
+                disabled={submitting}
+                className="mt-4 w-full bg-brand-900 text-white font-bold py-3 rounded-full hover:bg-stone-800 transition-colors disabled:opacity-60 flex items-center justify-center gap-2"
+              >
+                {submitting ? <><Loader2 size={16} className="animate-spin" /> Submitting...</> : <><MessageSquare size={16} /> Submit Review</>}
+              </button>
+            </div>
+
+            {/* Review list */}
+            <div className="space-y-4 max-h-[520px] overflow-y-auto pr-1">
+              {reviews.length === 0 ? (
+                <div className="flex flex-col items-center justify-center py-16 text-center">
+                  <ThumbsUp size={40} className="text-brand-200 mb-4" />
+                  <p className="text-stone-400 text-sm">No reviews yet. Be the first!</p>
+                </div>
+              ) : reviews.map((review: any) => (
+                <motion.div
+                  key={review.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="bg-white border border-brand-50 rounded-2xl p-5 shadow-sm"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-2">
+                    <div>
+                      <p className="font-semibold text-stone-800 text-sm">{review.user?.name || 'Verified Buyer'}</p>
+                      <p className="text-xs text-stone-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                    </div>
+                    <div className="flex items-center gap-0.5 shrink-0">
+                      {[1,2,3,4,5].map(s => (
+                        <Star key={s} size={12} className={s <= review.rating ? 'fill-brand-400 text-brand-400' : 'text-stone-200 fill-stone-200'} />
+                      ))}
+                    </div>
+                  </div>
+                  {review.comment && <p className="text-sm text-stone-600 leading-relaxed">{review.comment}</p>}
+                  {review.isVerified && (
+                    <span className="inline-flex items-center gap-1 mt-3 text-[10px] font-bold text-green-600 bg-green-50 px-2 py-0.5 rounded-full border border-green-100">
+                      <Send size={8} /> Verified Purchase
+                    </span>
+                  )}
+                </motion.div>
+              ))}
             </div>
           </div>
         </div>

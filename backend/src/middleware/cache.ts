@@ -4,24 +4,17 @@ import { redis } from '../redis';
 export const cacheMiddleware = (duration: number) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     const key = `cache:${req.originalUrl || req.url}`;
-    
     try {
-      const cachedResponse = await redis.get(key);
-      if (cachedResponse) {
-        return res.json(JSON.parse(cachedResponse));
-      }
-      
-      const originalJson = res.json;
-      res.json = function(body: any): any {
-        redis.set(key, JSON.stringify(body), 'EX', duration).catch(e => {
-          console.error('Redis cache set error:', e);
-        });
-        return originalJson.call(this, body);
+      const cached = await redis.get(key);
+      if (cached) { return res.json(JSON.parse(cached)); }
+
+      const originalJson = res.json.bind(res);
+      res.json = function (body: any): Response {
+        redis.setex(key, duration, JSON.stringify(body)).catch(console.error);
+        return originalJson(body);
       };
-      
       next();
-    } catch (error) {
-      console.error('Cache middleware error:', error);
+    } catch {
       next();
     }
   };
@@ -30,9 +23,7 @@ export const cacheMiddleware = (duration: number) => {
 export const clearCache = async (pattern: string) => {
   try {
     const keys = await redis.keys(`cache:${pattern}`);
-    if (keys.length > 0) {
-      await redis.del(...keys);
-    }
+    for (const key of keys) { await redis.del(key); }
   } catch (error) {
     console.error('Clear cache error:', error);
   }

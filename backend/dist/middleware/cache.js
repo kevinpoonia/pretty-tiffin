@@ -6,21 +6,18 @@ const cacheMiddleware = (duration) => {
     return async (req, res, next) => {
         const key = `cache:${req.originalUrl || req.url}`;
         try {
-            const cachedResponse = await redis_1.redis.get(key);
-            if (cachedResponse) {
-                return res.json(JSON.parse(cachedResponse));
+            const cached = await redis_1.redis.get(key);
+            if (cached) {
+                return res.json(JSON.parse(cached));
             }
-            const originalJson = res.json;
+            const originalJson = res.json.bind(res);
             res.json = function (body) {
-                redis_1.redis.set(key, JSON.stringify(body), 'EX', duration).catch(e => {
-                    console.error('Redis cache set error:', e);
-                });
-                return originalJson.call(this, body);
+                redis_1.redis.setex(key, duration, JSON.stringify(body)).catch(console.error);
+                return originalJson(body);
             };
             next();
         }
-        catch (error) {
-            console.error('Cache middleware error:', error);
+        catch {
             next();
         }
     };
@@ -29,8 +26,8 @@ exports.cacheMiddleware = cacheMiddleware;
 const clearCache = async (pattern) => {
     try {
         const keys = await redis_1.redis.keys(`cache:${pattern}`);
-        if (keys.length > 0) {
-            await redis_1.redis.del(...keys);
+        for (const key of keys) {
+            await redis_1.redis.del(key);
         }
     }
     catch (error) {

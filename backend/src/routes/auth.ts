@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { prisma } from '../prisma';
+import { sendEmail, welcomeEmail } from './email';
 
 const router = Router();
 
@@ -32,8 +33,10 @@ router.post('/register', async (req: Request, res: Response) => {
       }
     });
 
-    // Generate token
     const token = jwt.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET as string, { expiresIn: '7d' });
+
+    // Send welcome email (fire-and-forget)
+    sendEmail(user.email, 'Welcome to Pretty Tiffin! ✨', welcomeEmail(user.name)).catch(console.error);
 
     res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
   } catch (error) {

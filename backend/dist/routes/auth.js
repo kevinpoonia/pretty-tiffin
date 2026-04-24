@@ -7,6 +7,7 @@ const express_1 = require("express");
 const bcrypt_1 = __importDefault(require("bcrypt"));
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const prisma_1 = require("../prisma");
+const email_1 = require("./email");
 const router = (0, express_1.Router)();
 router.post('/register', async (req, res) => {
     try {
@@ -31,8 +32,9 @@ router.post('/register', async (req, res) => {
                 name
             }
         });
-        // Generate token
         const token = jsonwebtoken_1.default.sign({ id: user.id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
+        // Send welcome email (fire-and-forget)
+        (0, email_1.sendEmail)(user.email, 'Welcome to Pretty Tiffin! ✨', (0, email_1.welcomeEmail)(user.name)).catch(console.error);
         res.status(201).json({ token, user: { id: user.id, email: user.email, name: user.name, role: user.role } });
     }
     catch (error) {
