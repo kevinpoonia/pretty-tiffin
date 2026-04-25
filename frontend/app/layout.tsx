@@ -5,17 +5,17 @@ import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
+    default: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes Worldwide',
     template: '%s | Pretty Luxe Atelier'
   },
-  description: 'Premium, personalized stainless steel tiffin boxes for gifting and everyday use in India. Discover unique engraved tiffins for birthdays, anniversaries, and corporate gifting.',
-  keywords: ['personalized tiffin', 'customized tiffin box', 'stainless steel tiffin India', 'engraved gifts India', 'pretty luxe atelier', 'luxury gifting India'],
+  description: 'Premium, personalized stainless steel tiffin boxes for gifting and everyday use. Worldwide shipping. Discover unique engraved tiffins for birthdays, anniversaries, and corporate gifting.',
+  keywords: ['personalized tiffin', 'customized tiffin box', 'stainless steel tiffin', 'engraved gifts', 'pretty luxe atelier', 'luxury gifting worldwide'],
   metadataBase: new URL('https://prettyluxeatelier.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
+    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes Worldwide',
     description: 'Personalized, eco-friendly stainless steel tiffin boxes with premium laser engraving. The perfect gift for your loved ones.',
     url: 'https://prettyluxeatelier.com',
     siteName: 'Pretty Luxe Atelier',
@@ -27,12 +27,12 @@ export const metadata: Metadata = {
         alt: 'Pretty Luxe Atelier Collection',
       },
     ],
-    locale: 'en_IN',
+    locale: 'en_US',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
+    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes Worldwide',
     description: 'Personalized, eco-friendly stainless steel tiffin boxes with premium laser engraving.',
     images: ['/og-image.jpg'],
   },

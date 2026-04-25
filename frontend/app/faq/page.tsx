@@ -29,8 +29,8 @@ const FAQ_DATA = [
     category: 'Shipping & Gifting',
     icon: Truck,
     questions: [
-      { q: "How long does delivery take within India?", a: "Standard delivery takes 3-5 business days. Express shipping options are available for major metros (2-3 business days)." },
-      { q: "Do you offer international shipping?", a: "Currently, we ship only within India. We are working on expanding our reach soon!" },
+      { q: "How long does delivery take?", a: "Standard delivery takes 7-14 business days internationally. Express shipping is available at checkout for 3-7 business days." },
+      { q: "Do you ship worldwide?", a: "Yes! We ship to most countries worldwide. Free shipping is included on all orders." },
       { q: "Can I schedule a gift delivery?", a: "Yes! You can choose 'Schedule Delivery' at checkout and select your preferred delivery date for special occasions." }
     ]
   },

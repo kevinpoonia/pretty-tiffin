@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import api from '@/lib/api';
+import { useCurrency } from '@/context/CurrencyContext';
 
 declare global {
   interface Window {
@@ -18,6 +19,7 @@ declare global {
 export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth();
   const { items, total, loading: cartLoading, clearCart } = useCart();
+  const { formatPrice } = useCurrency();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -243,7 +245,7 @@ export default function CheckoutPage() {
                     onClick={handlePayment} 
                     className="w-full bg-brand-900 hover:bg-stone-800 focus:ring-4 focus:ring-brand-100 disabled:opacity-50 text-white font-bold py-5 px-6 rounded-full transition-all duration-700 text-xs uppercase tracking-widest mt-8 shadow-2xl hover:scale-[1.02] active:scale-95"
                   >
-                    {loading ? 'INITIATING CIRCLE...' : !razorpayReady ? 'CRAFTING GATEWAY...' : `AUTHORIZE ₹${total.toLocaleString('en-IN')}`}
+                    {loading ? 'INITIATING CIRCLE...' : !razorpayReady ? 'CRAFTING GATEWAY...' : `AUTHORIZE ${formatPrice(total)}`}
                   </button>
                 </div>
               )}
@@ -265,7 +267,7 @@ export default function CheckoutPage() {
                     </div>
                     <div className="flex-1 min-w-0 flex flex-col justify-center">
                       <h4 className="font-heading italic text-base text-stone-800 line-clamp-1">{item.name}</h4>
-                      <p className="font-sans font-bold text-sm text-stone-900 mt-1">₹{item.price.toLocaleString('en-IN')}</p>
+                      <p className="font-sans font-bold text-sm text-stone-900 mt-1">{formatPrice(item.price)}</p>
                     </div>
                   </div>
                 ))}
@@ -274,7 +276,7 @@ export default function CheckoutPage() {
               <div className="space-y-4 mb-8 pt-6 border-t border-brand-50">
                 <div className="flex justify-between text-sm text-stone-500 font-medium">
                   <span>Subtotal</span>
-                  <span className="text-stone-800">₹{total.toLocaleString('en-IN')}</span>
+                  <span className="text-stone-800">{formatPrice(total)}</span>
                 </div>
                 <div className="flex justify-between text-sm text-stone-500 font-medium">
                   <span>Artisanal Shipping</span>
@@ -282,7 +284,7 @@ export default function CheckoutPage() {
                 </div>
                 <div className="flex justify-between font-sans font-bold text-2xl text-stone-900 border-t border-brand-50 pt-6 mt-6">
                   <span>Total Due</span>
-                  <span>₹{total.toLocaleString('en-IN')}</span>
+                  <span>{formatPrice(total)}</span>
                 </div>
               </div>
 

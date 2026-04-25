@@ -392,9 +392,9 @@ export default function AdminDashboard() {
                   {/* Stats cards */}
                   <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
                     {[
-                      { title: 'Total Revenue', value: `₹${stats.revenue.toLocaleString('en-IN')}`, sub: `₹${stats.monthRevenue.toLocaleString('en-IN')} this month`, trend: stats.revenueChange, icon: DollarSign, color: 'bg-green-500' },
+                      { title: 'Total Revenue', value: `₹${stats.revenue.toLocaleString(undefined)}`, sub: `₹${stats.monthRevenue.toLocaleString(undefined)} this month`, trend: stats.revenueChange, icon: DollarSign, color: 'bg-green-500' },
                       { title: 'Total Orders', value: stats.totalOrders, sub: 'All time orders', trend: stats.ordersChange, icon: ShoppingCart, color: 'bg-blue-500' },
-                      { title: 'Avg Order Value', value: `₹${stats.avgOrderValue.toLocaleString('en-IN')}`, sub: 'Per order', trend: 0, icon: BarChart3, color: 'bg-purple-500' },
+                      { title: 'Avg Order Value', value: `₹${stats.avgOrderValue.toLocaleString(undefined)}`, sub: 'Per order', trend: 0, icon: BarChart3, color: 'bg-purple-500' },
                       { title: 'Customers', value: stats.totalUsers, sub: 'Total accounts', trend: stats.usersChange, icon: Users, color: 'bg-orange-500' },
                     ].map((s, i) => (
                       <div key={i} className="bg-white rounded-2xl p-6 shadow-sm border border-brand-100 space-y-3">
@@ -417,7 +417,7 @@ export default function AdminDashboard() {
                   <div className="bg-white rounded-2xl p-6 shadow-sm border border-brand-100">
                     <div className="flex items-center justify-between mb-1">
                       <h3 className="font-heading font-black text-brand-900">Revenue — Last 7 Days</h3>
-                      <p className="text-xs text-brand-400 font-bold">₹{stats.revenueByDay.reduce((s, d) => s + d.amount, 0).toLocaleString('en-IN')} total</p>
+                      <p className="text-xs text-brand-400 font-bold">₹{stats.revenueByDay.reduce((s, d) => s + d.amount, 0).toLocaleString(undefined)} total</p>
                     </div>
                     <RevenueChart data={stats.revenueByDay} />
                   </div>
@@ -477,8 +477,8 @@ export default function AdminDashboard() {
                       </div>
                       <p className="text-xs font-bold text-brand-600 truncate">{o.user?.name}</p>
                       <div className="flex items-center justify-between mt-1">
-                        <p className="text-[10px] text-brand-400">{new Date(o.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}</p>
-                        <p className="text-xs font-black text-brand-900">₹{Number(o.totalAmount).toLocaleString('en-IN')}</p>
+                        <p className="text-[10px] text-brand-400">{new Date(o.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}</p>
+                        <p className="text-xs font-black text-brand-900">₹{Number(o.totalAmount).toLocaleString(undefined)}</p>
                       </div>
                     </button>
                   ))}
@@ -492,7 +492,7 @@ export default function AdminDashboard() {
                     <div>
                       <h3 className="font-heading font-black text-xl text-brand-900">#{selectedOrder.id.slice(-8).toUpperCase()}</h3>
                       <p className="text-xs text-brand-400 mt-0.5">
-                        {new Date(selectedOrder.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                        {new Date(selectedOrder.createdAt).toLocaleString(undefined, { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     <button onClick={() => setSelectedOrder(null)} className="p-2 hover:bg-brand-100 rounded-xl transition-colors">
@@ -510,7 +510,7 @@ export default function AdminDashboard() {
                     </div>
                     <div className="bg-white rounded-2xl p-4 border border-brand-100">
                       <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest mb-2">Order Value</p>
-                      <p className="text-2xl font-black text-brand-900">₹{Number(selectedOrder.totalAmount).toLocaleString('en-IN')}</p>
+                      <p className="text-2xl font-black text-brand-900">₹{Number(selectedOrder.totalAmount).toLocaleString(undefined)}</p>
                       <p className="text-xs text-brand-400">{selectedOrder.paymentMethod}</p>
                     </div>
                   </div>
@@ -529,7 +529,7 @@ export default function AdminDashboard() {
                         </div>
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-black text-brand-900 truncate">{item.product.name}</p>
-                          <p className="text-[10px] text-brand-400">Qty: {item.quantity} × ₹{Number(item.price).toLocaleString('en-IN')}</p>
+                          <p className="text-[10px] text-brand-400">Qty: {item.quantity} × ₹{Number(item.price).toLocaleString(undefined)}</p>
                         </div>
                       </div>
                     ))}
@@ -757,8 +757,8 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 text-[10px] font-black uppercase tracking-widest text-brand-500">{p.category}</td>
                             <td className="px-6 py-4">
-                              <p className="font-black text-brand-900 text-sm">₹{Number(p.price).toLocaleString('en-IN')}</p>
-                              {p.compareAtPrice && <p className="text-[10px] text-brand-400 line-through">₹{Number(p.compareAtPrice).toLocaleString('en-IN')}</p>}
+                              <p className="font-black text-brand-900 text-sm">₹{Number(p.price).toLocaleString(undefined)}</p>
+                              {p.compareAtPrice && <p className="text-[10px] text-brand-400 line-through">₹{Number(p.compareAtPrice).toLocaleString(undefined)}</p>}
                             </td>
                             <td className="px-6 py-4 text-center">
                               <span className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase ${p.stock > 10 ? 'bg-green-100 text-green-700' : p.stock > 0 ? 'bg-yellow-100 text-yellow-700' : 'bg-red-100 text-red-700'}`}>
@@ -852,13 +852,13 @@ export default function AdminDashboard() {
                     </div>
                     <div className="bg-white rounded-2xl p-4 border border-brand-100 text-center">
                       <p className="text-2xl font-black text-brand-900">
-                        ₹{selectedCustomer.orders.filter(o => o.status !== 'CANCELLED').reduce((s, o) => s + Number(o.totalAmount), 0).toLocaleString('en-IN')}
+                        ₹{selectedCustomer.orders.filter(o => o.status !== 'CANCELLED').reduce((s, o) => s + Number(o.totalAmount), 0).toLocaleString(undefined)}
                       </p>
                       <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Lifetime Value</p>
                     </div>
                     <div className="bg-white rounded-2xl p-4 border border-brand-100 text-center">
                       <p className="text-2xl font-black text-brand-900">
-                        {new Date(selectedCustomer.createdAt).toLocaleDateString('en-IN', { month: 'short', year: 'numeric' })}
+                        {new Date(selectedCustomer.createdAt).toLocaleDateString(undefined, { month: 'short', year: 'numeric' })}
                       </p>
                       <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Member Since</p>
                     </div>
@@ -874,11 +874,11 @@ export default function AdminDashboard() {
                         <div key={o.id} className="flex items-center justify-between px-4 py-3 border-b border-brand-50 last:border-0">
                           <div>
                             <p className="text-xs font-black text-brand-900">#{o.id.slice(-8).toUpperCase()}</p>
-                            <p className="text-[10px] text-brand-400">{new Date(o.createdAt).toLocaleDateString('en-IN')}</p>
+                            <p className="text-[10px] text-brand-400">{new Date(o.createdAt).toLocaleDateString(undefined)}</p>
                           </div>
                           <div className="flex items-center gap-3">
                             <Pill status={o.status} />
-                            <p className="text-sm font-black text-brand-900">₹{Number(o.totalAmount).toLocaleString('en-IN')}</p>
+                            <p className="text-sm font-black text-brand-900">₹{Number(o.totalAmount).toLocaleString(undefined)}</p>
                           </div>
                         </div>
                       ))}
@@ -1057,7 +1057,7 @@ export default function AdminDashboard() {
                               {c.usageCount} used {c.usageLimit ? `/ ${c.usageLimit}` : '(unlimited)'}
                             </td>
                             <td className="px-6 py-4 text-sm text-brand-400">
-                              {c.expireAt ? new Date(c.expireAt).toLocaleDateString('en-IN') : '—'}
+                              {c.expireAt ? new Date(c.expireAt).toLocaleDateString(undefined) : '—'}
                             </td>
                             <td className="px-6 py-4 text-right">
                               <button onClick={() => deleteCoupon(c.id)}

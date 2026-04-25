@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { Trash2, Gift, ChevronRight, ShoppingBag } from 'lucide-react';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 export default function CartPage() {
   const { items, total, loading, removeItem, updateQuantity } = useCart();
   const { showToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const handleRemove = async (id: string, name: string) => {
     await removeItem(id);
@@ -77,7 +79,7 @@ export default function CartPage() {
                     <div className="flex items-start justify-between gap-4 mb-2">
                       <h3 className="font-heading italic text-xl sm:text-2xl text-stone-800 leading-tight group-hover:text-brand-700 transition-colors">{item.name}</h3>
                       <p className="font-sans font-bold text-stone-900 text-lg sm:text-xl">
-                        ₹{(item.price * item.quantity).toLocaleString('en-IN')}
+                        {formatPrice(item.price * item.quantity)}
                       </p>
                     </div>
 
@@ -151,7 +153,7 @@ export default function CartPage() {
                 <div className="space-y-4 mb-8">
                   <div className="flex justify-between text-sm text-stone-500 font-medium">
                     <span>Treasures ({items.reduce((s, i) => s + i.quantity, 0)})</span>
-                    <span className="text-stone-800">₹{total.toLocaleString('en-IN')}</span>
+                    <span className="text-stone-800">{formatPrice(total)}</span>
                   </div>
                   <div className="flex justify-between text-sm text-stone-500 font-medium">
                     <span>Artisanal Shipping</span>
@@ -159,7 +161,7 @@ export default function CartPage() {
                   </div>
                   <div className="flex justify-between font-sans font-bold text-xl text-stone-900 border-t border-brand-50 pt-4 mt-4">
                     <span>Total Amount</span>
-                    <span>₹{total.toLocaleString('en-IN')}</span>
+                    <span>{formatPrice(total)}</span>
                   </div>
                 </div>
 

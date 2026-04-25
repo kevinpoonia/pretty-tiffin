@@ -11,6 +11,7 @@ import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { useToast } from '@/context/ToastContext';
 import api from '@/lib/api';
+import { useCurrency } from '@/context/CurrencyContext';
 
 interface WishlistItem {
   id: string;
@@ -30,6 +31,7 @@ export default function WishlistPage() {
   const { token, loading: authLoading } = useAuth();
   const { addItem } = useCart();
   const { showToast } = useToast();
+  const { formatPrice } = useCurrency();
   const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [removing, setRemoving] = useState<string | null>(null);
@@ -147,9 +149,9 @@ export default function WishlistPage() {
                         <h3 className="font-heading italic text-lg text-stone-800 mb-3 hover:text-brand-700 transition-colors line-clamp-2">{item.product.name}</h3>
                       </Link>
                       <div className="flex items-center gap-3 mb-4">
-                        <span className="font-bold text-stone-900">₹{Number(item.product.price).toLocaleString('en-IN')}</span>
+                        <span className="font-bold text-stone-900">{formatPrice(item.product.price)}</span>
                         {item.product.compareAtPrice && Number(item.product.compareAtPrice) > Number(item.product.price) && (
-                          <span className="text-sm text-stone-400 line-through">₹{Number(item.product.compareAtPrice).toLocaleString('en-IN')}</span>
+                          <span className="text-sm text-stone-400 line-through">{formatPrice(item.product.compareAtPrice)}</span>
                         )}
                       </div>
                       <div className="flex gap-2">

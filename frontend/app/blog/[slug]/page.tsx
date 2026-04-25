@@ -75,7 +75,7 @@ export default function BlogDetailPage() {
               </button>
               
               <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-widest text-brand-500 mb-6 font-bold">
-                 <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-50 rounded-full"><Calendar size={12} /> {new Date(post.createdAt).toLocaleDateString('en-IN', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
+                 <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-50 rounded-full"><Calendar size={12} /> {new Date(post.createdAt).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                  <span className="flex items-center gap-1.5 px-3 py-1 bg-brand-50 rounded-full"><Clock size={12} /> 5 min read</span>
               </div>
               

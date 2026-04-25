@@ -59,11 +59,11 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
 
   const faqs = [
     { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box combines everyday utility with a personal touch that lasts a lifetime. It’s a thoughtful way to show you care, whether for office lunches or special celebrations.' },
-    { q: 'How long does it take for my custom tiffin to arrive?', a: 'We handle every order with care. Typically, your personalized tiffin will reach you within 3-5 business days across India, with express options for metro cities.' },
+    { q: 'How long does it take for my custom tiffin to arrive?', a: 'We handle every order with care. Standard international delivery takes 7-14 business days. Express shipping options are available at checkout for faster delivery.' },
     { q: 'Can I add a custom logo for a team gift?', a: 'Absolutely. We specialize in corporate gifting and can engrave individual names or company logos to create a premium, lasting impression for your team.' },
     { q: 'Is the engraving permanent?', a: 'Yes, our laser engraving process creates a permanent, high-precision mark on the steel. It will never fade, peel, or wash off, even with daily cleaning.' },
     { q: 'How should I clean and care for my engraved tiffin?', a: 'Our tiffins are made from high-grade 304 stainless steel. They are dishwasher safe, but we recommend hand-washing with a soft sponge to keep the finish looking brand new for years.' },
-    { q: 'Do you offer international shipping?', a: 'Currently, we ship within India. However, we are working on expanding our reach globally soon. Stay tuned to our newsletter for updates!' },
+    { q: 'Do you ship worldwide?', a: 'Yes! We ship to customers in over 100 countries. Free worldwide shipping is included on every order.' },
     { q: 'What is your return policy for customized items?', a: 'Since each piece is individually engraved for you, we can only accept returns if there is a manufacturing defect or damage during transit. Please reach out to our team within 48 hours of delivery if there is an issue.' },
   ];
 

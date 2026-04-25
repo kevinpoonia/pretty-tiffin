@@ -26,7 +26,7 @@ export default function ShippingReturns() {
                   </div>
                   <h3 className="font-black text-brand-900 text-xl tracking-tight mb-4">Fast Shipping</h3>
                   <p className="text-sm text-brand-600 leading-relaxed">
-                     Delivery in 3-5 business days across India. Express shipping available for all major metropolitan cities.
+                     Standard delivery in 7-14 business days worldwide. Express shipping available at checkout for faster delivery.
                   </p>
                </div>
                <div className="bg-brand-50 p-10 rounded-[3rem] border border-brand-100">

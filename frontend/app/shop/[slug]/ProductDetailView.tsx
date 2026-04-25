@@ -12,6 +12,7 @@ import ProductCustomizer from '@/components/products/ProductCustomizer';
 import GiftSelector from '@/components/products/GiftSelector';
 import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import api from '@/lib/api';
 
 export default function ProductDetailClient({ product }: { product: any }) {
@@ -19,6 +20,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
   const { user } = useAuth();
   const router = useRouter();
   const { showToast } = useToast();
+  const { formatPrice } = useCurrency();
   const [isAdding, setIsAdding] = useState(false);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [giftDetails, setGiftDetails] = useState({
@@ -79,7 +81,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
   const faqs = [
     { title: "Product Features & Specs", icon: Info, content: "Made from premium 304 food-grade stainless steel. Features a space-saving stacking design. Dimensions: 14cm x 14cm x 22cm when fully assembled." },
-    { title: "Shipping & Delivery", icon: Truck, content: "Free express shipping across India. Orders placed before 1 PM are eligible for Same Day Delivery in select metro cities. Standard delivery takes 2-4 business days." },
+    { title: "Shipping & Delivery", icon: Truck, content: "Free worldwide shipping on all orders. Standard delivery takes 5-10 business days internationally. Express shipping available at checkout." },
     { title: "Warranty Information", icon: ShieldCheck, content: "Enjoy peace of mind with our 1-year manufacturer warranty. Covers structural defects, clip malfunctions, and transit damages." },
   ];
 
@@ -172,12 +174,14 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   <div className="flex items-center text-brand-300">
                     {[1, 2, 3, 4, 5].map((s) => <Star key={s} size={14} className="fill-brand-300" />)}
                   </div>
-                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">Crafted for Excellence — 42 Reviews</span>
+                  <span className="text-[10px] font-bold text-stone-400 uppercase tracking-[0.2em]">Crafted for Excellence</span>
                 </div>
                 <h1 className="text-4xl sm:text-5xl md:text-7xl font-heading italic text-stone-800 mb-6 leading-tight">{product.name}</h1>
                 <div className="flex flex-wrap items-center gap-6">
-                   <p className="text-3xl font-sans font-bold text-stone-900">₹{Number(product.price).toLocaleString('en-IN')}</p>
-                   {product.compareAtPrice && <p className="text-xl text-stone-300 line-through font-medium">₹{Number(product.compareAtPrice).toLocaleString('en-IN')}</p>}
+                   <p className="text-3xl font-sans font-bold text-stone-900">{formatPrice(product.price)}</p>
+                   {product.compareAtPrice && Number(product.compareAtPrice) > Number(product.price) && (
+                     <p className="text-xl text-stone-300 line-through font-medium">{formatPrice(product.compareAtPrice)}</p>
+                   )}
                    <span className="bg-brand-50 text-brand-700 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-brand-100">Artisanal Stock</span>
                 </div>
               </div>
@@ -231,7 +235,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   {isAdding ? <><Loader2 size={20} className="animate-spin" /> CRAFTING...</> : (
                     <div className="flex items-center gap-4">
                        <Gift size={20} />
-                       <span className="uppercase text-[11px] font-bold tracking-[0.2em]">Personalize Now — ₹{calculateTotalPrice().toLocaleString('en-IN')}</span>
+                       <span className="uppercase text-[11px] font-bold tracking-[0.2em]">Personalize Now — {formatPrice(calculateTotalPrice())}</span>
                     </div>
                   )}
                 </button>
@@ -331,7 +335,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div>
                       <p className="font-semibold text-stone-800 text-sm">{review.user?.name || 'Verified Buyer'}</p>
-                      <p className="text-xs text-stone-400">{new Date(review.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}</p>
+                      <p className="text-xs text-stone-400">{new Date(review.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</p>
                     </div>
                     <div className="flex items-center gap-0.5 shrink-0">
                       {[1,2,3,4,5].map(s => (

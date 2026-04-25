@@ -37,7 +37,7 @@ export async function generateMetadata(
       description: product.description.substring(0, 160),
       images: [product.images?.[0], ...previousImages],
     },
-    keywords: [product.name, 'customized tiffin', 'personalized gift India', product.category, 'pretty luxe atelier'],
+    keywords: [product.name, 'customized tiffin', 'personalized gift', product.category, 'pretty luxe atelier', 'worldwide shipping'],
   };
 }
 

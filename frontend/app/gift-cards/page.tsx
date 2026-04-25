@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Give the gift of choice with a Pretty Luxe Atelier gift card. Perfect for birthdays, anniversaries, and every occasion.',
 };
 
-const AMOUNTS = [500, 1000, 2000, 5000];
+const AMOUNTS = [10, 25, 50, 100]; // USD base; converted at checkout
 
 export default function GiftCardsPage() {
   return (
@@ -35,7 +35,7 @@ export default function GiftCardsPage() {
                 className="bg-white rounded-3xl p-8 text-center shadow-sm border border-brand-100 hover:shadow-xl hover:border-brand-300 transition-all cursor-pointer group"
               >
                 <Gift size={32} className="mx-auto mb-4 text-brand-400 group-hover:text-brand-600 transition-colors" />
-                <p className="text-3xl font-heading font-bold text-brand-900">₹{amount.toLocaleString('en-IN')}</p>
+                <p className="text-3xl font-heading font-bold text-brand-900">${amount}</p>
                 <p className="text-xs text-brand-400 mt-1 font-medium">Gift Card</p>
               </div>
             ))}

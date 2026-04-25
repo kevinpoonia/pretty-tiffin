@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Star, ChevronRight, Heart, Sparkles } from 'lucide-react';
 import { useToast } from '@/context/ToastContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import api from '@/lib/api';
 
 interface ProductCardProps {
@@ -29,6 +30,7 @@ export default function ProductCard({ product, showBadge = false, priority = fal
   const [isHovered, setIsHovered] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
   const { showToast } = useToast();
+  const { formatPrice } = useCurrency();
 
   const images = product.images?.length > 0 ? product.images : ['/images/product-1.png'];
 
@@ -175,13 +177,13 @@ export default function ProductCard({ product, showBadge = false, priority = fal
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] text-stone-400 uppercase tracking-wide font-semibold">MRP</span>
                   <span className="text-xs text-stone-300 line-through font-medium">
-                    ₹{compareAtPrice.toLocaleString('en-IN')}
+                    {formatPrice(compareAtPrice)}
                   </span>
                 </div>
               )}
               <div className="flex items-center gap-2">
                 <span className="font-sans font-bold text-stone-900 text-xl">
-                  ₹{price.toLocaleString('en-IN')}
+                  {formatPrice(price)}
                 </span>
                 {discount && (
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">

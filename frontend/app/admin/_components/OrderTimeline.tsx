@@ -97,7 +97,7 @@ export default function OrderTimeline({ currentStatus, history }: Props) {
                     <div className="flex items-center justify-between gap-2">
                       <p className="text-xs font-bold text-brand-900">{m.label}</p>
                       <p className="text-[10px] text-brand-400 shrink-0">
-                        {new Date(entry.createdAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
+                        {new Date(entry.createdAt).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })}
                       </p>
                     </div>
                     {entry.trackingId && (

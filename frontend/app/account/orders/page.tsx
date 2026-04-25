@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 import { useAuth } from '@/context/AuthContext';
+import { useCurrency } from '@/context/CurrencyContext';
 import api from '@/lib/api';
 
 const STATUS_LABEL: Record<string, string> = {
@@ -63,8 +64,9 @@ interface Order {
 
 function OrderCard({ order }: { order: Order }) {
   const [expanded, setExpanded] = useState(false);
+  const { formatPrice } = useCurrency();
   const Icon = STATUS_ICON[order.status] || Package;
-  const date = new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  const date = new Date(order.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
 
   return (
     <motion.div
@@ -92,7 +94,7 @@ function OrderCard({ order }: { order: Order }) {
             <Icon size={12} />
             {STATUS_LABEL[order.status] || order.status}
           </span>
-          <p className="font-bold text-gray-900 text-sm">₹{Number(order.totalAmount).toLocaleString('en-IN')}</p>
+          <p className="font-bold text-gray-900 text-sm">{formatPrice(order.totalAmount)}</p>
           <ChevronDown
             size={18}
             className={`text-gray-400 transition-transform duration-300 ${expanded ? 'rotate-180' : ''}`}
@@ -133,7 +135,7 @@ function OrderCard({ order }: { order: Order }) {
                         {Object.entries(customization).filter(([, v]) => v).map(([k, v]) => (
                           <p key={k} className="text-xs text-gray-500">{k}: {v}</p>
                         ))}
-                        <p className="text-xs text-gray-400 mt-0.5">Qty: {item.quantity} &times; ₹{Number(item.price).toLocaleString('en-IN')}</p>
+                        <p className="text-xs text-gray-400 mt-0.5">Qty: {item.quantity} &times; {formatPrice(item.price)}</p>
                       </div>
                     </div>
                   );

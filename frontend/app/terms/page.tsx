@@ -33,7 +33,7 @@ export default function TermsOfService() {
 
             <div className="mt-20 p-10 bg-brand-900 text-white rounded-[3rem]">
                <h4 className="font-black mb-2">Legal Jurisdiction</h4>
-               <p className="text-sm text-brand-300">All disputes are subject to the exclusive jurisdiction of the courts in Jaipur, Rajasthan, India.</p>
+               <p className="text-sm text-brand-300">All disputes shall be governed by applicable law. Pretty Luxe Atelier reserves the right to choose the applicable jurisdiction.</p>
             </div>
           </motion.div>
         </div>

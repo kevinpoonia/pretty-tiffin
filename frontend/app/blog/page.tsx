@@ -46,7 +46,7 @@ export default function BlogListingPage() {
                 transition={{ duration: 0.6, delay: 0.1 }}
                 className="text-brand-500 text-lg leading-relaxed opacity-90"
               >
-               Explore stories about Indian heritage, sustainable living, and the art of mindful gifting.
+               Explore stories about artisanal craftsmanship, sustainable living, and the art of mindful gifting.
              </motion.p>
           </div>
 
@@ -77,7 +77,7 @@ export default function BlogListingPage() {
                        </div>
                        <div className="space-y-4 px-2">
                           <div className="flex items-center gap-4 text-[10px] font-black uppercase tracking-widest text-brand-400">
-                             <span className="flex items-center gap-1.5"><Calendar size={12} /> {new Date(post.createdAt).toLocaleDateString('en-IN', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                             <span className="flex items-center gap-1.5"><Calendar size={12} /> {new Date(post.createdAt).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                              <span className="flex items-center gap-1.5"><Clock size={12} /> 5 min read</span>
                           </div>
                           <h2 className="text-2xl font-heading font-black text-brand-900 tracking-tight group-hover:text-brand-500 transition-colors line-clamp-2 leading-tight">

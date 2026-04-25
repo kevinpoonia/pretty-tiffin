@@ -39,8 +39,8 @@ export default function AboutPage() {
                 transition={{ delay: 0.2 }}
                 className="text-4xl md:text-7xl font-heading font-black text-white tracking-tighter mb-8 leading-none"
               >
-                Revolutionizing India&apos;s <br />
-                <span className="text-brand-500 italic font-serif">Lunch Experience.</span>
+                Redefining the Art of <br />
+                <span className="text-brand-500 italic font-serif">Artisanal Gifting.</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export default function AboutPage() {
                 transition={{ delay: 0.4 }}
                 className="text-brand-100 max-w-2xl mx-auto text-lg opacity-80 leading-relaxed"
               >
-                Pretty Luxe Atelier was born from a simple desire: to blend India&apos;s rich tiffin culture with premium craftsmanship and modern personalization.
+                Pretty Luxe Atelier was born from a simple desire: to bring heritage craftsmanship and premium personalization to the world — one artisanal piece at a time.
               </motion.p>
            </div>
         </section>
@@ -118,7 +118,7 @@ export default function AboutPage() {
                  {[
                     { icon: Heart, title: 'Made with Love', desc: 'Every product is hand-finished and inspected for quality.' },
                     { icon: ShieldCheck, title: 'Premium Quality', desc: 'Only high-grade, food-safe stainless steel is used.' },
-                    { icon: Truck, title: 'Pan-India Reach', desc: 'Secure shipping to every corner of India within 3-5 days.' },
+                    { icon: Truck, title: 'Worldwide Shipping', desc: 'Secure delivery to customers in over 100 countries worldwide.' },
                     { icon: Users, title: 'Customer First', desc: 'Personalized support for every order, big or small.' },
                  ].map((value, i) => (
                     <motion.div 

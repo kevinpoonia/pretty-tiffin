@@ -1,21 +1,24 @@
 'use client';
 
 import Link from 'next/link';
-import { ShoppingCart, User, Search, MapPin, Truck, ChevronDown, Heart, Menu, X, LogOut } from 'lucide-react';
+import { ShoppingCart, User, Search, Truck, Heart, Menu, X, LogOut, Globe, ChevronDown } from 'lucide-react';
 import { useState, useRef, KeyboardEvent } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '@/context/AuthContext';
 import { useCart } from '@/context/CartContext';
 import { useRouter } from 'next/navigation';
+import { useCurrency, CURRENCIES } from '@/context/CurrencyContext';
 
 export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }) {
   const { user, logout } = useAuth();
   const { items } = useCart();
+  const { currency, setCurrency, currencyInfo } = useCurrency();
   const router = useRouter();
   const [searchFocused, setSearchFocused] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [mobileSearch, setMobileSearch] = useState('');
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const searchRef = useRef<HTMLInputElement>(null);
   const cartCount = items.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -32,7 +35,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
   };
 
   const navCategories = [
-    { label: 'Same Day Delivery', href: '/shop?category=same-day-delivery', highlight: true },
+    { label: 'New Arrivals', href: '/shop?category=new-arrivals', highlight: true },
     { label: 'Best Sellers', href: '/shop?category=best-sellers' },
     { label: 'Personalized', href: '/shop?category=personalized' },
     { label: 'Birthday', href: '/shop?category=birthday' },
@@ -50,13 +53,12 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
           <div className="flex items-center gap-4 text-brand-200">
             <span className="animate-pulse">✨ ARTISANAL CRAFTSMANSHIP IN EVERY PIECE</span>
           </div>
-          <div className="flex items-center gap-8 text-brand-200">
+          <div className="flex items-center gap-6 text-brand-200">
             <Link href="/track" className="hover:text-white flex items-center gap-2 transition-colors">
-              <Truck size={12} /> TRACK YOUR TREASURE
+              <Truck size={12} /> TRACK YOUR ORDER
             </Link>
-            <div className="hidden xl:flex items-center gap-2">
-              <MapPin size={12} /> SHIPS FROM <span className="text-white">INDIA</span>
-            </div>
+            <span className="text-brand-400">|</span>
+            <span>🌍 WORLDWIDE SHIPPING</span>
           </div>
         </div>
       </div>
@@ -103,7 +105,48 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
         </div>
 
         {/* Right Actions */}
-        <div className="flex items-center gap-3 md:gap-4 lg:gap-6 shrink-0">
+        <div className="flex items-center gap-3 md:gap-4 lg:gap-5 shrink-0">
+
+          {/* Currency Selector */}
+          <div className="relative hidden md:block">
+            <button
+              onClick={() => setCurrencyOpen(p => !p)}
+              onBlur={() => setTimeout(() => setCurrencyOpen(false), 150)}
+              className="flex items-center gap-1 text-xs font-bold text-stone-600 hover:text-brand-600 transition-colors px-2 py-1 rounded-lg hover:bg-brand-50"
+            >
+              <Globe size={14} />
+              <span>{currencyInfo.code}</span>
+              <ChevronDown size={12} className={`transition-transform ${currencyOpen ? 'rotate-180' : ''}`} />
+            </button>
+            <AnimatePresence>
+              {currencyOpen && (
+                <motion.div
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 6 }}
+                  transition={{ duration: 0.15 }}
+                  className="absolute right-0 top-full mt-2 w-56 bg-white border border-gray-100 rounded-2xl shadow-xl z-50 overflow-hidden"
+                >
+                  <div className="p-2 max-h-72 overflow-y-auto">
+                    <p className="text-[9px] font-black uppercase tracking-widest text-stone-400 px-2 py-1.5">Select Currency</p>
+                    {CURRENCIES.map(c => (
+                      <button
+                        key={c.code}
+                        onClick={() => { setCurrency(c.code); setCurrencyOpen(false); }}
+                        className={`w-full text-left px-3 py-2 text-xs rounded-xl transition-colors flex items-center justify-between ${
+                          currency === c.code ? 'bg-brand-50 text-brand-700 font-bold' : 'text-stone-600 hover:bg-stone-50'
+                        }`}
+                      >
+                        <span>{c.name}</span>
+                        <span className="font-mono text-[10px] text-stone-400">{c.code}</span>
+                      </button>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
           <div className="group relative">
             <Link
               href={user ? '/account' : '/login'}
@@ -169,7 +212,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
                 >
                   {cat.label}
                 </Link>
-                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center organic-shape-1" />
+                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
               </li>
             ))}
           </ul>
@@ -181,7 +224,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
         <div className="w-full flex items-center border border-gray-200 rounded-lg text-sm bg-brand-50 focus-within:border-brand-500 transition-all">
           <input
             type="text"
-            placeholder="Search for custom tiffins, gifts..."
+            placeholder="Search for gifts..."
             className="w-full py-2.5 px-4 outline-none rounded-l-lg text-gray-800 bg-transparent placeholder-gray-400"
             value={mobileSearch}
             onChange={e => setMobileSearch(e.target.value)}
@@ -222,7 +265,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
                 <nav className="py-4">
                   {[
                     { label: 'Shop All', href: '/shop' },
-                    { label: 'Same Day Delivery', href: '/shop?category=same-day-delivery' },
+                    { label: 'New Arrivals', href: '/shop?category=new-arrivals' },
                     { label: 'Personalized Gifts', href: '/shop?category=personalized' },
                     { label: 'Best Sellers', href: '/shop?category=best-sellers' },
                     { label: 'Birthday', href: '/shop?category=birthday' },
@@ -240,6 +283,20 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
                     </Link>
                   ))}
                 </nav>
+
+                {/* Mobile Currency Selector */}
+                <div className="px-6 py-4 border-t border-gray-100">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-gray-400 mb-3 flex items-center gap-2"><Globe size={12} /> Currency</p>
+                  <select
+                    value={currency}
+                    onChange={e => setCurrency(e.target.value)}
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm text-stone-700 bg-white focus:outline-none focus:border-brand-400"
+                  >
+                    {CURRENCIES.map(c => (
+                      <option key={c.code} value={c.code}>{c.name} ({c.code})</option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="px-6 py-4 border-t border-gray-100">
                   <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400 mb-3">My Account</p>
