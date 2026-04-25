@@ -99,7 +99,7 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
       const emailItems = newOrder.items.map((i: { product: { name: string }; quantity: number; price: unknown }) => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
       sendEmail(
         user.email,
-        'Your Pretty Tiffin Order is Confirmed! 🎉',
+        'Your Pretty Luxe Atelier Order is Confirmed! 🎉',
         orderConfirmationEmail(user.name, newOrder.id, totalAmount, emailItems)
       ).catch(console.error);
     }

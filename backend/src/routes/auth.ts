@@ -29,7 +29,7 @@ router.post('/sync', async (req: Request, res: Response) => {
         user = await prisma.user.update({ where: { email }, data: { clerkId } });
       } else {
         user = await prisma.user.create({ data: { clerkId, email, name, password: '' } });
-        sendEmail(email, 'Welcome to Pretty Tiffin! ✨', welcomeEmail(name)).catch(console.error);
+        sendEmail(email, 'Welcome to Pretty Luxe Atelier! ✨', welcomeEmail(name)).catch(console.error);
       }
     }
 

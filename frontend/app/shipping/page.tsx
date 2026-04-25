@@ -59,7 +59,7 @@ export default function ShippingReturns() {
                      <div className="w-8 h-8 rounded-full bg-brand-900 text-white flex items-center justify-center font-black text-xs shrink-0 mt-1">1</div>
                      <div>
                         <p className="font-black text-brand-900 mb-1">Reporting Issues</p>
-                        <p className="text-sm text-brand-500">Email us within 48 hours of delivery at support@prettytiffin.com with photos of the issue.</p>
+                        <p className="text-sm text-brand-500">Email us within 48 hours of delivery at support@prettyluxeatelier.com with photos of the issue.</p>
                      </div>
                   </div>
                   <div className="flex items-start gap-6">

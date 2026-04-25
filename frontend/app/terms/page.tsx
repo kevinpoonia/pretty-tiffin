@@ -19,7 +19,7 @@ export default function TermsOfService() {
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-8 font-bold">Last Updated: March 2026</p>
             
             <p className="text-brand-700 leading-relaxed">
-              By accessing and using Pretty Tiffin, you agree to abide by the following terms. Please read them carefully to understand our service commitments and your responsibilities.
+              By accessing and using Pretty Luxe Atelier, you agree to abide by the following terms. Please read them carefully to understand our service commitments and your responsibilities.
             </p>
 
             <h3 className="font-black text-brand-900 tracking-tight mt-12 mb-4">1. Product Personalization</h3>

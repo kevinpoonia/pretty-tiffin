@@ -16,7 +16,7 @@ async function getProducts() {
 }
 
 export const metadata: Metadata = {
-  title: 'Shop Premium Tiffins | Pretty Tiffin',
+  title: 'Shop Premium Tiffins | Pretty Luxe Atelier',
   description: 'Browse our collection of premium, customizable stainless steel stickers and tiffin boxes. Perfect for personal use and gifting.',
 };
 

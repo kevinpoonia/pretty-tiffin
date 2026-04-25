@@ -1,7 +1,7 @@
 import { MetadataRoute } from 'next';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://prettytiffin.in';
+  const baseUrl = 'https://prettyluxeatelier.com';
   
   // Fetch products and blog posts for dynamic routes
   // Note: Using a direct fetch or shared lib here. 

@@ -19,7 +19,7 @@ export default function PrivacyPolicy() {
             <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-8 font-bold">Last Updated: March 2026</p>
             
             <p className="text-brand-700 leading-relaxed">
-              At Pretty Tiffin, your privacy is paramount. This policy outlines how we collect, use, and safeguard your data when you interact with our premium D2C platform.
+              At Pretty Luxe Atelier, your privacy is paramount. This policy outlines how we collect, use, and safeguard your data when you interact with our premium D2C platform.
             </p>
 
             <h3 className="font-black text-brand-900 tracking-tight mt-12 mb-4">1. Information We Collect</h3>
@@ -39,7 +39,7 @@ export default function PrivacyPolicy() {
             
             <div className="mt-20 p-10 bg-brand-50 rounded-[3rem] border border-brand-100">
                <h4 className="font-black text-brand-900 mb-2">Questions?</h4>
-               <p className="text-sm text-brand-500">Contact our privacy team at privacy@prettytiffin.com</p>
+               <p className="text-sm text-brand-500">Contact our privacy team at privacy@prettyluxeatelier.com</p>
             </div>
           </motion.div>
         </div>

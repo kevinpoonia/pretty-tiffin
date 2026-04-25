@@ -48,7 +48,7 @@ export default function AboutPage() {
                 transition={{ delay: 0.4 }}
                 className="text-brand-100 max-w-2xl mx-auto text-lg opacity-80 leading-relaxed"
               >
-                Pretty Tiffin was born from a simple desire: to blend India&apos;s rich tiffin culture with premium craftsmanship and modern personalization.
+                Pretty Luxe Atelier was born from a simple desire: to blend India&apos;s rich tiffin culture with premium craftsmanship and modern personalization.
               </motion.p>
            </div>
         </section>
@@ -69,7 +69,7 @@ export default function AboutPage() {
                     </h3>
                     <div className="space-y-6 text-brand-700 leading-relaxed text-lg opacity-90">
                        <p>
-                          Every Pretty Tiffin is crafted from premium ISO-grade stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your story.
+                          Every Pretty Luxe Atelier is crafted from premium ISO-grade stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your story.
                        </p>
                        <p>
                           Our signature laser-engraving process allows you to immortalize names, dates, or messages directly onto the steel, creating a gift that lasts a lifetime.
@@ -146,7 +146,7 @@ export default function AboutPage() {
                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
                  <div className="relative z-10">
                     <h2 className="text-3xl md:text-6xl font-heading font-black text-white tracking-tighter mb-8 leading-none">
-                       Experience the <br />Pretty Tiffin Standard.
+                       Experience the <br />Pretty Luxe Atelier Standard.
                     </h2>
                     <p className="text-brand-300 mb-12 text-lg max-w-xl mx-auto opacity-80">
                        Ready to personalize your first tiffin? Join thousands of happy customers today.

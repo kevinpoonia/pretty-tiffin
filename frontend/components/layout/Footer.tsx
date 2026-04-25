@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="space-y-4 sm:col-span-2 xl:col-span-1">
             <Link href="/" className="inline-block">
               <span className="font-heading font-bold text-2xl text-white tracking-tight">
-                Pretty<span className="text-brand-400">Tiffin</span>
+                Pretty Luxe<span className="text-brand-400">Atelier</span>
               </span>
             </Link>
             <p className="text-sm text-brand-200 leading-relaxed max-w-xs">
@@ -107,7 +107,7 @@ export default function Footer() {
         {/* Newsletter & Trust Badges Strip */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center py-12 border-t border-brand-800">
           <div className="lg:col-span-2">
-            <h4 className="font-heading font-semibold text-white mb-2 text-2xl italic">Join the Pretty Tiffin Circle</h4>
+            <h4 className="font-heading font-semibold text-white mb-2 text-2xl italic">Join the Pretty Luxe Atelier Circle</h4>
             <p className="text-sm text-brand-300 mb-6 max-w-lg">Get first access to new product drops, personalized gifting ideas, and exclusive offers from our studio.</p>
             {subscribed ? (
               <div className="flex items-center gap-2 text-brand-300 text-sm font-medium bg-brand-800 rounded-xl px-4 py-3 border border-brand-700">
@@ -156,7 +156,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-brand-800 pt-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left text-[11px] font-medium text-brand-400 gap-4 uppercase tracking-wider">
-          <p>© {new Date().getFullYear()} Pretty Tiffin Studio. Crafted with love for your legacy.</p>
+          <p>© {new Date().getFullYear()} Pretty Luxe Atelier Studio. Crafted with love for your legacy.</p>
           <div className="flex flex-wrap justify-center gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>

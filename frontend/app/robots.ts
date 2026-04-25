@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/admin/', '/account/'],
     },
-    sitemap: 'https://prettytiffin.in/sitemap.xml',
+    sitemap: 'https://prettyluxeatelier.com/sitemap.xml',
   };
 }

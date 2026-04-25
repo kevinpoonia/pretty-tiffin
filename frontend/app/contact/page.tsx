@@ -49,7 +49,7 @@ export default function ContactPage() {
 
                <div className="space-y-8">
                   {[
-                    { icon: Mail, label: 'Email Us', value: 'hello@prettytiffin.com', detail: 'We reply within 24 hours' },
+                    { icon: Mail, label: 'Email Us', value: 'hello@prettyluxeatelier.com', detail: 'We reply within 24 hours' },
                     { icon: Phone, label: 'Call Us', value: '+91 99999 88888', detail: 'Mon-Sat, 9am - 7pm IST' },
                     { icon: MessageCircle, label: 'WhatsApp', value: '+91 99999 88888', detail: 'Instant support available' },
                     { icon: MapPin, label: 'Studio', value: 'Udaipur, Rajasthan', detail: 'Crafting excellence in India' },

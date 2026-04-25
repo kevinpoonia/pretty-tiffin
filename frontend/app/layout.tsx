@@ -5,26 +5,26 @@ import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Pretty Tiffin | Premium Customized Tiffin Boxes India',
-    template: '%s | Pretty Tiffin'
+    default: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
+    template: '%s | Pretty Luxe Atelier'
   },
   description: 'Premium, personalized stainless steel tiffin boxes for gifting and everyday use in India. Discover unique engraved tiffins for birthdays, anniversaries, and corporate gifting.',
-  keywords: ['personalized tiffin', 'customized tiffin box', 'stainless steel tiffin India', 'engraved gifts India', 'pretty tiffin'],
-  metadataBase: new URL('https://prettytiffin.in'),
+  keywords: ['personalized tiffin', 'customized tiffin box', 'stainless steel tiffin India', 'engraved gifts India', 'pretty luxe atelier', 'luxury gifting India'],
+  metadataBase: new URL('https://prettyluxeatelier.com'),
   alternates: {
     canonical: '/',
   },
   openGraph: {
-    title: 'Pretty Tiffin | Premium Customized Tiffin Boxes India',
+    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
     description: 'Personalized, eco-friendly stainless steel tiffin boxes with premium laser engraving. The perfect gift for your loved ones.',
-    url: 'https://prettytiffin.in',
-    siteName: 'Pretty Tiffin',
+    url: 'https://prettyluxeatelier.com',
+    siteName: 'Pretty Luxe Atelier',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Pretty Tiffin Collection',
+        alt: 'Pretty Luxe Atelier Collection',
       },
     ],
     locale: 'en_IN',
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pretty Tiffin | Premium Customized Tiffin Boxes India',
+    title: 'Pretty Luxe Atelier | Premium Customized Tiffin Boxes India',
     description: 'Personalized, eco-friendly stainless steel tiffin boxes with premium laser engraving.',
     images: ['/og-image.jpg'],
   },
@@ -57,13 +57,13 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "name": "Pretty Tiffin",
-    "url": "https://prettytiffin.in",
-    "logo": "https://prettytiffin.in/logo.png",
+    "name": "Pretty Luxe Atelier",
+    "url": "https://prettyluxeatelier.com",
+    "logo": "https://prettyluxeatelier.com/logo.png",
     "sameAs": [
-      "https://facebook.com/prettytiffin",
-      "https://instagram.com/prettytiffin",
-      "https://twitter.com/prettytiffin"
+      "https://facebook.com/prettyluxeatelier",
+      "https://instagram.com/prettyluxeatelier",
+      "https://twitter.com/prettyluxeatelier"
     ],
     "contactPoint": {
       "@type": "ContactPoint",

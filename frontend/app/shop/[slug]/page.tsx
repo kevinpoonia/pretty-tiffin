@@ -2,6 +2,8 @@ import { Metadata, ResolvingMetadata } from 'next';
 import ProductDetailClient from './ProductDetailView';
 import Script from 'next/script';
 
+export const revalidate = 3600; // ISR: rebuild pages at most once per hour
+
 async function getProduct(slug: string) {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products/${slug}`, {
@@ -31,11 +33,11 @@ export async function generateMetadata(
     title: product.name,
     description: product.description.substring(0, 160),
     openGraph: {
-      title: `${product.name} | Pretty Tiffin`,
+      title: `${product.name} | Pretty Luxe Atelier`,
       description: product.description.substring(0, 160),
       images: [product.images?.[0], ...previousImages],
     },
-    keywords: [product.name, 'customized tiffin', 'personalized gift India', product.category, 'pretty tiffin'],
+    keywords: [product.name, 'customized tiffin', 'personalized gift India', product.category, 'pretty luxe atelier'],
   };
 }
 
@@ -60,17 +62,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     "sku": product.id,
     "brand": {
       "@type": "Brand",
-      "name": "Pretty Tiffin"
+      "name": "Pretty Luxe Atelier"
     },
     "offers": {
       "@type": "Offer",
-      "url": `https://prettytiffin.in/shop/${product.slug}`,
+      "url": `https://prettyluxeatelier.com/shop/${product.slug}`,
       "priceCurrency": "INR",
       "price": product.price,
       "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "seller": {
         "@type": "Organization",
-        "name": "Pretty Tiffin"
+        "name": "Pretty Luxe Atelier"
       }
     }
   };

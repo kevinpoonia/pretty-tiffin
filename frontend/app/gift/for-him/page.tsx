@@ -53,7 +53,7 @@ export default function GiftsForHusband() {
                     viewport={{ once: true }}
                     transition={{ duration: 0.6 }}
                   >
-                    <h2 className="text-3xl font-heading font-black text-brand-900 tracking-tight mb-8">Why a Pretty Tiffin is the Perfect Gift?</h2>
+                    <h2 className="text-3xl font-heading font-black text-brand-900 tracking-tight mb-8">Why a Pretty Luxe Atelier is the Perfect Gift?</h2>
                     <div className="space-y-10">
                        {[
                           { title: 'Personalized Laser Engraving', desc: 'Add his name, a special date, or a witty message that never fades.', icon: ShieldCheck },
@@ -126,7 +126,7 @@ export default function GiftsForHusband() {
               <div className="space-y-8">
                  {[
                     { q: 'Can I add a custom message for my husband?', a: 'Yes! Our laser engraving allows you to add up to 25 characters on the top or side of the tiffin. You can also add a gift message in the cart.' },
-                    { q: 'Is it suitable for his office lunch?', a: 'Absolutely. Pretty Tiffins are designed for professional environments with a sleek aesthetic and durable build.' },
+                    { q: 'Is it suitable for his office lunch?', a: 'Absolutely. Pretty Luxe Ateliers are designed for professional environments with a sleek aesthetic and durable build.' },
                     { q: 'Will the engraving fade with daily washing?', a: 'No, laser engraving is permanent. It will not scratch or fade even with regular scrubbing.' }
                  ].map((faq, i) => (
                     <div key={i} className="border-b border-brand-50 pb-8">

@@ -69,8 +69,8 @@ export default function AdminDashboard() {
   }, [activeTab]);
 
   useEffect(() => {
-    if (!authLoading && (!user || user.role !== 'ADMIN')) {
-      router.push('/login');
+    if (!authLoading && user && user.role !== 'ADMIN') {
+      router.push('/');
     }
   }, [user, authLoading, router]);
 
@@ -153,7 +153,7 @@ export default function AdminDashboard() {
         <div className="p-8 border-b border-brand-800 flex items-center justify-between">
           <Link href="/" className="inline-block group">
             <span className="font-heading font-black text-2xl tracking-tighter text-white group-hover:text-brand-400 transition-colors">
-              PRETTY<span className="text-brand-400 group-hover:text-white transition-colors underline decoration-brand-500 underline-offset-4">TIFFIN</span>
+              PRETTY LUXE<span className="text-brand-400 group-hover:text-white transition-colors underline decoration-brand-500 underline-offset-4">ATELIER</span>
             </span>
           </Link>
         </div>

@@ -8,8 +8,8 @@ const router = (0, express_1.Router)();
 const BREVO_URL = 'https://api.brevo.com/v3/smtp/email';
 const API_KEY = process.env.BREVO_API_KEY || '';
 const SENDER = {
-    name: process.env.BREVO_SENDER_NAME || 'Pretty Tiffin',
-    email: process.env.BREVO_SENDER_EMAIL || 'noreply@prettytiffin.in'
+    name: process.env.BREVO_SENDER_NAME || 'Pretty Luxe Atelier',
+    email: process.env.BREVO_SENDER_EMAIL || 'noreply@prettyluxeatelier.com'
 };
 async function sendEmail(to, subject, htmlContent) {
     if (!API_KEY) {
@@ -41,7 +41,7 @@ function orderConfirmationEmail(name, orderId, total, items) {
 <body style="margin:0;padding:0;background:#faf8f4;font-family:'Helvetica Neue',Arial,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
     <div style="background:#2a3d25;padding:32px 40px;text-align:center;">
-      <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:-0.5px;">Pretty<span style="color:#83aa79;">Tiffin</span></h1>
+      <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:-0.5px;">Pretty Luxe<span style="color:#83aa79;">Atelier</span></h1>
       <p style="color:#adc8a5;margin:8px 0 0;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Order Confirmed</p>
     </div>
     <div style="padding:40px;">
@@ -61,11 +61,11 @@ function orderConfirmationEmail(name, orderId, total, items) {
         <span style="font-weight:700;color:#2a3d25;">Total Paid</span>
         <span style="font-weight:900;color:#2a3d25;font-size:18px;">₹${Number(total).toLocaleString('en-IN')}</span>
       </div>
-      <a href="https://prettytiffin.in/account/orders" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px;">Track Your Order →</a>
+      <a href="https://prettyluxeatelier.com/account/orders" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px;">Track Your Order →</a>
     </div>
     <div style="background:#f5f8f3;padding:24px 40px;text-align:center;border-top:1px solid #e8f0e4;">
-      <p style="color:#83aa79;font-size:12px;margin:0;">Questions? <a href="mailto:support@prettytiffin.in" style="color:#628f57;">support@prettytiffin.in</a></p>
-      <p style="color:#adc8a5;font-size:11px;margin:8px 0 0;">© ${new Date().getFullYear()} Pretty Tiffin. Crafted with love in India.</p>
+      <p style="color:#83aa79;font-size:12px;margin:0;">Questions? <a href="mailto:support@prettyluxeatelier.com" style="color:#628f57;">support@prettyluxeatelier.com</a></p>
+      <p style="color:#adc8a5;font-size:11px;margin:8px 0 0;">© ${new Date().getFullYear()} Pretty Luxe Atelier. Crafted with love in India.</p>
     </div>
   </div>
 </body>
@@ -77,15 +77,15 @@ function welcomeEmail(name) {
 <body style="margin:0;padding:0;background:#faf8f4;font-family:'Helvetica Neue',Arial,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;">
     <div style="background:#2a3d25;padding:32px 40px;text-align:center;">
-      <h1 style="color:#fff;margin:0;font-size:28px;">Pretty<span style="color:#83aa79;">Tiffin</span></h1>
+      <h1 style="color:#fff;margin:0;font-size:28px;">Pretty Luxe<span style="color:#83aa79;">Atelier</span></h1>
     </div>
     <div style="padding:40px;">
       <h2 style="color:#2a3d25;">Welcome, ${name}! ✨</h2>
       <p style="color:#628f57;line-height:1.6;">Your account is ready. Explore our premium collection of personalized, laser-engraved stainless steel tiffins — perfect for gifting or everyday use.</p>
-      <a href="https://prettytiffin.in/shop" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;margin-top:16px;">Shop Now →</a>
+      <a href="https://prettyluxeatelier.com/shop" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;margin-top:16px;">Shop Now →</a>
     </div>
     <div style="background:#f5f8f3;padding:24px 40px;text-align:center;">
-      <p style="color:#adc8a5;font-size:11px;margin:0;">© ${new Date().getFullYear()} Pretty Tiffin. All rights reserved.</p>
+      <p style="color:#adc8a5;font-size:11px;margin:0;">© ${new Date().getFullYear()} Pretty Luxe Atelier. All rights reserved.</p>
     </div>
   </div>
 </body>

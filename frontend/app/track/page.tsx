@@ -30,7 +30,7 @@ export default function TrackOrderPage() {
       <main className="container mx-auto px-4 md:px-6 py-10 md:py-14">
         <div className="text-center mb-10">
           <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Track Your Order</h1>
-          <p className="text-gray-500 text-sm">Get real-time shipping updates for your Pretty Tiffin order</p>
+          <p className="text-gray-500 text-sm">Get real-time shipping updates for your Pretty Luxe Atelier order</p>
         </div>
 
         {!tracked ? (

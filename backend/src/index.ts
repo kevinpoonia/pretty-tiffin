@@ -1,5 +1,6 @@
 import express, { NextFunction, Request, Response } from 'express';
 import cors, { CorsOptions } from 'cors';
+import compression from 'compression';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -25,10 +26,9 @@ app.set('trust proxy', 1);
 
 const defaultAllowedOrigins = [
   'http://localhost:3000',
-  'https://prettytiffin.pcubesolution.com',
-  'https://prettytiffin.in',
-  'https://www.prettytiffin.in',
-  'https://pretty-tiffin.vercel.app'
+  'https://prettyluxeatelier.com',
+  'https://www.prettyluxeatelier.com',
+  'https://prettyluxeatelier.vercel.app'
 ];
 
 const allowedOrigins = new Set(
@@ -41,9 +41,8 @@ const allowedOrigins = new Set(
 
 const allowedOriginPatterns = [
   /^https?:\/\/localhost(?::\d+)?$/,
-  /^https:\/\/(?:www\.)?prettytiffin\.pcubesolution\.com$/,
-  /^https:\/\/(?:www\.)?prettytiffin\.in$/,
-  /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
+  /^https:\/\/(?:www\.)?prettyluxeatelier\.com$/,
+  /^https:\/\/prettyluxeatelier(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 
 const isAllowedOrigin = (origin?: string) => {
@@ -72,23 +71,59 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.options(/.*/, cors(corsOptions));
 app.use(helmet());
+app.use(compression());
 
-const limiter = rateLimit({
+// Read endpoints: generous limit for browsing (1000/15min)
+const readLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 1000,
+  standardHeaders: true,
+  legacyHeaders: false,
+  skip: (req) => req.method === 'OPTIONS' || req.method !== 'GET'
+});
+
+// Write endpoints: strict limit to prevent abuse (100/15min)
+const writeLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 100,
   standardHeaders: true,
   legacyHeaders: false,
-  skip: (req) => req.method === 'OPTIONS'
+  skip: (req) => req.method === 'OPTIONS' || req.method === 'GET'
 });
 
-app.use(limiter);
-app.use(express.json());
+// Auth endpoints: very strict (20/15min per IP)
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: { error: 'Too many requests, please try again later.' }
+});
+
+app.use(readLimiter);
+app.use(writeLimiter);
+app.use(express.json({ limit: '1mb' }));
 
 app.get('/api/health', (req: Request, res: Response) => {
+  res.set('Cache-Control', 'no-store');
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
-app.use('/api/auth', authRoutes);
+// Cache-Control headers for public read endpoints
+app.use('/api/products', (req: Request, res: Response, next: NextFunction) => {
+  if (req.method === 'GET') res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+  next();
+});
+app.use('/api/blog', (req: Request, res: Response, next: NextFunction) => {
+  if (req.method === 'GET') res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+  next();
+});
+app.use('/api/banners', (req: Request, res: Response, next: NextFunction) => {
+  if (req.method === 'GET') res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
+  next();
+});
+
+app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/products', productRoutes);
 app.use('/api/customizations', customizationRoutes);
 app.use('/api/cart', cartRoutes);

@@ -5,6 +5,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
+const compression_1 = __importDefault(require("compression"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();
 const auth_1 = __importDefault(require("./routes/auth"));
@@ -26,10 +27,9 @@ const port = process.env.PORT || 4000;
 app.set('trust proxy', 1);
 const defaultAllowedOrigins = [
     'http://localhost:3000',
-    'https://prettytiffin.pcubesolution.com',
-    'https://prettytiffin.in',
-    'https://www.prettytiffin.in',
-    'https://pretty-tiffin.vercel.app'
+    'https://prettyluxeatelier.com',
+    'https://www.prettyluxeatelier.com',
+    'https://prettyluxeatelier.vercel.app'
 ];
 const allowedOrigins = new Set([
     ...defaultAllowedOrigins,
@@ -38,9 +38,8 @@ const allowedOrigins = new Set([
 ].filter(Boolean));
 const allowedOriginPatterns = [
     /^https?:\/\/localhost(?::\d+)?$/,
-    /^https:\/\/(?:www\.)?prettytiffin\.pcubesolution\.com$/,
-    /^https:\/\/(?:www\.)?prettytiffin\.in$/,
-    /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
+    /^https:\/\/(?:www\.)?prettyluxeatelier\.com$/,
+    /^https:\/\/prettyluxeatelier(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 const isAllowedOrigin = (origin) => {
     if (!origin) {
@@ -64,19 +63,55 @@ const corsOptions = {
 app.use((0, cors_1.default)(corsOptions));
 app.options(/.*/, (0, cors_1.default)(corsOptions));
 app.use((0, helmet_1.default)());
-const limiter = (0, express_rate_limit_1.default)({
+app.use((0, compression_1.default)());
+// Read endpoints: generous limit for browsing (1000/15min)
+const readLimiter = (0, express_rate_limit_1.default)({
+    windowMs: 15 * 60 * 1000,
+    max: 1000,
+    standardHeaders: true,
+    legacyHeaders: false,
+    skip: (req) => req.method === 'OPTIONS' || req.method !== 'GET'
+});
+// Write endpoints: strict limit to prevent abuse (100/15min)
+const writeLimiter = (0, express_rate_limit_1.default)({
     windowMs: 15 * 60 * 1000,
     max: 100,
     standardHeaders: true,
     legacyHeaders: false,
-    skip: (req) => req.method === 'OPTIONS'
+    skip: (req) => req.method === 'OPTIONS' || req.method === 'GET'
 });
-app.use(limiter);
-app.use(express_1.default.json());
+// Auth endpoints: very strict (20/15min per IP)
+const authLimiter = (0, express_rate_limit_1.default)({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: 'Too many requests, please try again later.' }
+});
+app.use(readLimiter);
+app.use(writeLimiter);
+app.use(express_1.default.json({ limit: '1mb' }));
 app.get('/api/health', (req, res) => {
+    res.set('Cache-Control', 'no-store');
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
-app.use('/api/auth', auth_1.default);
+// Cache-Control headers for public read endpoints
+app.use('/api/products', (req, res, next) => {
+    if (req.method === 'GET')
+        res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+    next();
+});
+app.use('/api/blog', (req, res, next) => {
+    if (req.method === 'GET')
+        res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+    next();
+});
+app.use('/api/banners', (req, res, next) => {
+    if (req.method === 'GET')
+        res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
+    next();
+});
+app.use('/api/auth', authLimiter, auth_1.default);
 app.use('/api/products', products_1.default);
 app.use('/api/customizations', customization_1.default);
 app.use('/api/cart', cart_1.default);

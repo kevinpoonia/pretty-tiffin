@@ -73,7 +73,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
           </button>
           <Link href="/" className="flex-shrink-0 group">
             <span className="font-heading italic text-3xl sm:text-4xl text-stone-800 group-hover:text-brand-700 transition-colors">
-              Pretty<span className="text-brand-500">Tiffin</span>
+              Pretty Luxe<span className="text-brand-500">Atelier</span>
             </span>
           </Link>
         </div>
@@ -211,7 +211,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             >
               <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100">
                 <span className="font-heading font-extrabold text-2xl text-gray-900">
-                  Pretty<span className="text-brand-500">Tiffin</span>
+                  Pretty Luxe<span className="text-brand-500">Atelier</span>
                 </span>
                 <button onClick={() => setMobileMenuOpen(false)} className="text-gray-500 p-1" aria-label="Close menu">
                   <X size={24} />

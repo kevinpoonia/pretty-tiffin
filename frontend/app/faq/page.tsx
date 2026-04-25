@@ -38,7 +38,7 @@ const FAQ_DATA = [
     category: 'Corporate Gifting',
     icon: Gift,
     questions: [
-      { q: "Do you offer discounts for bulk orders?", a: "Yes, we have specialized pricing for corporate gifting and bulk orders (20+ units). Reach out to us at sales@prettytiffin.com." },
+      { q: "Do you offer discounts for bulk orders?", a: "Yes, we have specialized pricing for corporate gifting and bulk orders (20+ units). Reach out to us at sales@prettyluxeatelier.com." },
       { q: "Can you provide custom packaging for events?", a: "Absolutely. We offer premium gift-wrapping and can even include personalized thank-you notes for large scale events." }
     ]
   }
@@ -168,7 +168,7 @@ export default function FAQPage() {
                 <h4 className="text-2xl font-black text-brand-900 mb-4 tracking-tight">Still have questions?</h4>
                 <p className="text-brand-500 mb-8 max-w-sm mx-auto text-sm leading-relaxed">Our support team is always ready to help you with anything you need.</p>
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                   <a href="mailto:hello@prettytiffin.com" className="px-8 py-4 bg-brand-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/20 active:scale-95">Shoot an Email</a>
+                   <a href="mailto:hello@prettyluxeatelier.com" className="px-8 py-4 bg-brand-900 text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:bg-brand-800 transition-all shadow-xl shadow-brand-900/20 active:scale-95">Shoot an Email</a>
                    <a href="https://wa.me/919999988888" className="px-8 py-4 bg-[#25D366] text-white rounded-2xl font-black text-[10px] uppercase tracking-[0.2em] hover:shadow-xl transition-all active:scale-95">Chat on WhatsApp</a>
                 </div>
              </div>

@@ -29,7 +29,7 @@ router.post('/sync', async (req, res) => {
             }
             else {
                 user = await prisma_1.prisma.user.create({ data: { clerkId, email, name, password: '' } });
-                (0, email_1.sendEmail)(email, 'Welcome to Pretty Tiffin! ✨', (0, email_1.welcomeEmail)(name)).catch(console.error);
+                (0, email_1.sendEmail)(email, 'Welcome to Pretty Luxe Atelier! ✨', (0, email_1.welcomeEmail)(name)).catch(console.error);
             }
         }
         res.json({ id: user.id, email: user.email, name: user.name, role: user.role });
