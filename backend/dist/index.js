@@ -98,17 +98,17 @@ app.get('/api/health', (req, res) => {
 // Cache-Control headers for public read endpoints
 app.use('/api/products', (req, res, next) => {
     if (req.method === 'GET')
-        res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+        res.set('Cache-Control', 'private, max-age=60');
     next();
 });
 app.use('/api/blog', (req, res, next) => {
     if (req.method === 'GET')
-        res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+        res.set('Cache-Control', 'private, max-age=300');
     next();
 });
 app.use('/api/banners', (req, res, next) => {
     if (req.method === 'GET')
-        res.set('Cache-Control', 'public, max-age=600, stale-while-revalidate=3600');
+        res.set('Cache-Control', 'private, max-age=60');
     next();
 });
 app.use('/api/auth', authLimiter, auth_1.default);
