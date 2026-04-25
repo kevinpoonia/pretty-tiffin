@@ -49,8 +49,10 @@ export default function ProductCard({ product, showBadge = false, priority = fal
     }
   };
 
-  const discount = product.compareAtPrice && product.compareAtPrice > product.price
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+  const price = Number(product.price);
+  const compareAtPrice = product.compareAtPrice ? Number(product.compareAtPrice) : null;
+  const discount = compareAtPrice && compareAtPrice > price
+    ? Math.round(((compareAtPrice - price) / compareAtPrice) * 100)
     : null;
 
   const rating = product.avgRating ?? 0;
@@ -169,17 +171,17 @@ export default function ProductCard({ product, showBadge = false, priority = fal
           <div className="flex items-end justify-between">
             {/* Price block */}
             <div className="flex flex-col gap-0.5">
-              {product.compareAtPrice && product.compareAtPrice > product.price && (
+              {compareAtPrice && compareAtPrice > price && (
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] text-stone-400 uppercase tracking-wide font-semibold">MRP</span>
                   <span className="text-xs text-stone-300 line-through font-medium">
-                    ₹{product.compareAtPrice.toLocaleString('en-IN')}
+                    ₹{compareAtPrice.toLocaleString('en-IN')}
                   </span>
                 </div>
               )}
               <div className="flex items-center gap-2">
                 <span className="font-sans font-bold text-stone-900 text-xl">
-                  ₹{product.price.toLocaleString('en-IN')}
+                  ₹{price.toLocaleString('en-IN')}
                 </span>
                 {discount && (
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
