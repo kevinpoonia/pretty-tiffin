@@ -40,6 +40,7 @@ interface Product {
   price: number; compareAtPrice?: number; images: string[];
   category: string; stock: number; isFeatured: boolean;
   seoTitle?: string; seoDesc?: string;
+  manualReviewCount?: number; manualAvgRating?: number;
   customizationOptions: { id: string; type: string; label: string; values: string[]; priceOffset: number }[];
 }
 
@@ -130,6 +131,7 @@ export default function AdminDashboard() {
   const [pf, setPf] = useState({
     name: '', slug: '', description: '', price: '', compareAtPrice: '', stock: '', category: '',
     isFeatured: false, seoTitle: '', seoDesc: '', images: [] as string[],
+    manualReviewCount: '', manualAvgRating: '',
     customizationOptions: [] as { type: string; label: string; values: string; priceOffset: string }[]
   });
   const [savingProduct, setSavingProduct] = useState(false);
@@ -221,12 +223,15 @@ export default function AdminDashboard() {
       price: String(p.price), compareAtPrice: p.compareAtPrice ? String(p.compareAtPrice) : '',
       stock: String(p.stock), category: p.category, isFeatured: p.isFeatured,
       seoTitle: p.seoTitle || '', seoDesc: p.seoDesc || '', images: p.images || [],
+      manualReviewCount: p.manualReviewCount ? String(p.manualReviewCount) : '',
+      manualAvgRating: p.manualAvgRating ? String(p.manualAvgRating) : '',
       customizationOptions: (p.customizationOptions || []).map(o => ({
         type: o.type, label: o.label, values: o.values.join(', '), priceOffset: String(o.priceOffset)
       }))
     } : {
       name: '', slug: '', description: '', price: '', compareAtPrice: '', stock: '', category: '',
       isFeatured: false, seoTitle: '', seoDesc: '', images: [],
+      manualReviewCount: '', manualAvgRating: '',
       customizationOptions: []
     });
     setProductFormOpen(true);
@@ -240,6 +245,8 @@ export default function AdminDashboard() {
         ...pf,
         price: Number(pf.price), compareAtPrice: pf.compareAtPrice ? Number(pf.compareAtPrice) : null,
         stock: Number(pf.stock),
+        manualReviewCount: pf.manualReviewCount ? Number(pf.manualReviewCount) : null,
+        manualAvgRating: pf.manualAvgRating ? Number(pf.manualAvgRating) : null,
         customizationOptions: pf.customizationOptions.map(o => ({
           type: o.type, label: o.label, priceOffset: Number(o.priceOffset) || 0,
           values: o.values.split(',').map(v => v.trim()).filter(Boolean)
@@ -636,6 +643,8 @@ export default function AdminDashboard() {
                         { label: 'Category', key: 'category', placeholder: 'Premium Tiffins', required: true },
                         { label: 'SEO Title', key: 'seoTitle', placeholder: 'Optional SEO title' },
                         { label: 'SEO Description', key: 'seoDesc', placeholder: 'Optional SEO description' },
+                        { label: 'Review Count (display)', key: 'manualReviewCount', placeholder: 'e.g. 128', type: 'number' },
+                        { label: 'Avg Rating (1–5)', key: 'manualAvgRating', placeholder: 'e.g. 4.7' },
                       ].map(({ label, key, placeholder, required, type }) => (
                         <div key={key} className="space-y-1">
                           <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">{label}</label>
