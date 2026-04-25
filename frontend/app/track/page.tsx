@@ -25,7 +25,7 @@ export default function TrackOrderPage() {
   };
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen">
+    <div className="bg-[#f5f3ed] min-h-screen">
       <Navbar alwaysSolid />
       <main className="container mx-auto px-4 md:px-6 py-10 md:py-14">
         <div className="text-center mb-10">

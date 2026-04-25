@@ -640,7 +640,6 @@ export default function AdminDashboard() {
                         { label: 'Price (₹)', key: 'price', placeholder: '1499', required: true, type: 'number' },
                         { label: 'Compare-At Price (₹)', key: 'compareAtPrice', placeholder: '1999 (optional)' },
                         { label: 'Stock', key: 'stock', placeholder: '50', required: true, type: 'number' },
-                        { label: 'Category', key: 'category', placeholder: 'Premium Tiffins', required: true },
                         { label: 'SEO Title', key: 'seoTitle', placeholder: 'Optional SEO title' },
                         { label: 'SEO Description', key: 'seoDesc', placeholder: 'Optional SEO description' },
                         { label: 'Review Count (display)', key: 'manualReviewCount', placeholder: 'e.g. 128', type: 'number' },
@@ -654,6 +653,16 @@ export default function AdminDashboard() {
                             className="w-full bg-brand-50 rounded-xl px-4 py-2.5 text-sm font-medium text-brand-900 border-none outline-none focus:ring-2 focus:ring-brand-500/20" />
                         </div>
                       ))}
+                      <div className="space-y-1">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Category <span className="text-red-400">*</span></label>
+                        <select required value={pf.category} onChange={e => setPf(p => ({ ...p, category: e.target.value }))}
+                          className="w-full bg-brand-50 rounded-xl px-4 py-2.5 text-sm font-medium text-brand-900 border-none outline-none focus:ring-2 focus:ring-brand-500/20">
+                          <option value="">Select category…</option>
+                          {['tiffins', 'kitchenware', 'apparels', 'corporate', 'new-arrivals', 'best-sellers', 'gifting'].map(c => (
+                            <option key={c} value={c}>{c.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}</option>
+                          ))}
+                        </select>
+                      </div>
                     </div>
 
                     <div className="space-y-1">

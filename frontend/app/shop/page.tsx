@@ -16,13 +16,14 @@ async function getProducts() {
 }
 
 export const metadata: Metadata = {
-  title: 'Shop Premium Tiffins | Pretty Luxe Atelier',
-  description: 'Browse our collection of premium, customizable stainless steel stickers and tiffin boxes. Perfect for personal use and gifting.',
+  title: 'Shop Tiffins, Kitchenware & Apparels | Pretty Luxe Atelier',
+  description: 'Browse our curated collection of premium stainless steel tiffin boxes, Indian kitchenware, and ethnic apparels. Laser-engraved personalisation available. Worldwide shipping.',
+  keywords: ['tiffin box shop', 'Indian kitchenware online', 'ethnic apparels India', 'personalized tiffin', 'pretty luxe atelier shop'],
 };
 
 function ShopPageFallback() {
   return (
-    <div className="bg-[#faf8f4] min-h-screen">
+    <div className="bg-[#f5f3ed] min-h-screen">
       <div className="container mx-auto px-4 md:px-6 py-8 md:py-10">
         <div className="h-8 w-44 rounded-full bg-white shadow-sm animate-pulse mb-6" />
         <div className="grid gap-6 lg:grid-cols-[280px_minmax(0,1fr)]">

@@ -63,12 +63,12 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
     { q: 'Can I add a custom logo for a team gift?', a: 'Absolutely. We specialize in corporate gifting and can engrave individual names or company logos to create a premium, lasting impression for your team.' },
     { q: 'Is the engraving permanent?', a: 'Yes, our laser engraving process creates a permanent, high-precision mark on the steel. It will never fade, peel, or wash off, even with daily cleaning.' },
     { q: 'How should I clean and care for my engraved tiffin?', a: 'Our tiffins are made from high-grade 304 stainless steel. They are dishwasher safe, but we recommend hand-washing with a soft sponge to keep the finish looking brand new for years.' },
-    { q: 'Do you ship worldwide?', a: 'Yes! We ship to customers in over 100 countries. Free worldwide shipping is included on every order.' },
+    { q: 'Do you ship worldwide?', a: 'Yes! We ship to customers in over 100 countries. Shipping charges are calculated at checkout based on your location and order size.' },
     { q: 'What is your return policy for customized items?', a: 'Since each piece is individually engraved for you, we can only accept returns if there is a manufacturing defect or damage during transit. Please reach out to our team within 48 hours of delivery if there is an issue.' },
   ];
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen">
+    <div className="bg-[#f5f3ed] min-h-screen">
       <Navbar alwaysSolid />
       <main className="w-full">
 
@@ -95,13 +95,13 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                   </div>
                 </div>
                 <div className="absolute inset-0 z-20 flex items-end sm:items-center">
-                  <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-10 sm:pb-0">
-                    <div className="max-w-xl rounded-[1.5rem] bg-black/25 p-5 sm:p-7 md:p-9 backdrop-blur-[3px] shadow-2xl">
-                      <h2 className="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 leading-tight">{banner.title}</h2>
-                      <p className="text-sm sm:text-base md:text-lg mb-5 text-white/85 max-w-md">{banner.subtitle}</p>
+                  <div className="container mx-auto px-4 sm:px-6 md:px-10 lg:px-16 text-white text-left pb-6 sm:pb-0">
+                    <div className="max-w-xs sm:max-w-md md:max-w-xl rounded-[1rem] sm:rounded-[1.5rem] bg-black/25 p-4 sm:p-6 md:p-9 backdrop-blur-[3px] shadow-2xl">
+                      <h2 className="text-xl sm:text-3xl md:text-4xl xl:text-5xl font-bold mb-2 sm:mb-3 leading-tight">{banner.title}</h2>
+                      <p className="text-xs sm:text-sm md:text-base mb-4 sm:mb-5 text-white/85 max-w-sm sm:max-w-md line-clamp-3">{banner.subtitle}</p>
                       <Link
                         href={banner.link || '/shop'}
-                        className="inline-flex items-center bg-brand-100 text-brand-900 hover:bg-white px-8 sm:px-10 py-3.5 rounded-full text-xs sm:text-sm font-bold tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95"
+                        className="inline-flex items-center bg-brand-100 text-brand-900 hover:bg-white px-5 sm:px-8 md:px-10 py-2.5 sm:py-3.5 rounded-full text-[10px] sm:text-xs font-bold tracking-widest transition-all shadow-xl hover:scale-105 active:scale-95"
                       >
                         DISCOVER COLLECTION <ChevronRight size={14} className="ml-2" />
                       </Link>
@@ -152,18 +152,18 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Trust Badges */}
-        <section className="bg-brand-900 py-4 relative overflow-hidden">
+        <section className="bg-brand-500 py-4 sm:py-6 relative overflow-hidden">
           <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <div className="flex flex-wrap justify-center md:justify-around items-center gap-y-4 gap-x-10 text-brand-100 text-[11px] sm:text-xs font-medium tracking-[0.2em]">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-0 md:flex md:flex-wrap md:justify-around items-center text-brand-50 font-semibold tracking-[0.15em]">
               {[
-                { icon: <Truck size={18} />, text: 'Free Shipping on All Orders' },
-                { icon: <Zap size={18} />, text: 'Same Day Delivery Available' },
-                { icon: <PenTool size={18} />, text: 'Laser Engraved Personalization' },
+                { icon: <Truck size={18} />, text: 'Worldwide Shipping' },
+                { icon: <Zap size={18} />, text: 'Fast Dispatch' },
+                { icon: <PenTool size={18} />, text: 'Laser Engraved' },
                 { icon: <ShieldCheck size={18} />, text: '100% Secure Payments' },
               ].map((badge, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="text-brand-300">{badge.icon}</span>
-                  <span className="uppercase tracking-wide">{badge.text}</span>
+                <div key={i} className="flex items-center gap-2 sm:gap-3">
+                  <span className="text-brand-300 shrink-0">{badge.icon}</span>
+                  <span className="uppercase tracking-widest text-[10px] sm:text-[11px]">{badge.text}</span>
                 </div>
               ))}
             </div>
@@ -171,10 +171,10 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Shop By Category */}
-        <section className="bg-white py-12 md:py-16 relative">
+        <section className="bg-white py-16 md:py-20 relative border-b border-brand-100">
           <div className="container mx-auto px-4 md:px-6">
-            <h2 className="text-3xl md:text-4xl text-center text-stone-800 mb-10">
-              <span className="ink-underline">Browse by Category</span>
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-12 uppercase tracking-widest">
+              Browse by Category
             </h2>
             <div className="flex overflow-x-auto pb-4 md:pb-0 md:flex-wrap md:justify-center gap-8 md:gap-14 no-scrollbar snap-x">
               {categories.length > 0 ? categories.map((cat, idx) => (
@@ -183,25 +183,18 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                   href={`/shop?category=${encodeURIComponent(cat.name)}`}
                   className="flex flex-col items-center group cursor-pointer w-[5rem] sm:w-28 md:w-32 flex-shrink-0 snap-center"
                 >
-                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-brand-50 overflow-hidden relative mb-4 group-hover:shadow-2xl transition-all duration-700 border border-brand-100 group-hover:border-brand-300 group-hover:-translate-y-2`}>
+                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-none bg-brand-50 overflow-hidden relative mb-4 transition-all duration-700 border border-brand-100 group-hover:border-brand-500`}>
                     <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 80px, 120px" className="object-cover group-hover:scale-110 transition-transform duration-700 p-3" />
                   </div>
-                  <span className="text-xs font-bold text-stone-600 text-center group-hover:text-brand-700 transition-colors tracking-wide">{cat.name}</span>
+                  <span className="text-xs font-bold text-stone-600 text-center group-hover:text-brand-700 transition-colors tracking-widest uppercase">{cat.name}</span>
                 </Link>
               )) : ['Personalized', 'Corporate', 'Birthday', 'Anniversary', 'Wedding', 'Occasions'].map((cat, i) => (
                 <Link key={i} href={`/shop?category=${cat.toLowerCase()}`} className="flex flex-col items-center group cursor-pointer w-[5rem] flex-shrink-0">
-                  <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-brand-50 mb-4 animate-pulse" />
+                  <div className="w-[4.5rem] h-[4.5rem] bg-brand-50 mb-4 animate-pulse" />
                   <span className="text-xs font-semibold text-stone-400">{cat}</span>
                 </Link>
               ))}
             </div>
-          </div>
-          
-          {/* Wavy Separator */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
-            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
-            </svg>
           </div>
         </section>
 
@@ -214,7 +207,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
             </div>
             <Link href="/shop" className="text-brand-700 font-bold text-xs uppercase tracking-widest hover:text-brand-900 border-b-2 border-brand-200 pb-1 transition-all">View All Collections</Link>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 md:gap-8">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-6 md:gap-8">
             {loading ? (
               [1, 2, 3, 4, 5].map(i => <div key={i} className="bg-white h-80 animate-pulse border border-brand-50 rounded-2xl" />)
             ) : products.slice(0, 5).map((item, idx) => (
@@ -224,36 +217,24 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
         </section>
 
         {/* Gifts by Relationship */}
-        <section className="bg-brand-50 py-16 md:py-20 relative overflow-hidden">
-          <div className="absolute top-0 left-0 w-full overflow-hidden leading-[0] -translate-y-[1px] rotate-180 text-white">
-            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
-            </svg>
-          </div>
-
+        <section className="bg-brand-50 py-16 md:py-24 border-y border-brand-100">
           <div className="container mx-auto px-4 md:px-6 relative z-10">
-            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-12 font-heading italic">Curated for Loved Ones</h2>
+            <h2 className="text-3xl md:text-5xl text-center text-stone-800 mb-16 uppercase tracking-widest">Curated for Loved Ones</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-10">
               {relationships.map((rel, idx) => (
                 <Link
                   key={idx}
                   href={rel.href}
-                  className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden group cursor-pointer block rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-700 bg-white"
+                  className="relative aspect-[3/4] md:aspect-[4/5] overflow-hidden group cursor-pointer block rounded-none transition-all duration-700 bg-white"
                 >
                   <Image src={rel.img} alt={rel.title} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-cover group-hover:scale-110 transition-transform duration-1000 grayscale-[0.2] group-hover:grayscale-0" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-stone-900/90 via-stone-900/20 to-transparent flex flex-col justify-end p-6 md:p-8">
-                    <h3 className="text-white italic text-xl md:text-2xl mb-2">{rel.title}</h3>
-                    <p className="text-brand-200 text-[10px] font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">Explore →</p>
+                  <div className="absolute inset-0 bg-stone-900/40 group-hover:bg-stone-900/20 transition-colors flex flex-col justify-end p-6 md:p-8">
+                    <h3 className="text-white text-xl md:text-2xl mb-2 font-heading tracking-wide uppercase">{rel.title}</h3>
+                    <p className="text-brand-50 text-[10px] font-bold uppercase tracking-[0.2em] group-hover:translate-x-2 transition-transform">Explore Collection →</p>
                   </div>
                 </Link>
               ))}
             </div>
-          </div>
-
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[1px] text-white">
-            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor" />
-            </svg>
           </div>
         </section>
 

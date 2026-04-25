@@ -20,7 +20,7 @@ const PERKS = [
 
 export default function BulkOrdersPage() {
   return (
-    <div className="bg-[#faf8f4] min-h-screen flex flex-col">
+    <div className="bg-[#f5f3ed] min-h-screen flex flex-col">
       <Navbar alwaysSolid />
       <main className="flex-1 pt-24 pb-20">
         <div className="container mx-auto px-4 max-w-5xl">

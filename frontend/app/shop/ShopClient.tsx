@@ -9,20 +9,20 @@ import Footer from '@/components/layout/Footer';
 import ProductCard from '@/components/products/ProductCard';
 
 const curatedCollections = [
-  { value: 'same-day-delivery', label: 'Same Day Delivery' },
+  { value: 'tiffins', label: 'Tiffin Boxes' },
+  { value: 'kitchenware', label: 'Kitchenware' },
+  { value: 'apparels', label: 'Apparels' },
+  { value: 'corporate', label: 'Corporate Gifts' },
   { value: 'best-sellers', label: 'Best Sellers' },
-  { value: 'personalized', label: 'Personalized' },
-  { value: 'birthday', label: 'Birthday' },
-  { value: 'anniversary', label: 'Anniversary' },
-  { value: 'corporate', label: 'Corporate' },
-  { value: 'occasions', label: 'Occasions' },
+  { value: 'new-arrivals', label: 'New Arrivals' },
+  { value: 'gifting', label: 'Gift Hampers' },
 ];
 
 const relationshipCollections = [
-  { value: 'for-husband', label: 'For Husband' },
-  { value: 'for-wife', label: 'For Wife' },
+  { value: 'for-him', label: 'For Him' },
+  { value: 'for-her', label: 'For Her' },
   { value: 'for-kids', label: 'For Kids' },
-  { value: 'for-parents', label: 'For Parents' },
+  { value: 'for-home', label: 'For Home' },
 ];
 
 const sortOptions = [
@@ -53,24 +53,25 @@ const matchesTokens = (product: any, tokens: string[]) => {
 };
 
 const matchesCuratedCollection = (product: any, collection: string) => {
+  const cat = normalizeValue(product.category || '');
   switch (normalizeValue(collection)) {
-    case 'same-day-delivery': return Boolean(product.isFeatured) || getProductPrice(product) <= 1500;
+    case 'tiffins': return cat === 'tiffins' || matchesTokens(product, ['tiffin', 'lunchbox', 'lunch box']);
+    case 'kitchenware': return cat === 'kitchenware' || matchesTokens(product, ['kitchen', 'cookware', 'vessel', 'utensil', 'kadai', 'bowl']);
+    case 'apparels': return cat === 'apparels' || matchesTokens(product, ['apparel', 'shirt', 'kurta', 'fabric', 'clothing', 'wear']);
+    case 'corporate': return cat === 'corporate' || matchesTokens(product, ['executive', 'corporate', 'bulk', 'company']);
     case 'best-sellers': return Boolean(product.isFeatured);
-    case 'personalized': return Array.isArray(product.customizationOptions) && product.customizationOptions.length > 0;
-    case 'birthday': return matchesTokens(product, ['kids', 'birthday', 'gift', 'special']);
-    case 'anniversary': return matchesTokens(product, ['vintage', 'copper', 'premium', 'special']);
-    case 'corporate': return matchesTokens(product, ['executive', 'corporate', 'modern', 'minimalist']);
-    case 'occasions': return matchesTokens(product, ['gift', 'special', 'occasion', 'vintage', 'executive']);
+    case 'new-arrivals': return getProductCreatedAt(product) > Date.now() - 30 * 24 * 60 * 60 * 1000;
+    case 'gifting': return matchesTokens(product, ['gift', 'hamper', 'festive', 'occasion', 'special']);
     default: return false;
   }
 };
 
 const matchesRelationship = (product: any, relationship: string) => {
   switch (normalizeValue(relationship)) {
-    case 'for-husband': return matchesTokens(product, ['executive', 'vintage', 'copper', 'modern']);
-    case 'for-wife': return matchesTokens(product, ['vintage', 'special', 'pastel', 'gift']);
-    case 'for-kids': return matchesTokens(product, ['kids']);
-    case 'for-parents': return matchesTokens(product, ['vintage', 'steel', 'modern']);
+    case 'for-him': return matchesTokens(product, ['executive', 'copper', 'modern', 'vintage', 'mens']);
+    case 'for-her': return matchesTokens(product, ['pastel', 'special', 'rose', 'women', 'ethnic']);
+    case 'for-kids': return matchesTokens(product, ['kids', 'children', 'school', 'small']);
+    case 'for-home': return matchesTokens(product, ['kitchen', 'vessel', 'home', 'cookware', 'bowl']);
     default: return true;
   }
 };
@@ -185,13 +186,13 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   const hasActiveFilters = !!(activeCategory || activeRelationship || activeMinPrice || activeMaxPrice || activeSearch);
 
   const FilterPanel = () => (
-    <div className="space-y-8">
-      <div className="flex justify-between items-center pb-4 border-b border-brand-50">
-        <h3 className="font-heading italic text-2xl text-stone-800 flex items-center gap-3">
-          <SlidersHorizontal size={20} className="text-brand-400" /> Refine
+    <div className="space-y-10">
+      <div className="flex justify-between items-center pb-5 border-b border-brand-100">
+        <h3 className="font-heading text-xl text-stone-800 flex items-center gap-3 uppercase tracking-tight">
+          <SlidersHorizontal size={18} className="text-brand-500" /> Refine
         </h3>
         {hasActiveFilters && (
-          <button onClick={clearAllFilters} className="text-xs text-brand-500 hover:text-brand-700 font-bold uppercase tracking-widest border-b border-brand-200">
+          <button onClick={clearAllFilters} className="text-[10px] text-brand-500 hover:text-brand-700 font-bold uppercase tracking-widest border-b border-brand-200 transition-colors">
             Reset
           </button>
         )}
@@ -199,19 +200,19 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
 
       {/* Collections */}
       <div>
-        <h4 className="font-bold text-stone-800 mb-4 text-xs uppercase tracking-[0.2em]">Collections</h4>
-        <div className="space-y-3">
+        <h4 className="font-bold text-stone-400 mb-5 text-[10px] uppercase tracking-[0.2em]">Collections</h4>
+        <div className="space-y-4">
           {curatedCollections.map(col => {
             const isSelected = normalizedCategory === col.value;
             return (
-              <label key={col.value} className="flex items-center gap-3 cursor-pointer group">
+              <label key={col.value} className="flex items-center gap-4 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => updateSearchParams({ category: isSelected ? null : col.value, for: null })}
-                  className="w-4 h-4 rounded-full border-brand-200 text-brand-900 focus:ring-brand-500 cursor-pointer transition-all"
+                  className="w-4 h-4 rounded-none border-brand-200 text-brand-500 focus:ring-brand-500 cursor-pointer transition-all"
                 />
-                <span className={`text-sm tracking-wide transition-colors ${isSelected ? 'text-brand-900 font-bold' : 'text-stone-500 group-hover:text-stone-800'}`}>
+                <span className={`text-[11px] uppercase tracking-widest transition-colors ${isSelected ? 'text-brand-500 font-bold' : 'text-stone-500 group-hover:text-stone-900'}`}>
                   {col.label}
                 </span>
               </label>
@@ -222,20 +223,20 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
 
       {/* Product Categories */}
       {productCategories.length > 0 && (
-        <div className="pt-4 border-t border-brand-100">
-          <h4 className="font-semibold text-brand-900 mb-3 text-sm">Product Categories</h4>
-          <div className="space-y-2">
+        <div className="pt-6 border-t border-brand-50">
+          <h4 className="font-bold text-stone-400 mb-5 text-[10px] uppercase tracking-[0.2em]">Categories</h4>
+          <div className="space-y-4">
             {productCategories.map(cat => {
               const isSelected = normalizeValue(cat) === normalizedCategory;
               return (
-                <label key={cat} className="flex items-center gap-2.5 cursor-pointer group">
+                <label key={cat} className="flex items-center gap-4 cursor-pointer group">
                   <input
                     type="checkbox"
                     checked={isSelected}
                     onChange={() => updateSearchParams({ category: isSelected ? null : cat, for: null })}
-                    className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                    className="w-4 h-4 rounded-none border-brand-200 text-brand-500 focus:ring-brand-500 cursor-pointer transition-all"
                   />
-                  <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                  <span className={`text-[11px] uppercase tracking-widest transition-colors ${isSelected ? 'text-brand-500 font-bold' : 'text-stone-500 group-hover:text-stone-900'}`}>
                     {cat}
                   </span>
                 </label>
@@ -246,20 +247,20 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
       )}
 
       {/* Relationship */}
-      <div className="pt-4 border-t border-brand-100">
-        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Gift by Relationship</h4>
-        <div className="space-y-2">
+      <div className="pt-6 border-t border-brand-50">
+        <h4 className="font-bold text-stone-400 mb-5 text-[10px] uppercase tracking-[0.2em]">Gift For</h4>
+        <div className="space-y-4">
           {relationshipCollections.map(rel => {
             const isSelected = normalizedRelationship === rel.value;
             return (
-              <label key={rel.value} className="flex items-center gap-2.5 cursor-pointer group">
+              <label key={rel.value} className="flex items-center gap-4 cursor-pointer group">
                 <input
                   type="checkbox"
                   checked={isSelected}
                   onChange={() => updateSearchParams({ for: isSelected ? null : rel.value, category: null })}
-                  className="rounded border-brand-300 text-brand-500 focus:ring-brand-500 cursor-pointer"
+                  className="w-4 h-4 rounded-none border-brand-200 text-brand-500 focus:ring-brand-500 cursor-pointer transition-all"
                 />
-                <span className={`text-sm transition-colors ${isSelected ? 'text-brand-700 font-semibold' : 'text-brand-600 group-hover:text-brand-900'}`}>
+                <span className={`text-[11px] uppercase tracking-widest transition-colors ${isSelected ? 'text-brand-500 font-bold' : 'text-stone-500 group-hover:text-stone-900'}`}>
                   {rel.label}
                 </span>
               </label>
@@ -269,30 +270,30 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
       </div>
 
       {/* Price */}
-      <div className="pt-4 border-t border-brand-100">
-        <h4 className="font-semibold text-brand-900 mb-3 text-sm">Price Range (₹)</h4>
-        <div className="flex items-center gap-2">
+      <div className="pt-6 border-t border-brand-50">
+        <h4 className="font-bold text-stone-400 mb-5 text-[10px] uppercase tracking-[0.2em]">Price (₹)</h4>
+        <div className="flex items-center gap-3">
           <input
             type="number"
             placeholder="Min"
             value={minPriceInput}
             onChange={e => setMinPriceInput(e.target.value)}
-            className="w-full bg-brand-50 text-sm p-2 rounded-lg border border-brand-200 focus:border-brand-500 focus:outline-none"
+            className="w-full bg-brand-50 text-xs p-3 rounded-none border border-brand-100 focus:border-brand-500 focus:outline-none placeholder-stone-300"
           />
-          <span className="text-brand-400 shrink-0">—</span>
+          <span className="text-brand-200 shrink-0">—</span>
           <input
             type="number"
             placeholder="Max"
             value={maxPriceInput}
             onChange={e => setMaxPriceInput(e.target.value)}
-            className="w-full bg-brand-50 text-sm p-2 rounded-lg border border-brand-200 focus:border-brand-500 focus:outline-none"
+            className="w-full bg-brand-50 text-xs p-3 rounded-none border border-brand-100 focus:border-brand-500 focus:outline-none placeholder-stone-300"
           />
         </div>
         <button
           onClick={applyPriceFilters}
-          className="mt-3 w-full bg-brand-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold hover:bg-brand-800 transition-colors"
+          className="mt-6 w-full bg-brand-500 text-white px-4 py-4 rounded-none text-[10px] font-bold hover:bg-brand-600 transition-all uppercase tracking-[0.2em]"
         >
-          Apply Price Range
+          Apply Filter
         </button>
       </div>
     </div>
@@ -301,32 +302,25 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-[#fdfaf6] min-h-screen pb-20 selection:bg-brand-200">
+      <main className="flex-1 bg-brand-50 min-h-screen pb-20 selection:bg-brand-200 font-sans">
         {/* Page Header */}
-        <div className="bg-white py-16 md:py-24 relative overflow-hidden">
+        <div className="bg-white pt-28 md:pt-36 lg:pt-44 pb-10 md:pb-16 relative overflow-hidden border-b border-brand-100">
           <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
-            <h1 className="text-4xl md:text-6xl font-heading italic text-stone-800 mb-6">{activeHeading}</h1>
-            <p className="text-stone-500 text-base md:text-lg italic max-w-lg mx-auto font-medium">
+            <h1 className="text-2xl sm:text-3xl md:text-5xl font-heading text-stone-800 mb-4 uppercase tracking-tight">{activeHeading}</h1>
+            <p className="text-stone-500 max-w-lg mx-auto font-medium uppercase tracking-widest text-[10px]">
               {activeSearch
                 ? `Discovering artisanal treasures for "${activeSearch}"`
                 : 'Hand-guided laser engravings on premium stainless steel, crafted for a lifetime of memories.'}
             </p>
           </div>
-          
-          {/* Wavy Separator */}
-          <div className="absolute bottom-0 left-0 w-full overflow-hidden leading-[0] translate-y-[99%] z-10 text-brand-50">
-            <svg viewBox="0 0 1440 48" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full h-auto">
-              <path d="M0 48H1440V0C1350 0 1260 24 1170 24C1080 24 990 0 900 0C810 0 720 24 630 24C540 24 450 0 360 0C270 0 180 24 90 24C45 24 0 12 0 12V48Z" fill="currentColor"/>
-            </svg>
-          </div>
         </div>
 
-        <div className="container mx-auto px-4 md:px-6">
-          <div className="flex flex-col md:flex-row gap-8">
+        <div className="container mx-auto px-4 md:px-6 mt-12">
+          <div className="flex flex-col md:flex-row gap-12">
 
             {/* Desktop Sidebar */}
             <aside className="hidden md:block w-72 lg:w-80 flex-shrink-0">
-              <div className="bg-white p-8 rounded-[2.5rem] organic-shape-1 shadow-xl border border-brand-50 lg:sticky lg:top-32">
+              <div className="bg-white p-6 lg:p-8 rounded-none shadow-sm border border-brand-100 lg:sticky lg:top-44">
                 <FilterPanel />
               </div>
             </aside>
@@ -334,29 +328,29 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
             {/* Main Content */}
             <div className="flex-1 min-w-0">
               {/* Sort Bar */}
-              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-6">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-3 mb-8">
                 <div className="flex items-center gap-3">
                   {/* Mobile Filter Button */}
                   <button
                     onClick={() => setMobileFiltersOpen(true)}
-                    className="md:hidden flex items-center gap-2 bg-white border border-brand-200 text-brand-700 font-semibold text-sm px-4 py-2 rounded-full hover:border-brand-500 transition-colors"
+                    className="md:hidden flex items-center gap-2 bg-white border border-brand-100 text-stone-700 font-bold text-[10px] px-6 py-3 rounded-none hover:border-brand-500 transition-colors uppercase tracking-widest"
                   >
-                    <Filter size={15} /> Filters
+                    <Filter size={14} /> Filters
                     {hasActiveFilters && (
-                      <span className="bg-brand-500 text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">
+                      <span className="bg-brand-500 text-white text-[9px] w-4 h-4 rounded-none flex items-center justify-center font-bold">
                         !
                       </span>
                     )}
                   </button>
-                  <p className="text-sm text-brand-600">{visibleProducts.length} products</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-brand-500">{visibleProducts.length} products found</p>
                 </div>
 
-                <div className="flex items-center gap-3 bg-white border border-brand-100 rounded-full px-6 py-2 shadow-sm">
-                  <span className="text-stone-400 text-xs font-bold uppercase tracking-widest shrink-0">Sort By</span>
+                <div className="flex items-center gap-3 bg-white border border-brand-100 rounded-none px-6 py-2.5 shadow-sm">
+                  <span className="text-stone-400 text-[10px] font-bold uppercase tracking-widest shrink-0">Sort By</span>
                   <select
                     value={activeSort}
                     onChange={e => updateSearchParams({ sort: e.target.value })}
-                    className="bg-transparent text-stone-800 text-sm font-bold focus:outline-none cursor-pointer pr-4 italic"
+                    className="bg-transparent text-stone-800 text-xs font-bold focus:outline-none cursor-pointer pr-4 uppercase tracking-widest border-none"
                   >
                     {sortOptions.map(o => <option key={o.value} value={o.value}>{o.label}</option>)}
                   </select>
@@ -365,27 +359,27 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
 
               {/* Active filter chips */}
               {hasActiveFilters && (
-                <div className="flex flex-wrap gap-2 mb-5">
+                <div className="flex flex-wrap gap-2 mb-8">
                   {activeSearch && (
-                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    <span className="flex items-center gap-2 bg-brand-500 text-white text-[9px] font-bold px-4 py-2 rounded-none uppercase tracking-widest">
                       Search: "{activeSearch}"
                       <button onClick={() => updateSearchParams({ search: null })}><X size={12} /></button>
                     </span>
                   )}
                   {activeCategory && (
-                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    <span className="flex items-center gap-2 bg-brand-500 text-white text-[9px] font-bold px-4 py-2 rounded-none uppercase tracking-widest">
                       {titleCaseFromSlug(activeCategory)}
                       <button onClick={() => updateSearchParams({ category: null })}><X size={12} /></button>
                     </span>
                   )}
                   {activeRelationship && (
-                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    <span className="flex items-center gap-2 bg-brand-500 text-white text-[9px] font-bold px-4 py-2 rounded-none uppercase tracking-widest">
                       {titleCaseFromSlug(activeRelationship)}
                       <button onClick={() => updateSearchParams({ for: null })}><X size={12} /></button>
                     </span>
                   )}
                   {(activeMinPrice || activeMaxPrice) && (
-                    <span className="flex items-center gap-1.5 bg-brand-100 text-brand-700 text-xs font-semibold px-3 py-1.5 rounded-full">
+                    <span className="flex items-center gap-2 bg-brand-500 text-white text-[9px] font-bold px-4 py-2 rounded-none uppercase tracking-widest">
                       ₹{activeMinPrice || '0'} – ₹{activeMaxPrice || '∞'}
                       <button onClick={() => updateSearchParams({ minPrice: null, maxPrice: null })}><X size={12} /></button>
                     </span>
@@ -394,18 +388,18 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
               )}
 
               {visibleProducts.length === 0 ? (
-                <div className="bg-white border border-brand-100 rounded-3xl p-12 text-center">
-                  <h2 className="text-xl font-bold font-heading text-brand-900 mb-2">No products found</h2>
-                  <p className="text-brand-500 mb-6 text-sm">Try different filters or search terms.</p>
+                <div className="bg-white border border-brand-100 rounded-none p-16 text-center shadow-sm">
+                  <h2 className="text-xl font-bold font-heading text-stone-900 mb-2 uppercase tracking-tight">No products found</h2>
+                  <p className="text-stone-500 mb-8 text-sm uppercase tracking-widest text-[10px]">Try different filters or search terms.</p>
                   <button
                     onClick={clearAllFilters}
-                    className="bg-brand-500 text-white px-6 py-3 rounded-full font-semibold hover:bg-brand-600 transition-colors text-sm"
+                    className="bg-brand-500 text-white px-10 py-4 rounded-none font-bold hover:bg-brand-600 transition-colors text-[10px] uppercase tracking-[0.2em]"
                   >
                     Reset All Filters
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4 md:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6">
                   {visibleProducts.map(product => (
                     <ProductCard key={product.id} product={product} />
                   ))}
@@ -428,19 +422,19 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
               className="absolute right-0 top-0 h-full w-[86vw] max-w-sm bg-white shadow-2xl flex flex-col"
               onClick={e => e.stopPropagation()}
             >
-              <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
-                <h2 className="font-bold text-gray-900 text-lg">Filters</h2>
-                <button onClick={() => setMobileFiltersOpen(false)} className="text-gray-500 p-1">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-brand-50">
+                <h2 className="font-bold text-stone-900 text-sm uppercase tracking-widest">Filters</h2>
+                <button onClick={() => setMobileFiltersOpen(false)} className="text-stone-500 p-1">
                   <X size={22} />
                 </button>
               </div>
-              <div className="flex-1 overflow-y-auto p-5">
+              <div className="flex-1 overflow-y-auto p-6">
                 <FilterPanel />
               </div>
-              <div className="p-4 border-t border-gray-100">
+              <div className="p-6 border-t border-brand-50">
                 <button
                   onClick={() => setMobileFiltersOpen(false)}
-                  className="w-full bg-brand-900 text-white py-3 rounded-xl font-bold text-sm hover:bg-brand-800 transition-colors"
+                  className="w-full bg-brand-500 text-white py-4 rounded-none font-bold text-[10px] hover:bg-brand-600 transition-colors uppercase tracking-[0.2em]"
                 >
                   Show {visibleProducts.length} Products
                 </button>

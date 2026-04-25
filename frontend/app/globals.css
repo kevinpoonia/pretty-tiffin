@@ -1,20 +1,20 @@
-@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=Instrument+Serif:ital@0;1&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600;1,700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-brand-50: #f5f8f3;
-  --color-brand-100: #e8f0e4;
-  --color-brand-200: #d0e1ca;
-  --color-brand-300: #adc8a5;
-  --color-brand-400: #83aa79;
-  --color-brand-500: #628f57;
-  --color-brand-600: #4d7244;
-  --color-brand-700: #3e5b37;
-  --color-brand-800: #334a2d;
-  --color-brand-900: #2a3d25;
+  --color-brand-50: #f5f3ed;
+  --color-brand-100: #e8e4d9;
+  --color-brand-200: #d1cbb8;
+  --color-brand-300: #b5ac8f;
+  --color-brand-400: #8a8162;
+  --color-brand-500: #434a31;
+  --color-brand-600: #383e29;
+  --color-brand-700: #2d3221;
+  --color-brand-800: #212519;
+  --color-brand-900: #171a11;
 
-  --font-sans: "Instrument Sans", "Inter", sans-serif;
-  --font-heading: "Instrument Serif", serif;
+  --font-sans: "Montserrat", "Helvetica Neue", sans-serif;
+  --font-heading: "Playfair Display", serif;
 
   --animate-fade-in: fade-in 0.8s cubic-bezier(0.16, 1, 0.3, 1);
   --animate-slide-up: slide-up 0.8s cubic-bezier(0.16, 1, 0.3, 1);
@@ -67,7 +67,7 @@
   }
 
   body {
-    @apply text-gray-900 bg-[#faf8f4] font-sans antialiased;
+    @apply text-stone-800 bg-[#f5f3ed] font-sans antialiased;
     overflow-x: hidden;
   }
 
@@ -77,7 +77,7 @@
   h4,
   h5,
   h6 {
-    @apply font-heading italic font-normal tracking-tight;
+    @apply font-heading font-normal tracking-tight;
   }
 
   input,

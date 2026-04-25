@@ -71,9 +71,9 @@ export default function WishlistPage() {
   };
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen flex flex-col">
+    <div className="bg-[#f5f3ed] min-h-screen flex flex-col">
       <Navbar alwaysSolid />
-      <main className="flex-1 pt-28 md:pt-32 pb-16">
+      <main className="flex-1 pt-28 md:pt-36 lg:pt-44 pb-16">
         <div className="container mx-auto px-4 max-w-5xl">
           <h1 className="text-3xl font-bold text-gray-900 mb-8 font-heading">My Wishlist</h1>
 

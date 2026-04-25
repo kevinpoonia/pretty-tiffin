@@ -35,29 +35,27 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
   };
 
   const navCategories = [
-    { label: 'New Arrivals', href: '/shop?category=new-arrivals', highlight: true },
+    { label: 'Tiffins', href: '/shop?category=tiffins', highlight: true },
+    { label: 'Kitchenware', href: '/shop?category=kitchenware' },
+    { label: 'Apparels', href: '/shop?category=apparels' },
+    { label: 'Corporate Gifts', href: '/shop?category=corporate' },
+    { label: 'New Arrivals', href: '/shop?category=new-arrivals' },
     { label: 'Best Sellers', href: '/shop?category=best-sellers' },
-    { label: 'Personalized', href: '/shop?category=personalized' },
-    { label: 'Birthday', href: '/shop?category=birthday' },
-    { label: 'Anniversary', href: '/shop?category=anniversary' },
-    { label: 'Corporate', href: '/shop?category=corporate' },
-    { label: 'Occasions', href: '/shop?category=occasions' },
   ];
 
   return (
     <header className="w-full bg-white shadow-sm sticky top-0 z-50">
       {/* Top Banner Strip */}
-      <div className="bg-brand-900 text-brand-100 hidden lg:block overflow-hidden relative">
-        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] pointer-events-none" />
-        <div className="container mx-auto px-4 md:px-6 h-10 flex items-center justify-between text-[10px] font-bold tracking-[0.2em] relative z-10">
-          <div className="flex items-center gap-4 text-brand-200">
-            <span className="animate-pulse">✨ ARTISANAL CRAFTSMANSHIP IN EVERY PIECE</span>
+      <div className="bg-brand-500 text-brand-50 hidden lg:block overflow-hidden relative border-b border-brand-600">
+        <div className="container mx-auto px-4 md:px-6 h-10 flex items-center justify-between text-[10px] font-bold tracking-[0.2em] relative z-10 uppercase">
+          <div className="flex items-center gap-4 text-brand-100">
+            <span>✨ TIFFINS · KITCHENWARE · APPARELS — CRAFTED IN INDIA</span>
           </div>
-          <div className="flex items-center gap-6 text-brand-200">
+          <div className="flex items-center gap-6 text-brand-100">
             <Link href="/track" className="hover:text-white flex items-center gap-2 transition-colors">
               <Truck size={12} /> TRACK YOUR ORDER
             </Link>
-            <span className="text-brand-400">|</span>
+            <span className="text-brand-300">|</span>
             <span>🌍 WORLDWIDE SHIPPING</span>
           </div>
         </div>
@@ -74,7 +72,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             <Menu size={24} />
           </button>
           <Link href="/" className="flex-shrink-0 group">
-            <span className="font-heading italic text-3xl sm:text-4xl text-stone-800 group-hover:text-brand-700 transition-colors">
+            <span className="font-heading text-xl sm:text-2xl lg:text-3xl text-stone-800 group-hover:text-brand-500 transition-colors uppercase tracking-tight">
               Pretty Luxe<span className="text-brand-500">Atelier</span>
             </span>
           </Link>
@@ -82,12 +80,12 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
 
         {/* Search Bar */}
         <div className="hidden md:flex flex-1 min-w-0 max-w-xl relative">
-          <div className={`w-full flex items-center border-2 ${searchFocused ? 'border-brand-500 bg-white' : 'border-brand-50 bg-brand-50'} rounded-full text-sm transition-all duration-500 px-2`}>
+          <div className={`w-full flex items-center border ${searchFocused ? 'border-brand-500 bg-white' : 'border-brand-100 bg-brand-50/50'} rounded-none text-sm transition-all duration-500 px-1`}>
             <input
               ref={searchRef}
               type="text"
               placeholder="Seeking something special?"
-              className="w-full py-2.5 px-5 outline-none rounded-full text-stone-800 placeholder-stone-400 bg-transparent"
+              className="w-full py-2.5 px-5 outline-none rounded-none text-stone-800 placeholder-stone-400 bg-transparent"
               onFocus={() => setSearchFocused(true)}
               onBlur={() => setSearchFocused(false)}
               value={searchQuery}
@@ -96,7 +94,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
             />
             <button
               onClick={() => handleSearch(searchQuery)}
-              className="w-10 h-10 bg-brand-900 hover:bg-brand-700 text-white rounded-full transition-all duration-500 flex items-center justify-center shrink-0 shadow-lg hover:scale-105 active:scale-95"
+              className="w-10 h-10 bg-brand-500 hover:bg-brand-600 text-white rounded-none transition-all duration-500 flex items-center justify-center shrink-0 shadow-sm"
               aria-label="Search"
             >
               <Search size={18} />
@@ -201,18 +199,18 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
       </div>
 
       {/* Category Nav */}
-      <nav className="hidden md:block bg-white border-t border-stone-50">
+      <nav className="hidden md:block bg-white border-t border-brand-100">
         <div className="container mx-auto px-4 md:px-6 overflow-x-auto no-scrollbar">
-          <ul className="flex min-w-max items-center justify-center gap-10 lg:gap-14 text-xs font-bold text-stone-500 tracking-[0.15em] uppercase">
+          <ul className="flex min-w-max items-center justify-center gap-10 lg:gap-14 text-xs font-bold text-stone-600 tracking-[0.2em] uppercase">
             {navCategories.map((cat, idx) => (
               <li key={idx} className="relative group">
                 <Link
                   href={cat.href}
-                  className={`block py-5 hover:text-brand-900 transition-all duration-500 ${cat.highlight ? 'text-brand-700' : ''}`}
+                  className={`block py-5 hover:text-brand-500 transition-all duration-500 ${cat.highlight ? 'text-brand-500' : ''}`}
                 >
                   {cat.label}
                 </Link>
-                <div className="absolute bottom-0 left-0 w-full h-[3px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
+                <div className="absolute bottom-0 left-0 w-full h-[2px] bg-brand-500 scale-x-0 group-hover:scale-x-100 transition-transform duration-700 origin-center" />
               </li>
             ))}
           </ul>
@@ -253,7 +251,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
               onClick={e => e.stopPropagation()}
             >
               <div className="px-6 py-5 flex justify-between items-center border-b border-gray-100">
-                <span className="font-heading font-extrabold text-2xl text-gray-900">
+                <span className="font-heading text-xl text-gray-900 uppercase tracking-tight">
                   Pretty Luxe<span className="text-brand-500">Atelier</span>
                 </span>
                 <button onClick={() => setMobileMenuOpen(false)} className="text-gray-500 p-1" aria-label="Close menu">
@@ -265,13 +263,13 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
                 <nav className="py-4">
                   {[
                     { label: 'Shop All', href: '/shop' },
+                    { label: 'Tiffin Boxes', href: '/shop?category=tiffins' },
+                    { label: 'Kitchenware', href: '/shop?category=kitchenware' },
+                    { label: 'Apparels', href: '/shop?category=apparels' },
+                    { label: 'Corporate Gifts', href: '/shop?category=corporate' },
                     { label: 'New Arrivals', href: '/shop?category=new-arrivals' },
-                    { label: 'Personalized Gifts', href: '/shop?category=personalized' },
                     { label: 'Best Sellers', href: '/shop?category=best-sellers' },
-                    { label: 'Birthday', href: '/shop?category=birthday' },
-                    { label: 'Anniversary', href: '/shop?category=anniversary' },
-                    { label: 'Corporate Gifting', href: '/shop?category=corporate' },
-                    { label: 'Gifting Guide', href: '/gift' },
+                    { label: 'Track Order', href: '/track' },
                   ].map(item => (
                     <Link
                       key={item.href}

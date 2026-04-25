@@ -3,7 +3,7 @@ import { prisma } from '../prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
 import { razorpay } from '../razorpay';
 import crypto from 'crypto';
-import { sendEmail, orderConfirmationEmail } from './email';
+import { sendEmail, orderConfirmationEmail, invoiceHtml } from './email';
 
 const router = Router();
 
@@ -93,14 +93,21 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
       include: { items: { include: { product: { select: { name: true } } } }, giftOption: true }
     });
 
-    // Send order confirmation email (fire-and-forget)
-    const user = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { email: true, name: true } });
+    // Send order confirmation + invoice email (fire-and-forget)
+    const user = await prisma.user.findUnique({ where: { id: req.user!.id }, select: { email: true, name: true, phone: true } });
     if (user) {
       const emailItems = newOrder.items.map((i: { product: { name: string }; quantity: number; price: unknown }) => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
       sendEmail(
         user.email,
         'Your Pretty Luxe Atelier Order is Confirmed! 🎉',
         orderConfirmationEmail(user.name, newOrder.id, totalAmount, emailItems)
+      ).catch(console.error);
+      // Send invoice email
+      const fullOrder = { ...newOrder, items: newOrder.items, shippingAddress, status: 'CONFIRMED', paymentMethod, trackingNumber: null };
+      sendEmail(
+        user.email,
+        `Invoice #INV-${newOrder.id.slice(-8).toUpperCase()} — Pretty Luxe Atelier`,
+        invoiceHtml(fullOrder, user)
       ).catch(console.error);
     }
 
@@ -126,6 +133,28 @@ router.get('/my-orders', authenticate, async (req: AuthRequest, res: Response) =
   try {
     const orders = await getUserOrders(req.user!.id);
     res.json(orders);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// GET /api/orders/:id/invoice — get invoice HTML for an order
+router.get('/:id/invoice', authenticate, async (req: AuthRequest, res: Response) => {
+  try {
+    const order = await prisma.order.findUnique({
+      where: { id: req.params.id as string },
+      include: {
+        items: { include: { product: { select: { name: true, images: true } } } },
+        user: { select: { name: true, email: true, phone: true } }
+      }
+    });
+    if (!order) { res.status(404).json({ error: 'Order not found' }); return; }
+    if (order.userId !== req.user!.id && req.user!.role !== 'ADMIN') {
+      res.status(403).json({ error: 'Forbidden' }); return;
+    }
+    const html = invoiceHtml(order, order.user);
+    res.setHeader('Content-Type', 'text/html');
+    res.send(html);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

@@ -15,14 +15,14 @@ async function getHomeData() {
 }
 
 export const metadata: Metadata = {
-  title: 'Pretty Luxe Atelier | Personalized Tiffin Boxes & Engraved Gifts',
-  description: 'Premium personalized stainless steel tiffin boxes with precision laser engraving. Perfect for birthdays, anniversaries, corporate gifting, and everyday use. Worldwide shipping.',
+  title: 'Pretty Luxe Atelier | Tiffin Boxes, Kitchenware & Indian Apparels',
+  description: 'Premium stainless steel tiffin boxes, Indian kitchenware, and ethnic apparels with precision laser engraving. Perfect for everyday use, corporate gifting, and meaningful gifting. Worldwide shipping.',
   alternates: { canonical: 'https://prettyluxeatelier.com' },
   keywords: [
-    'personalized tiffin box', 'engraved tiffin gift', 'custom tiffin box',
-    'laser engraved gift', 'personalized gift for husband', 'anniversary gift tiffin',
-    'birthday gift tiffin', 'corporate gift tiffin', 'stainless steel tiffin',
-    'pretty luxe atelier', 'worldwide tiffin gift'
+    'tiffin box', 'stainless steel tiffin', 'personalized tiffin box', 'Indian kitchenware',
+    'ethnic apparels', 'Indian clothing', 'kitchen accessories India', 'engraved tiffin gift',
+    'corporate gift tiffin', 'bulk tiffin order', 'pretty luxe atelier', 'worldwide shipping India',
+    'custom kitchen gift', 'traditional Indian apparels'
   ],
 };
 
@@ -35,34 +35,34 @@ export default async function Home() {
     "mainEntity": [
       {
         "@type": "Question",
-        "name": "What is the best personalized gift for any occasion?",
+        "name": "What types of products does Pretty Luxe Atelier sell?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "A high-quality, laser-engraved stainless steel tiffin box is a timeless and practical gift. Personalized with a name, date, or message, it combines sentiment with everyday utility and lasts a lifetime."
+          "text": "Pretty Luxe Atelier offers premium stainless steel tiffin boxes, Indian kitchenware essentials, and ethnic apparels. All products can be personalized with laser-engraved names, messages, or company logos — perfect for everyday use, gifting, and corporate orders."
         }
       },
       {
         "@type": "Question",
-        "name": "How long does worldwide shipping take for customized tiffins?",
+        "name": "Do you offer bulk or corporate orders for kitchenware and tiffins?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Standard international delivery takes 7–14 business days. Express shipping is available for 3–7 business days. Free shipping is included on all orders."
+          "text": "Yes! We specialize in bulk and corporate orders for tiffin boxes, kitchen accessories, and branded apparels. Engrave individual names or company logos for a premium branded experience. Pricing discounts available for 20+ units."
         }
       },
       {
         "@type": "Question",
-        "name": "Can I engrave a company logo for corporate gifting?",
+        "name": "What materials are used in Pretty Luxe Atelier products?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Yes! We specialize in corporate gifting. Engrave individual names, company logos, or custom messages for a premium branded experience. Bulk pricing available for 20+ units."
+          "text": "Our tiffin boxes and kitchenware use food-grade stainless steel (304 series) — rust-proof, BPA-free, and built to last a lifetime. Apparels are crafted from premium natural fabrics. All engravings use precision laser technology for permanent, fade-resistant results."
         }
       },
       {
         "@type": "Question",
-        "name": "What materials are used in Pretty Luxe Atelier tiffin boxes?",
+        "name": "How long does worldwide shipping take?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "We use food-grade stainless steel (304 series) — rust-proof, BPA-free, and built to last a lifetime. All engravings are done with precision laser technology for permanent, fade-resistant results."
+          "text": "Standard international delivery takes 7–14 business days. Express shipping is available for 3–7 business days. Shipping charges are calculated at checkout based on your location and order size."
         }
       }
     ]

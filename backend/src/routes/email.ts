@@ -136,6 +136,86 @@ export function orderStatusUpdateEmail(name: string, orderId: string, status: st
 </html>`;
 }
 
+export function invoiceHtml(order: any, user: any): string {
+  const addr = (() => { try { return JSON.parse(order.shippingAddress || '{}'); } catch { return {}; } })();
+  const itemRows = (order.items || []).map((i: any) => `
+    <tr>
+      <td style="padding:10px 0;border-bottom:1px solid #f7e8cb;font-size:13px;color:#2c1804;">${i.product?.name || 'Item'}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #f7e8cb;text-align:center;font-size:13px;color:#4a2b08;">${i.quantity}</td>
+      <td style="padding:10px 0;border-bottom:1px solid #f7e8cb;text-align:right;font-size:13px;color:#2c1804;font-weight:700;">₹${Number(i.price).toLocaleString('en-IN')}</td>
+    </tr>`).join('');
+  const date = new Date(order.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' });
+  return `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#fdf8ef;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <div style="max-width:700px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(44,24,4,0.08);border:1px solid #f7e8cb;">
+    <div style="background:#2c1804;padding:32px 40px;display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <h1 style="color:#fff;margin:0;font-size:26px;letter-spacing:-0.5px;">Pretty Luxe<span style="color:#c8892a;">Atelier</span></h1>
+        <p style="color:#c8892a;margin:4px 0 0;font-size:11px;letter-spacing:0.15em;text-transform:uppercase;">Tax Invoice / Bill of Supply</p>
+      </div>
+      <div style="text-align:right;">
+        <p style="color:#eecf95;font-size:11px;margin:0;letter-spacing:0.1em;text-transform:uppercase;">Invoice No.</p>
+        <p style="color:#fff;font-size:18px;font-weight:900;margin:4px 0 0;letter-spacing:0.05em;">#INV-${order.id.slice(-8).toUpperCase()}</p>
+      </div>
+    </div>
+    <div style="padding:32px 40px;display:flex;justify-content:space-between;border-bottom:2px solid #f7e8cb;">
+      <div>
+        <p style="font-size:10px;color:#a86f1e;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 8px;">Bill To</p>
+        <p style="font-size:15px;font-weight:700;color:#2c1804;margin:0 0 4px;">${user.name || 'Customer'}</p>
+        <p style="font-size:13px;color:#6e400d;margin:0;">${user.email || ''}</p>
+        ${addr.street ? `<p style="font-size:12px;color:#6e400d;margin:4px 0 0;">${addr.street}, ${addr.city || ''}, ${addr.state || ''} ${addr.pincode || ''}</p>` : ''}
+      </div>
+      <div style="text-align:right;">
+        <p style="font-size:10px;color:#a86f1e;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin:0 0 8px;">Invoice Date</p>
+        <p style="font-size:14px;font-weight:700;color:#2c1804;margin:0;">${date}</p>
+        <p style="font-size:10px;color:#a86f1e;font-weight:700;letter-spacing:0.15em;text-transform:uppercase;margin:16px 0 4px;">Status</p>
+        <span style="display:inline-block;background:#a86f1e;color:#fff;font-size:10px;font-weight:900;letter-spacing:0.1em;text-transform:uppercase;padding:4px 12px;border-radius:999px;">${order.status}</span>
+      </div>
+    </div>
+    <div style="padding:32px 40px;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:0 0 12px;font-size:10px;color:#a86f1e;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;border-bottom:2px solid #f7e8cb;">Item</th>
+            <th style="text-align:center;padding:0 0 12px;font-size:10px;color:#a86f1e;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;border-bottom:2px solid #f7e8cb;">Qty</th>
+            <th style="text-align:right;padding:0 0 12px;font-size:10px;color:#a86f1e;font-weight:700;text-transform:uppercase;letter-spacing:0.15em;border-bottom:2px solid #f7e8cb;">Amount</th>
+          </tr>
+        </thead>
+        <tbody>${itemRows}</tbody>
+      </table>
+      <div style="margin-top:24px;border-top:2px solid #2c1804;padding-top:16px;display:flex;justify-content:flex-end;">
+        <div style="width:240px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;color:#6e400d;">Subtotal</span>
+            <span style="font-size:13px;font-weight:700;color:#2c1804;">₹${Number(order.totalAmount).toLocaleString('en-IN')}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <span style="font-size:13px;color:#6e400d;">Shipping</span>
+            <span style="font-size:13px;font-weight:700;color:#a86f1e;">Calculated at checkout</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;background:#fdf8ef;padding:12px;border-radius:8px;border:1px solid #f7e8cb;margin-top:8px;">
+            <span style="font-size:15px;font-weight:900;color:#2c1804;">Total</span>
+            <span style="font-size:18px;font-weight:900;color:#2c1804;">₹${Number(order.totalAmount).toLocaleString('en-IN')}</span>
+          </div>
+        </div>
+      </div>
+      <div style="margin-top:32px;padding:16px 20px;background:#fdf8ef;border-radius:12px;border:1px solid #f7e8cb;">
+        <p style="font-size:11px;font-weight:700;color:#a86f1e;text-transform:uppercase;letter-spacing:0.1em;margin:0 0 4px;">Payment Method</p>
+        <p style="font-size:14px;color:#2c1804;font-weight:600;margin:0;">${order.paymentMethod === 'COD' ? 'Cash on Delivery' : order.paymentMethod}</p>
+        ${order.trackingNumber ? `<p style="font-size:11px;font-weight:700;color:#a86f1e;text-transform:uppercase;letter-spacing:0.1em;margin:12px 0 4px;">Tracking Number</p><p style="font-size:14px;color:#2c1804;font-weight:600;font-family:monospace;margin:0;">${order.trackingNumber}</p>` : ''}
+      </div>
+    </div>
+    <div style="background:#fdf8ef;padding:24px 40px;border-top:1px solid #f7e8cb;text-align:center;">
+      <p style="color:#a86f1e;font-size:13px;margin:0 0 4px;">Thank you for shopping with <strong>Pretty Luxe Atelier</strong></p>
+      <p style="color:#6e400d;font-size:11px;margin:0;">Questions? <a href="mailto:support@prettyluxeatelier.com" style="color:#a86f1e;">support@prettyluxeatelier.com</a> | WhatsApp: <a href="https://wa.me/919999988888" style="color:#a86f1e;">+91 99999 88888</a></p>
+      <p style="color:#c8892a;font-size:10px;margin:8px 0 0;letter-spacing:0.1em;">© ${new Date().getFullYear()} Pretty Luxe Atelier. Crafted with love in India.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
 // POST /api/email/send
 router.post('/send', async (req: Request, res: Response) => {
   try {

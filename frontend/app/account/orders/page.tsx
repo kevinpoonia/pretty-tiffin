@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Package, ChevronRight, ChevronDown, Loader2, AlertCircle, ShoppingBag, Truck, CheckCircle2, Clock, XCircle, RotateCcw } from 'lucide-react';
+import { Package, ChevronRight, ChevronDown, Loader2, AlertCircle, ShoppingBag, Truck, CheckCircle2, Clock, XCircle, RotateCcw, FileText, MessageCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
@@ -189,7 +189,7 @@ function OrderCard({ order }: { order: Order }) {
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
+              <div className="flex flex-wrap gap-3 pt-2">
                 {order.trackingNumber && (
                   <a
                     href={`https://www.delhivery.com/track/package/${order.trackingNumber}`}
@@ -200,6 +200,22 @@ function OrderCard({ order }: { order: Order }) {
                     <Truck size={15} /> Track Order
                   </a>
                 )}
+                <a
+                  href={`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/orders/${order.id}/invoice`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 bg-amber-50 border border-amber-200 text-amber-700 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-amber-100 transition-colors"
+                >
+                  <FileText size={15} /> View Invoice
+                </a>
+                <a
+                  href={`https://wa.me/?text=${encodeURIComponent(`My order #${order.id.slice(0,8).toUpperCase()} from Pretty Luxe Atelier — Total: ₹${Number(order.totalAmount).toLocaleString('en-IN')} — Status: ${order.status}. View orders: https://prettyluxeatelier.com/account/orders`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 bg-green-50 border border-green-200 text-green-700 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-green-100 transition-colors"
+                >
+                  <MessageCircle size={15} /> Share on WhatsApp
+                </a>
                 <Link
                   href="/contact"
                   className="flex items-center justify-center gap-2 border border-gray-200 text-gray-600 px-5 py-2.5 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-colors"
@@ -231,10 +247,10 @@ export default function OrdersPage() {
   }, [token, authLoading]);
 
   return (
-    <div className="bg-[#faf8f4] min-h-screen flex flex-col">
+    <div className="bg-[#f5f3ed] min-h-screen flex flex-col">
       <Navbar alwaysSolid />
-      <main className="flex-1 pt-28 md:pt-32 pb-16">
-        <div className="container mx-auto px-4 max-w-3xl">
+      <main className="flex-1 pt-28 md:pt-36 lg:pt-44 pb-16">
+        <div className="container mx-auto px-4 sm:px-6 max-w-3xl">
           <div className="flex items-center gap-2 text-sm text-gray-500 mb-8">
             <Link href="/" className="hover:text-brand-500">Home</Link>
             <ChevronRight size={14} />

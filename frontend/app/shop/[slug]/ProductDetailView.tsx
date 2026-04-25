@@ -85,7 +85,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
   const faqs = [
     { title: "Product Features & Specs", icon: Info, content: "Made from premium 304 food-grade stainless steel. Features a space-saving stacking design. Dimensions: 14cm x 14cm x 22cm when fully assembled." },
-    { title: "Shipping & Delivery", icon: Truck, content: "Free worldwide shipping on all orders. Standard delivery takes 7-14 business days internationally. Express shipping available at checkout." },
+    { title: "Shipping & Delivery", icon: Truck, content: "Worldwide shipping available. Standard delivery takes 7–14 business days internationally. Express shipping available at checkout. Shipping charges calculated at checkout." },
     { title: "Warranty Information", icon: ShieldCheck, content: "Enjoy peace of mind with our 1-year manufacturer warranty. Covers structural defects, clip malfunctions, and transit damages." },
   ];
 
@@ -114,13 +114,12 @@ export default function ProductDetailClient({ product }: { product: any }) {
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-white pt-28 md:pt-32 pb-16 md:pb-20">
+      <main className="flex-1 bg-white pt-28 md:pt-36 lg:pt-44 pb-16 md:pb-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pt-6 md:pt-8">
             {/* Left: Product Images */}
-            <div className="w-full lg:w-1/2 lg:self-start lg:sticky lg:top-32 flex flex-col gap-4">
-              <div className="relative aspect-square w-full rounded-[3rem] organic-shape-1 overflow-hidden bg-brand-50/50 flex items-center justify-center p-8 shadow-2xl border border-brand-100 group">
-                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] pointer-events-none" />
+            <div className="w-full lg:w-1/2 lg:self-start lg:sticky lg:top-44 flex flex-col gap-4">
+              <div className="relative aspect-square w-full rounded-none overflow-hidden bg-brand-50 flex items-center justify-center p-8 border border-brand-100 group">
                 {product.images?.[0] ? (
                   <div className="relative w-full h-full">
                     <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-contain p-8 group-hover:scale-105 transition-transform duration-1000 z-10" />
@@ -131,7 +130,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                           animate={{ opacity: 1, y: 0 }}
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mix-blend-overlay opacity-50"
                         >
-                          <p className="font-heading italic font-bold text-3xl text-black select-none tracking-widest uppercase">
+                          <p className="font-heading font-bold text-3xl text-black select-none tracking-widest uppercase">
                             {selectedOptions['Engraving']}
                           </p>
                         </motion.div>
@@ -141,7 +140,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 ) : (
                   <motion.div
                     layout
-                    className={`relative w-72 h-96 rounded-[3rem] organic-shape-2 shadow-2xl flex flex-col items-center justify-center transition-all duration-700 ${getTiffinColor()}`}
+                    className={`relative w-72 h-96 rounded-none shadow-sm flex flex-col items-center justify-center transition-all duration-700 ${getTiffinColor()}`}
                   >
                     <div className="absolute top-1/3 w-full h-[1px] bg-black/5" />
                     <div className="absolute top-2/3 w-full h-[1px] bg-black/5" />
@@ -153,7 +152,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                           exit={{ opacity: 0, scale: 0.8 }}
                           className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[80%] text-center mix-blend-overlay"
                         >
-                          <p className="font-heading italic font-bold text-3xl text-black/40 tracking-wider">
+                          <p className="font-heading font-bold text-3xl text-black/40 tracking-wider">
                             {selectedOptions['Engraving']}
                           </p>
                         </motion.div>
@@ -185,34 +184,34 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     <span className="text-[10px] font-bold text-stone-400">{displayRating > 0 ? displayRating.toFixed(1) : ''} ({displayTotal} review{displayTotal !== 1 ? 's' : ''})</span>
                   )}
                 </div>
-                <h1 className="text-4xl sm:text-5xl md:text-7xl font-heading italic text-stone-800 mb-6 leading-tight">{product.name}</h1>
+                <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading text-stone-800 mb-4 sm:mb-6 leading-tight uppercase tracking-tighter">{product.name}</h1>
                 <div className="flex flex-wrap items-center gap-6">
                   <p className="text-3xl font-sans font-bold text-stone-900">{formatPrice(product.price)}</p>
                   {product.compareAtPrice && Number(product.compareAtPrice) > Number(product.price) && (
                     <p className="text-xl text-stone-300 line-through font-medium">{formatPrice(product.compareAtPrice)}</p>
                   )}
-                  <span className="bg-brand-50 text-brand-700 text-[10px] font-bold px-4 py-1.5 rounded-full uppercase tracking-widest border border-brand-100">Artisanal Stock</span>
+                  <span className="bg-brand-50 text-brand-500 text-[10px] font-bold px-4 py-1.5 rounded-none uppercase tracking-widest border border-brand-100">Artisanal Stock</span>
                 </div>
               </div>
 
               {/* Improved Description Section */}
               <div className="mb-8">
                 <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-3">About This Piece</p>
-                <div className="bg-gradient-to-br from-brand-50/80 to-white rounded-2xl border border-brand-100 p-5">
-                  <p className="text-brand-700 leading-relaxed text-sm whitespace-pre-line">
+                <div className="bg-white rounded-none border border-brand-100 p-6">
+                  <p className="text-stone-600 leading-relaxed text-sm whitespace-pre-line">
                     {product.description}
                   </p>
-                  <div className="mt-4 pt-4 border-t border-brand-100 grid grid-cols-3 gap-3">
+                  <div className="mt-6 pt-6 border-t border-brand-50 grid grid-cols-3 gap-3">
                     {[
                       { icon: ShieldCheck, label: '304 Steel', sub: 'Food-grade' },
-                      { icon: Truck, label: 'Free Ship', sub: 'Worldwide' },
+                      { icon: Truck, label: 'Worldwide', sub: 'Shipping' },
                       { icon: Star, label: 'Engraved', sub: 'Laser precision' },
                     ].map(({ icon: Icon, label, sub }) => (
                       <div key={label} className="flex flex-col items-center text-center gap-1">
-                        <div className="w-8 h-8 rounded-xl bg-white border border-brand-100 flex items-center justify-center shadow-sm">
+                        <div className="w-8 h-8 rounded-none bg-brand-50 border border-brand-100 flex items-center justify-center">
                           <Icon size={15} className="text-brand-500" />
                         </div>
-                        <span className="text-[10px] font-black text-brand-700 uppercase tracking-wide">{label}</span>
+                        <span className="text-[10px] font-black text-brand-500 uppercase tracking-wide">{label}</span>
                         <span className="text-[9px] text-brand-400">{sub}</span>
                       </div>
                     ))}
@@ -227,11 +226,11 @@ export default function ProductDetailClient({ product }: { product: any }) {
               />
 
               {/* Add to Cart */}
-              <div className="mt-10 md:mt-12 bg-white/80 backdrop-blur-2xl p-6 rounded-[2.5rem] organic-shape-1 border border-brand-50 shadow-2xl flex flex-col sm:flex-row gap-6 z-20 2xl:sticky 2xl:bottom-10">
-                <div className="flex items-center border border-brand-100 rounded-full bg-brand-50/50 overflow-hidden w-full sm:w-40 shrink-0 h-16">
-                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-6 h-full text-stone-500 hover:text-brand-900 transition-all font-bold text-xl">-</button>
+              <div className="mt-8 md:mt-10 bg-white p-4 sm:p-6 rounded-none border border-brand-100 shadow-xl flex flex-col sm:flex-row gap-4 sm:gap-6 z-20">
+                <div className="flex items-center border border-brand-100 rounded-none bg-brand-50 overflow-hidden w-full sm:w-40 shrink-0 h-16">
+                  <button onClick={() => setQuantity(Math.max(1, quantity - 1))} className="px-6 h-full text-stone-500 hover:text-brand-500 transition-all font-bold text-xl">-</button>
                   <span className="flex-1 text-center font-bold text-base text-stone-800">{quantity}</span>
-                  <button onClick={() => setQuantity(quantity + 1)} className="px-6 h-full text-stone-500 hover:text-brand-900 transition-all font-bold text-xl">+</button>
+                  <button onClick={() => setQuantity(quantity + 1)} className="px-6 h-full text-stone-500 hover:text-brand-500 transition-all font-bold text-xl">+</button>
                 </div>
                 <button
                   onClick={async () => {
@@ -253,7 +252,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     }
                   }}
                   disabled={isAdding}
-                  className="w-full sm:flex-1 bg-brand-900 text-white font-bold rounded-full py-5 px-10 hover:bg-stone-800 transition-all duration-700 shadow-2xl shadow-brand-900/20 flex items-center justify-center gap-4 cursor-pointer disabled:opacity-75 hover:scale-105 active:scale-95"
+                  className="w-full sm:flex-1 bg-brand-500 text-white font-bold rounded-none py-5 px-10 hover:bg-brand-600 transition-all duration-700 shadow-xl shadow-brand-500/10 flex items-center justify-center gap-4 cursor-pointer disabled:opacity-75"
                 >
                   {isAdding ? <><Loader2 size={20} className="animate-spin" /> CRAFTING...</> : (
                     <div className="flex items-center gap-4">

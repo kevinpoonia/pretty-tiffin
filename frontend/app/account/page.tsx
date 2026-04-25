@@ -271,7 +271,7 @@ export default function AccountDashboard() {
 
   if (authLoading || !user) {
     return (
-      <div className="bg-[#faf8f4] min-h-screen flex items-center justify-center">
+      <div className="bg-[#f5f3ed] min-h-screen flex items-center justify-center">
         <Loader2 className="animate-spin text-brand-500" size={32} />
       </div>
     );
@@ -280,7 +280,7 @@ export default function AccountDashboard() {
   return (
     <>
       <Navbar alwaysSolid />
-      <main className="flex-1 bg-brand-50 pt-32 pb-20 min-h-screen">
+      <main className="flex-1 bg-brand-50 pt-32 lg:pt-44 pb-20 min-h-screen">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col md:flex-row gap-8">
             <aside className="w-full md:w-64 flex-shrink-0">
