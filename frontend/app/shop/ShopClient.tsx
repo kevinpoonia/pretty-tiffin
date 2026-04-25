@@ -104,9 +104,18 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
   const [minPriceInput, setMinPriceInput] = useState('');
   const [maxPriceInput, setMaxPriceInput] = useState('');
+  const [products, setProducts] = useState<any[]>(initialProducts);
+
+  // Refresh products on client mount so freshly-added products always appear
+  useEffect(() => {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products`)
+      .then(r => r.json())
+      .then(data => { if (Array.isArray(data)) setProducts(data); })
+      .catch(() => {});
+  }, []);
 
   const productCategories = Array.from(
-    new Set(initialProducts.map((p: any) => p.category).filter(Boolean))
+    new Set(products.map((p: any) => p.category).filter(Boolean))
   ).sort((a, b) => a.localeCompare(b));
 
   const activeCategory = searchParams.get('category') || '';
@@ -143,7 +152,7 @@ export default function ShopClient({ initialProducts }: { initialProducts: any[]
   const normalizedCategory = normalizeValue(activeCategory);
   const normalizedRelationship = normalizeValue(activeRelationship);
 
-  let visibleProducts = [...initialProducts];
+  let visibleProducts = [...products];
 
   if (activeSearch) visibleProducts = visibleProducts.filter(p => matchesSearch(p, activeSearch));
   if (normalizedCategory) {

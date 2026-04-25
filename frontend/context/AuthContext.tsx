@@ -36,14 +36,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (!clerkUser) {
         setUser(null);
         setToken(null);
-        setApiToken(null);
+        setApiToken(null); // clear the getter
         setLoading(false);
         return;
       }
       try {
         const clerkToken = await getToken();
         setToken(clerkToken);
-        setApiToken(clerkToken);
+        setApiToken(getToken); // pass the function, not the value
         const res = await api.post('/auth/sync', {}, {
           headers: { Authorization: `Bearer ${clerkToken}` }
         });

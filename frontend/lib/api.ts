@@ -5,14 +5,20 @@ const api = axios.create({
   headers: { 'Content-Type': 'application/json' },
 });
 
-// Clerk stores its session token in a cookie that clerk-js manages.
-// We expose a setter so AuthContext can push the latest token in.
-let _clerkToken: string | null = null;
-export const setApiToken = (token: string | null) => { _clerkToken = token; };
+// Store Clerk's getToken function so the interceptor always fetches a fresh token.
+// Clerk tokens expire every 60 seconds; storing the raw token causes 401s on any
+// request made after the first minute.
+let _getToken: (() => Promise<string | null>) | null = null;
+export const setApiToken = (getter: (() => Promise<string | null>) | null) => {
+  _getToken = getter;
+};
 
-api.interceptors.request.use((config) => {
-  if (_clerkToken) {
-    config.headers['Authorization'] = `Bearer ${_clerkToken}`;
+api.interceptors.request.use(async (config) => {
+  if (_getToken) {
+    const token = await _getToken();
+    if (token) {
+      config.headers['Authorization'] = `Bearer ${token}`;
+    }
   }
   return config;
 });

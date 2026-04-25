@@ -1,16 +1,16 @@
-import { SignIn } from '@clerk/nextjs';
+import { SignUp } from '@clerk/nextjs';
 import Navbar from '@/components/layout/Navbar';
 import Footer from '@/components/layout/Footer';
 
-export default function LoginPage() {
+export default function SignUpPage() {
   return (
     <div className="bg-[#faf8f4] min-h-screen flex flex-col">
       <Navbar alwaysSolid />
       <main className="flex-1 flex items-center justify-center py-16 px-4">
-        <SignIn
+        <SignUp
           routing="hash"
           fallbackRedirectUrl="/account"
-          signUpUrl="/signup"
+          signInUrl="/login"
           appearance={{
             variables: {
               colorPrimary: '#4a7c59',

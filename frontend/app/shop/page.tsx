@@ -5,7 +5,7 @@ import ShopClient from './ShopClient';
 async function getProducts() {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/api'}/products`, {
-      next: { revalidate: 3600 }
+      next: { revalidate: 60 }
     });
     if (!res.ok) return [];
     return res.json();

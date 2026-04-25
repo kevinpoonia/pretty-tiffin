@@ -164,7 +164,7 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         </div>
 
         <Link href={`/shop/${product.slug}`}>
-          <h3 className="font-heading italic text-xl text-stone-800 mb-4 group-hover:text-brand-900 transition-colors line-clamp-2 leading-snug min-h-[3rem]">
+          <h3 className="font-heading italic text-xl text-brand-900 mb-4 group-hover:text-brand-700 transition-colors line-clamp-2 leading-snug min-h-[3rem]">
             {product.name}
           </h3>
         </Link>

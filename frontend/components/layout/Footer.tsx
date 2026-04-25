@@ -29,7 +29,7 @@ export default function Footer() {
               </span>
             </Link>
             <p className="text-sm text-brand-200 leading-relaxed max-w-xs">
-              Premium, engraved stainless steel tiffins designed for modern Indian lifestyles. Combining heritage with personalization.
+              Premium, laser-engraved stainless steel tiffin boxes crafted for meaningful gifting. Heritage craftsmanship delivered worldwide.
             </p>
             <div className="flex items-center gap-3 pt-1">
               {[
@@ -93,12 +93,14 @@ export default function Footer() {
           <div>
             <h4 className="font-heading font-semibold text-white mb-6 text-lg italic">Help</h4>
             <ul className="space-y-4 text-sm text-brand-200">
-              <li><Link href="/faq" className="hover:text-white transition-colors">Care Instructions</Link></li>
+              <li><Link href="/faq" className="hover:text-white transition-colors">FAQ & Care Guide</Link></li>
               <li><Link href="/shipping" className="hover:text-white transition-colors">Shipping & Returns</Link></li>
-              <li><Link href="/track" className="hover:text-white transition-colors">Track Your Treasure</Link></li>
+              <li><Link href="/track" className="hover:text-white transition-colors">Track Your Order</Link></li>
               <li><Link href="/contact" className="hover:text-white transition-colors">Get in Touch</Link></li>
               <li><Link href="/about" className="hover:text-white transition-colors">Our Story</Link></li>
-              <li><Link href="/bulk" className="hover:text-white transition-colors">Bulk Orders</Link></li>
+              <li><Link href="/bulk" className="hover:text-white transition-colors">Bulk & Corporate Orders</Link></li>
+              <li><Link href="/blog" className="hover:text-white transition-colors">Journal</Link></li>
+              <li><Link href="/custom" className="hover:text-white transition-colors">Custom Engraving</Link></li>
             </ul>
           </div>
 
@@ -138,7 +140,7 @@ export default function Footer() {
               <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-brand-400">
                 <Globe size={20} />
               </div>
-              <span>Made in India</span>
+              <span>Ships Worldwide</span>
             </div>
             <div className="flex flex-col items-center gap-2 text-[10px] font-bold uppercase tracking-tighter">
               <div className="w-12 h-12 rounded-full border border-brand-800 flex items-center justify-center mb-1 text-brand-400">
