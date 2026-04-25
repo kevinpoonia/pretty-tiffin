@@ -17,6 +17,8 @@ interface ProductCardProps {
     price: number;
     compareAtPrice?: number;
     images: string[];
+    avgRating?: number;
+    reviewCount?: number;
   };
   showBadge?: boolean;
   priority?: boolean;
@@ -50,6 +52,9 @@ export default function ProductCard({ product, showBadge = false, priority = fal
   const discount = product.compareAtPrice && product.compareAtPrice > product.price
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : null;
+
+  const rating = product.avgRating ?? 0;
+  const reviewCount = product.reviewCount ?? 0;
 
   return (
     <motion.div
@@ -123,7 +128,8 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         )}
       </Link>
 
-      <div className="p-6 flex-1 flex flex-col">
+      <div className="p-5 flex-1 flex flex-col">
+        {/* Category + Rating row */}
         <div className="flex items-center justify-between mb-3">
           <div className="px-2 py-0.5 rounded bg-brand-50 border border-brand-100">
             <p className="text-[9px] text-brand-700 font-bold uppercase tracking-[0.1em]">
@@ -131,31 +137,58 @@ export default function ProductCard({ product, showBadge = false, priority = fal
             </p>
           </div>
           <div className="flex items-center gap-1">
-            <Star size={10} className="fill-brand-400 text-brand-400" />
-            <span className="text-[10px] text-stone-500 font-bold">4.9</span>
+            {[1, 2, 3, 4, 5].map((s) => (
+              <Star
+                key={s}
+                size={9}
+                className={
+                  rating >= s
+                    ? 'fill-amber-400 text-amber-400'
+                    : rating >= s - 0.5
+                    ? 'fill-amber-200 text-amber-200'
+                    : 'fill-stone-200 text-stone-200'
+                }
+              />
+            ))}
+            <span className="text-[10px] text-stone-500 font-bold ml-0.5">
+              {rating > 0 ? rating.toFixed(1) : '—'}
+            </span>
+            {reviewCount > 0 && (
+              <span className="text-[9px] text-stone-400 ml-0.5">({reviewCount})</span>
+            )}
           </div>
         </div>
-        
+
         <Link href={`/shop/${product.slug}`}>
           <h3 className="font-heading italic text-xl text-stone-800 mb-4 group-hover:text-brand-900 transition-colors line-clamp-2 leading-snug min-h-[3rem]">
             {product.name}
           </h3>
         </Link>
 
-        <div className="mt-auto flex items-end justify-between pt-5 border-t border-stone-50">
-          <div className="flex flex-col">
-            <div className="flex items-baseline gap-2">
-              <span className="font-sans font-bold text-stone-900 text-xl">
-                ₹{product.price.toLocaleString('en-IN')}
-              </span>
+        <div className="mt-auto pt-4 border-t border-stone-50">
+          <div className="flex items-end justify-between">
+            {/* Price block */}
+            <div className="flex flex-col gap-0.5">
               {product.compareAtPrice && product.compareAtPrice > product.price && (
-                <span className="text-xs text-stone-300 line-through">
-                  ₹{product.compareAtPrice.toLocaleString('en-IN')}
-                </span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-stone-400 uppercase tracking-wide font-semibold">MRP</span>
+                  <span className="text-xs text-stone-300 line-through font-medium">
+                    ₹{product.compareAtPrice.toLocaleString('en-IN')}
+                  </span>
+                </div>
               )}
+              <div className="flex items-center gap-2">
+                <span className="font-sans font-bold text-stone-900 text-xl">
+                  ₹{product.price.toLocaleString('en-IN')}
+                </span>
+                {discount && (
+                  <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded-full">
+                    {discount}% off
+                  </span>
+                )}
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-end">
+
             <span className="text-brand-600 font-bold text-[10px] uppercase tracking-widest group-hover:translate-x-1 transition-transform flex items-center gap-1.5">
               Explore <ChevronRight size={12} />
             </span>
@@ -163,6 +196,5 @@ export default function ProductCard({ product, showBadge = false, priority = fal
         </div>
       </div>
     </motion.div>
-
   );
 }

@@ -9,10 +9,21 @@ const router = Router();
 router.get('/', cacheMiddleware(3600), async (req: Request, res: Response) => {
   try {
     const products = await prisma.product.findMany({
-      include: { customizationOptions: true },
+      include: {
+        customizationOptions: true,
+        reviews: { select: { rating: true } },
+        _count: { select: { reviews: true } },
+      },
       orderBy: { createdAt: 'desc' }
     });
-    res.json(products);
+    const result = products.map(({ reviews, _count, ...p }) => ({
+      ...p,
+      reviewCount: _count.reviews,
+      avgRating: reviews.length
+        ? Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length * 10) / 10
+        : 0,
+    }));
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: 'Internal server error' });

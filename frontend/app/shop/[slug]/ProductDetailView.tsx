@@ -110,16 +110,16 @@ export default function ProductDetailClient({ product }: { product: any }) {
       <main className="flex-1 bg-white pt-28 md:pt-32 pb-16 md:pb-20">
         <div className="container mx-auto px-4 md:px-6">
           <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 pt-6 md:pt-8">
-            {/* Left: Product Images & Customizer Preview */}
-            <div className="w-full lg:w-1/2 flex flex-col gap-8">
-              <div className="relative aspect-square w-full rounded-[3rem] organic-shape-1 overflow-hidden bg-brand-50/50 flex items-center justify-center p-8 lg:sticky lg:top-32 shadow-2xl border border-brand-100 group">
+            {/* Left: Product Images — sticky column */}
+            <div className="w-full lg:w-1/2 lg:self-start lg:sticky lg:top-32 flex flex-col gap-4">
+              <div className="relative aspect-square w-full rounded-[3rem] organic-shape-1 overflow-hidden bg-brand-50/50 flex items-center justify-center p-8 shadow-2xl border border-brand-100 group">
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/felt.png')] pointer-events-none" />
                 {product.images?.[0] ? (
                   <div className="relative w-full h-full">
                      <Image src={product.images[0]} alt={product.name} fill sizes="(max-width: 1024px) 100vw, 50vw" className="object-contain p-8 group-hover:scale-105 transition-transform duration-1000 z-10" />
                      <AnimatePresence>
                         {selectedOptions['Engraving'] && (
-                          <motion.div 
+                          <motion.div
                             initial={{ opacity: 0, y: 10 }}
                             animate={{ opacity: 1, y: 0 }}
                             className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 pointer-events-none mix-blend-overlay opacity-50"
@@ -132,7 +132,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                      </AnimatePresence>
                   </div>
                 ) : (
-                  <motion.div 
+                  <motion.div
                     layout
                     className={`relative w-72 h-96 rounded-[3rem] organic-shape-2 shadow-2xl flex flex-col items-center justify-center transition-all duration-700 ${getTiffinColor()}`}
                   >
@@ -155,7 +155,8 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   </motion.div>
                 )}
               </div>
-              <div className="flex gap-3 md:gap-4 overflow-x-auto pb-2 no-scrollbar">
+              {/* Thumbnails */}
+              <div className="flex gap-3 md:gap-4 overflow-x-auto pb-1 no-scrollbar">
                 {product.images?.map((thumb: string, i: number) => (
                   <div key={i} className="w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-brand-50 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-brand-500 transition-all relative overflow-hidden shadow-sm">
                     <Image src={thumb} alt={product.name} fill sizes="80px" className="object-cover" />

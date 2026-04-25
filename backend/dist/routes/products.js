@@ -9,10 +9,21 @@ const router = (0, express_1.Router)();
 router.get('/', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
     try {
         const products = await prisma_1.prisma.product.findMany({
-            include: { customizationOptions: true },
+            include: {
+                customizationOptions: true,
+                reviews: { select: { rating: true } },
+                _count: { select: { reviews: true } },
+            },
             orderBy: { createdAt: 'desc' }
         });
-        res.json(products);
+        const result = products.map(({ reviews, _count, ...p }) => ({
+            ...p,
+            reviewCount: _count.reviews,
+            avgRating: reviews.length
+                ? Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length * 10) / 10
+                : 0,
+        }));
+        res.json(result);
     }
     catch (error) {
         console.error(error);
