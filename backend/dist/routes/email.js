@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.sendEmail = sendEmail;
 exports.orderConfirmationEmail = orderConfirmationEmail;
 exports.welcomeEmail = welcomeEmail;
+exports.orderStatusUpdateEmail = orderStatusUpdateEmail;
 const express_1 = require("express");
 const router = (0, express_1.Router)();
 const BREVO_URL = 'https://api.brevo.com/v3/smtp/email';
@@ -86,6 +87,47 @@ function welcomeEmail(name) {
     </div>
     <div style="background:#f5f8f3;padding:24px 40px;text-align:center;">
       <p style="color:#adc8a5;font-size:11px;margin:0;">© ${new Date().getFullYear()} Pretty Luxe Atelier. All rights reserved.</p>
+    </div>
+  </div>
+</body>
+</html>`;
+}
+const STATUS_LABEL = {
+    PENDING: 'Order Placed', CONFIRMED: 'Order Confirmed', PROCESSING: 'Being Packed',
+    SHIPPED: 'Shipped', DELIVERED: 'Delivered', CANCELLED: 'Cancelled'
+};
+const STATUS_COLOR = {
+    PENDING: '#d97706', CONFIRMED: '#2563eb', PROCESSING: '#7c3aed',
+    SHIPPED: '#4f46e5', DELIVERED: '#16a34a', CANCELLED: '#dc2626'
+};
+function orderStatusUpdateEmail(name, orderId, status, trackingId, note) {
+    const label = STATUS_LABEL[status] || status;
+    const color = STATUS_COLOR[status] || '#4a7c59';
+    const shortId = orderId.slice(-8).toUpperCase();
+    return `<!DOCTYPE html>
+<html>
+<body style="margin:0;padding:0;background:#faf8f4;font-family:'Helvetica Neue',Arial,sans-serif;">
+  <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
+    <div style="background:#2a3d25;padding:32px 40px;text-align:center;">
+      <h1 style="color:#fff;margin:0;font-size:28px;letter-spacing:-0.5px;">Pretty Luxe<span style="color:#83aa79;">Atelier</span></h1>
+      <p style="color:#adc8a5;margin:8px 0 0;font-size:13px;letter-spacing:0.1em;text-transform:uppercase;">Order Update</p>
+    </div>
+    <div style="padding:40px;">
+      <div style="display:inline-block;background:${color}20;border:1px solid ${color}40;border-radius:999px;padding:6px 20px;margin-bottom:20px;">
+        <span style="color:${color};font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">${label}</span>
+      </div>
+      <h2 style="color:#2a3d25;font-size:22px;margin:0 0 8px;">Hi ${name},</h2>
+      <p style="color:#628f57;margin:0 0 24px;font-size:14px;">Your order <strong>#${shortId}</strong> status has been updated to <strong>${label}</strong>.</p>
+      ${trackingId ? `<div style="background:#f5f8f3;border-radius:12px;padding:16px 20px;margin-bottom:24px;">
+        <p style="margin:0;font-size:12px;color:#628f57;font-weight:700;text-transform:uppercase;letter-spacing:0.1em;">Tracking ID</p>
+        <p style="margin:6px 0 0;font-size:20px;font-weight:900;color:#2a3d25;letter-spacing:0.05em;">${trackingId}</p>
+      </div>` : ''}
+      ${note ? `<p style="color:#628f57;font-size:14px;padding:12px 16px;background:#f5f8f3;border-radius:8px;margin-bottom:24px;">${note}</p>` : ''}
+      <a href="https://prettyluxeatelier.com/account/orders" style="display:inline-block;background:#628f57;color:#fff;padding:14px 32px;border-radius:999px;font-weight:700;text-decoration:none;font-size:14px;">View Order Details →</a>
+    </div>
+    <div style="background:#f5f8f3;padding:24px 40px;text-align:center;border-top:1px solid #e8f0e4;">
+      <p style="color:#83aa79;font-size:12px;margin:0;">Questions? <a href="mailto:support@prettyluxeatelier.com" style="color:#628f57;">support@prettyluxeatelier.com</a></p>
+      <p style="color:#adc8a5;font-size:11px;margin:8px 0 0;">© ${new Date().getFullYear()} Pretty Luxe Atelier. Crafted with love in India.</p>
     </div>
   </div>
 </body>

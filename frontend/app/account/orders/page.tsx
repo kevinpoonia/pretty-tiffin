@@ -45,6 +45,10 @@ interface OrderItem {
   product: { name: string; images: string[]; slug: string };
 }
 
+interface StatusHistory {
+  id: string; status: string; trackingId?: string; note?: string; createdAt: string;
+}
+
 interface Order {
   id: string;
   status: string;
@@ -54,6 +58,7 @@ interface Order {
   createdAt: string;
   items: OrderItem[];
   giftOption?: { occasion?: string; message?: string } | null;
+  statusHistory?: StatusHistory[];
 }
 
 function OrderCard({ order }: { order: Order }) {
@@ -134,6 +139,34 @@ function OrderCard({ order }: { order: Order }) {
                   );
                 })}
               </div>
+
+              {/* Order progress timeline */}
+              {(() => {
+                const STEPS = ['PENDING', 'CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+                const STEP_LABELS: Record<string, string> = { PENDING: 'Placed', CONFIRMED: 'Confirmed', PROCESSING: 'Packing', SHIPPED: 'Shipped', DELIVERED: 'Delivered' };
+                const currentIdx = STEPS.indexOf(order.status);
+                if (order.status === 'CANCELLED') return (
+                  <div className="flex items-center gap-2 text-xs text-red-600 bg-red-50 px-3 py-2 rounded-xl border border-red-100">
+                    <XCircle size={14} /> Order Cancelled
+                  </div>
+                );
+                return (
+                  <div className="space-y-2">
+                    <div className="flex gap-0.5">
+                      {STEPS.map((s, i) => (
+                        <div key={s} className={`flex-1 h-1.5 rounded-full ${i <= currentIdx ? 'bg-brand-500' : 'bg-gray-100'}`} />
+                      ))}
+                    </div>
+                    <div className="flex justify-between">
+                      {STEPS.map((s, i) => (
+                        <p key={s} className={`text-[9px] font-bold uppercase tracking-wide ${i <= currentIdx ? 'text-brand-600' : 'text-gray-300'}`}>
+                          {STEP_LABELS[s]}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
 
               <div className="grid grid-cols-2 gap-3 text-sm pt-2 border-t border-gray-100">
                 <div>

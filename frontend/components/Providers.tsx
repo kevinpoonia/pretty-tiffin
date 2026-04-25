@@ -8,7 +8,7 @@ import { ToastProvider } from '../context/ToastContext';
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
+    <ClerkProvider signInUrl="/login" signUpUrl="/login">
       <ToastProvider>
         <AuthProvider>
           <CartProvider>
