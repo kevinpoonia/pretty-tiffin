@@ -75,9 +75,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       "@type": "OfferCatalog",
       "name": "Personalized Tiffin Collection",
       "itemListElement": [
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Personalized Tiffin Box" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Engraved Gift Set" } },
-        { "@type": "Offer", "itemOffered": { "@type": "Product", "name": "Corporate Gift Tiffin" } }
+        "Personalized Tiffin Box",
+        "Engraved Gift Set",
+        "Corporate Gift Tiffin"
       ]
     }
   };

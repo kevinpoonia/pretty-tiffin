@@ -66,9 +66,12 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     );
   }
 
-  const avgRating = product.reviews?.length
+  const displayRating = Number(product.manualAvgRating || (product.reviews?.length
     ? product.reviews.reduce((s: number, r: any) => s + r.rating, 0) / product.reviews.length
-    : null;
+    : 0));
+  
+  const displayReviewCount = Number(product.manualReviewCount || product.reviews?.length || 0);
+  const cleanPrice = parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
 
   const productSchema = {
     "@context": "https://schema.org",
@@ -87,7 +90,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       "@type": "Offer",
       "url": `https://prettyluxeatelier.com/shop/${product.slug}`,
       "priceCurrency": "INR",
-      "price": Number(product.price),
+      "price": cleanPrice,
       "priceValidUntil": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
       "shippingDetails": {
@@ -98,7 +101,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
           "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 2, "unitCode": "DAY" },
           "transitTime": { "@type": "QuantitativeValue", "minValue": 7, "maxValue": 14, "unitCode": "DAY" }
         },
-        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "WORLDWIDE" }
+        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" }
       },
       "seller": {
         "@type": "Organization",
@@ -106,11 +109,11 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         "name": "Pretty Luxe Atelier"
       }
     },
-    ...(avgRating && product.reviews?.length >= 3 ? {
+    ...(displayReviewCount > 0 ? {
       "aggregateRating": {
         "@type": "AggregateRating",
-        "ratingValue": Math.round(avgRating * 10) / 10,
-        "reviewCount": product.reviews.length,
+        "ratingValue": displayRating || 5.0,
+        "reviewCount": displayReviewCount,
         "bestRating": 5,
         "worstRating": 1
       }
