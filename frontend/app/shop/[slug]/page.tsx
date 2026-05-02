@@ -91,8 +91,17 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       "url": `https://prettyluxeatelier.com/shop/${product.slug}`,
       "priceCurrency": "INR",
       "price": cleanPrice,
+      "itemCondition": "https://schema.org/NewCondition",
       "priceValidUntil": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+      "hasMerchantReturnPolicy": {
+        "@type": "MerchantReturnPolicy",
+        "applicableCountry": "IN",
+        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
+        "merchantReturnDays": 7,
+        "returnMethod": "https://schema.org/ReturnByMail",
+        "returnFees": "https://schema.org/FreeReturn"
+      },
       "shippingDetails": {
         "@type": "OfferShippingDetails",
         "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "INR" },
@@ -117,6 +126,23 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         "bestRating": 5,
         "worstRating": 1
       }
+    } : {}),
+    ...(product.reviews && product.reviews.length > 0 ? {
+      "review": product.reviews.map((r: any) => ({
+        "@type": "Review",
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": r.rating,
+          "bestRating": 5,
+          "worstRating": 1
+        },
+        "author": {
+          "@type": "Person",
+          "name": r.userName || "Verified Buyer"
+        },
+        "reviewBody": r.comment || "",
+        "datePublished": r.createdAt || new Date().toISOString().split('T')[0]
+      }))
     } : {})
   };
 
@@ -130,11 +156,43 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
     ]
   };
 
+  const faqSchema = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `How long does shipping take for the ${product.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Standard shipping within India takes 7-14 business days. All items are securely packaged to ensure they arrive in pristine condition."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Can I personalize the ${product.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, we offer precision laser engraving. You can add a custom name, message, or logo directly to the product."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `What is the return policy for ${product.name}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "We offer a 7-day return window. Customized or engraved items may have specific return conditions unless there is a manufacturing defect."
+        }
+      }
+    ]
+  };
+
   return (
     <>
       <ProductDetailClient product={product} />
       <Script id="product-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }} />
       <Script id="breadcrumb-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }} />
+      <Script id="faq-schema" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }} />
     </>
   );
 }

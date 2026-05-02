@@ -183,14 +183,16 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
                   href={`/shop?category=${encodeURIComponent(cat.name)}`}
                   className="flex flex-col items-center group cursor-pointer w-[5rem] sm:w-28 md:w-32 flex-shrink-0 snap-center"
                 >
-                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-none bg-brand-50 overflow-hidden relative mb-4 transition-all duration-700 border border-brand-100 group-hover:border-brand-500`}>
-                    <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 80px, 120px" className="object-cover group-hover:scale-110 transition-transform duration-700 p-3" />
+                  <div className={`w-[4.5rem] h-[4.5rem] sm:w-24 sm:h-24 md:w-28 md:h-28 rounded-full bg-brand-50 overflow-hidden relative mb-4 transition-all duration-700 border border-brand-100 group-hover:border-brand-500 shadow-sm`}>
+                    <Image src={cat.img} alt={cat.name} fill sizes="(max-width: 768px) 80px, 120px" className="object-cover group-hover:scale-110 transition-transform duration-700 p-2" />
                   </div>
                   <span className="text-xs font-bold text-stone-600 text-center group-hover:text-brand-700 transition-colors tracking-widest uppercase">{cat.name}</span>
                 </Link>
               )) : ['Personalized', 'Corporate', 'Birthday', 'Anniversary', 'Wedding', 'Occasions'].map((cat, i) => (
                 <Link key={i} href={`/shop?category=${cat.toLowerCase()}`} className="flex flex-col items-center group cursor-pointer w-[5rem] flex-shrink-0">
-                  <div className="w-[4.5rem] h-[4.5rem] bg-brand-50 mb-4 animate-pulse" />
+                  <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-brand-50 mb-4 overflow-hidden relative border border-brand-100 shadow-sm animate-pulse">
+                     <Image src="/images/category-placeholder.png" alt="Loading category" fill className="object-cover opacity-50" />
+                  </div>
                   <span className="text-xs font-semibold text-stone-400">{cat}</span>
                 </Link>
               ))}
