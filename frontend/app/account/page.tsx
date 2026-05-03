@@ -53,7 +53,7 @@ const emptyAddressForm = {
   city: '',
   state: '',
   pincode: '',
-  country: 'India',
+  country: '',
   isDefault: false
 };
 
@@ -164,7 +164,7 @@ export default function AccountDashboard() {
         city: address.city,
         state: address.state,
         pincode: address.pincode,
-        country: address.country || 'India',
+        country: address.country || '',
         isDefault: address.isDefault
       });
     } else {

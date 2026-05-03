@@ -52,7 +52,7 @@ export default function ContactPage() {
                     { icon: Mail, label: 'Email Us', value: 'hello@prettyluxeatelier.com', detail: 'We reply within 24 hours' },
                     { icon: Phone, label: 'Call Us', value: '+91 99999 88888', detail: 'Mon-Sat, 9am - 7pm IST' },
                     { icon: MessageCircle, label: 'WhatsApp', value: '+91 99999 88888', detail: 'Instant support available' },
-                    { icon: MapPin, label: 'Studio', value: 'Udaipur, India', detail: 'Crafting excellence worldwide' },
+                    { icon: MapPin, label: 'Studio', value: 'Udaipur', detail: 'Crafting excellence worldwide' },
                   ].map((item, i) => (
                     <motion.div 
                       key={i}

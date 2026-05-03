@@ -5,7 +5,8 @@ import {
   LayoutDashboard, ShoppingCart, Users, Package, LogOut, Tag,
   TrendingUp, TrendingDown, DollarSign, Plus, Edit, Trash2, X,
   Loader2, Save, ChevronRight, Bell, Search, ImageIcon, RefreshCw,
-  Star, Eye, BarChart3, MessageSquare, CheckCircle, Minus, Image as ImageIconLucide
+  Star, Eye, BarChart3, MessageSquare, CheckCircle, Minus, Image as ImageIconLucide,
+  Settings, CreditCard, Globe
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
@@ -16,7 +17,7 @@ import ImageUpload from './_components/ImageUpload';
 import OrderTimeline from './_components/OrderTimeline';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
-type TabType = 'overview' | 'orders' | 'products' | 'customers' | 'banners' | 'coupons';
+type TabType = 'overview' | 'orders' | 'products' | 'customers' | 'banners' | 'coupons' | 'settings';
 
 interface Stats {
   totalUsers: number; totalOrders: number; totalProducts: number;
@@ -40,8 +41,12 @@ interface Product {
   price: number; compareAtPrice?: number; images: string[];
   category: string; stock: number; isFeatured: boolean;
   seoTitle?: string; seoDesc?: string;
+  hasSteel: boolean; hasEngraving: boolean;
+  featuresAndSpecs?: string; shippingInfo?: string; warrantyInfo?: string;
   manualReviewCount?: number; manualAvgRating?: number;
   customizationOptions: { id: string; type: string; label: string; values: string[]; priceOffset: number }[];
+  currencyPrices?: { id: string; currency: string; symbol: string; price: number; compareAtPrice?: number }[];
+  adminReviews?: { id: string; reviewerName: string; location?: string; rating: number; comment: string; isVerified: boolean; createdAt: string }[];
 }
 
 interface Customer {
@@ -132,7 +137,11 @@ export default function AdminDashboard() {
     name: '', slug: '', description: '', price: '', compareAtPrice: '', stock: '', category: '',
     isFeatured: false, seoTitle: '', seoDesc: '', images: [] as string[],
     manualReviewCount: '', manualAvgRating: '',
-    customizationOptions: [] as { type: string; label: string; values: string; priceOffset: string }[]
+    hasSteel: false, hasEngraving: false,
+    featuresAndSpecs: '', shippingInfo: '', warrantyInfo: '',
+    customizationOptions: [] as { type: string; label: string; values: string; priceOffset: string }[],
+    currencyPrices: [] as { currency: string; symbol: string; price: string; compareAtPrice: string }[],
+    adminReviews: [] as { reviewerName: string; location: string; rating: string; comment: string }[]
   });
   const [savingProduct, setSavingProduct] = useState(false);
 
@@ -225,14 +234,36 @@ export default function AdminDashboard() {
       seoTitle: p.seoTitle || '', seoDesc: p.seoDesc || '', images: p.images || [],
       manualReviewCount: p.manualReviewCount ? String(p.manualReviewCount) : '',
       manualAvgRating: p.manualAvgRating ? String(p.manualAvgRating) : '',
+      hasSteel: p.hasSteel || false,
+      hasEngraving: p.hasEngraving || false,
+      featuresAndSpecs: p.featuresAndSpecs || '',
+      shippingInfo: p.shippingInfo || '',
+      warrantyInfo: p.warrantyInfo || '',
       customizationOptions: (p.customizationOptions || []).map(o => ({
         type: o.type, label: o.label, values: o.values.join(', '), priceOffset: String(o.priceOffset)
+      })),
+      currencyPrices: (p.currencyPrices || []).map(cp => ({
+        currency: cp.currency, symbol: cp.symbol,
+        price: String(cp.price), compareAtPrice: cp.compareAtPrice ? String(cp.compareAtPrice) : ''
+      })),
+      adminReviews: (p.adminReviews || []).map(ar => ({
+        reviewerName: ar.reviewerName, location: ar.location || '',
+        rating: String(ar.rating), comment: ar.comment
       }))
     } : {
       name: '', slug: '', description: '', price: '', compareAtPrice: '', stock: '', category: '',
       isFeatured: false, seoTitle: '', seoDesc: '', images: [],
       manualReviewCount: '', manualAvgRating: '',
-      customizationOptions: []
+      hasSteel: false, hasEngraving: false,
+      featuresAndSpecs: '', shippingInfo: '', warrantyInfo: '',
+      customizationOptions: [],
+      currencyPrices: [
+        { currency: 'USD', symbol: '$', price: '', compareAtPrice: '' },
+        { currency: 'GBP', symbol: '£', price: '', compareAtPrice: '' },
+        { currency: 'EUR', symbol: '€', price: '', compareAtPrice: '' },
+        { currency: 'AED', symbol: 'AED', price: '', compareAtPrice: '' },
+      ],
+      adminReviews: []
     });
     setProductFormOpen(true);
   };
@@ -247,9 +278,21 @@ export default function AdminDashboard() {
         stock: Number(pf.stock),
         manualReviewCount: pf.manualReviewCount ? Number(pf.manualReviewCount) : null,
         manualAvgRating: pf.manualAvgRating ? Number(pf.manualAvgRating) : null,
+        hasSteel: pf.hasSteel, hasEngraving: pf.hasEngraving,
+        featuresAndSpecs: pf.featuresAndSpecs || null,
+        shippingInfo: pf.shippingInfo || null,
+        warrantyInfo: pf.warrantyInfo || null,
         customizationOptions: pf.customizationOptions.map(o => ({
           type: o.type, label: o.label, priceOffset: Number(o.priceOffset) || 0,
           values: o.values.split(',').map(v => v.trim()).filter(Boolean)
+        })),
+        currencyPrices: pf.currencyPrices.filter(cp => cp.currency && cp.price).map(cp => ({
+          currency: cp.currency.toUpperCase(), symbol: cp.symbol,
+          price: Number(cp.price), compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+        })),
+        adminReviews: pf.adminReviews.filter(ar => ar.reviewerName && ar.rating && ar.comment).map(ar => ({
+          reviewerName: ar.reviewerName, location: ar.location || null,
+          rating: Number(ar.rating), comment: ar.comment
         }))
       };
       if (editingProduct) await api.put(`/admin/products/${editingProduct.id}`, payload);
@@ -326,6 +369,7 @@ export default function AdminDashboard() {
     { id: 'customers', label: 'Customers', icon: Users },
     { id: 'banners', label: 'Banners', icon: ImageIconLucide },
     { id: 'coupons', label: 'Coupons', icon: Tag },
+    { id: 'settings', label: 'Settings', icon: Settings },
   ] as const;
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -665,22 +709,158 @@ export default function AdminDashboard() {
                       </div>
                     </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Description</label>
-                      <textarea required rows={4} placeholder="Describe your product…"
-                        value={pf.description} onChange={e => setPf(p => ({ ...p, description: e.target.value }))}
-                        className="w-full bg-brand-50 rounded-xl px-4 py-2.5 text-sm text-brand-700 border-none outline-none focus:ring-2 focus:ring-brand-500/20 resize-none" />
+                    {/* ── Product Description ── */}
+                    <div className="space-y-2">
+                      <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Product Description <span className="text-red-400">*</span></label>
+                      <div className="bg-brand-50 rounded-2xl border border-brand-100 overflow-hidden focus-within:ring-2 focus-within:ring-brand-500/20">
+                        <textarea required rows={6} placeholder="Write a detailed, compelling product description. Include key selling points, material quality, use cases, and what makes this product special…"
+                          value={pf.description} onChange={e => setPf(p => ({ ...p, description: e.target.value }))}
+                          className="w-full bg-transparent px-5 py-4 text-sm text-brand-700 outline-none resize-none leading-relaxed" />
+                        <div className="px-5 py-2 border-t border-brand-100 flex justify-between items-center">
+                          <span className="text-[10px] text-brand-300 font-bold">Write a rich, detailed description for best SEO results</span>
+                          <span className="text-[10px] text-brand-400 font-black">{pf.description.length} chars</span>
+                        </div>
+                      </div>
                     </div>
 
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={pf.isFeatured} onChange={e => setPf(p => ({ ...p, isFeatured: e.target.checked }))} className="w-4 h-4 rounded accent-brand-600" />
-                      <span className="text-sm font-bold text-brand-700">Featured product (shown on homepage)</span>
-                    </label>
+                    {/* ── Product Options ── */}
+                    <div className="bg-brand-50/60 rounded-2xl p-5 border border-brand-100 space-y-4">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-brand-400">Product Options</p>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <label className="flex items-center gap-3 cursor-pointer bg-white rounded-xl px-4 py-3 border border-brand-100 hover:border-brand-300 transition-colors group">
+                          <div onClick={() => setPf(p => ({ ...p, hasSteel: !p.hasSteel }))}
+                            className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${pf.hasSteel ? 'bg-brand-600' : 'bg-brand-200'}`}>
+                            <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${pf.hasSteel ? 'left-5' : 'left-0.5'}`} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-brand-900">Steel Variant Available</p>
+                            <p className="text-[10px] text-brand-400">Product has stainless steel option</p>
+                          </div>
+                        </label>
+                        <label className="flex items-center gap-3 cursor-pointer bg-white rounded-xl px-4 py-3 border border-brand-100 hover:border-brand-300 transition-colors group">
+                          <div onClick={() => setPf(p => ({ ...p, hasEngraving: !p.hasEngraving }))}
+                            className={`w-11 h-6 rounded-full transition-colors relative shrink-0 ${pf.hasEngraving ? 'bg-brand-600' : 'bg-brand-200'}`}>
+                            <div className={`absolute top-0.5 w-5 h-5 bg-white rounded-full shadow transition-all ${pf.hasEngraving ? 'left-5' : 'left-0.5'}`} />
+                          </div>
+                          <div>
+                            <p className="text-sm font-black text-brand-900">Engraving Available</p>
+                            <p className="text-[10px] text-brand-400">Laser engraving can be applied</p>
+                          </div>
+                        </label>
+                      </div>
+                      <label className="flex items-center gap-2 cursor-pointer">
+                        <input type="checkbox" checked={pf.isFeatured} onChange={e => setPf(p => ({ ...p, isFeatured: e.target.checked }))} className="w-4 h-4 rounded accent-brand-600" />
+                        <span className="text-sm font-bold text-brand-700">Featured product (shown on homepage)</span>
+                      </label>
+                    </div>
 
-                    {/* Image upload */}
+                    {/* ── Content Tabs: Features / Shipping / Warranty ── */}
+                    <div className="space-y-4">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-brand-400">Product Information (shown on product page)</p>
+                      {[
+                        { label: 'Features & Specs', key: 'featuresAndSpecs', placeholder: 'e.g. Material: Premium 304 Food-Grade Stainless Steel\nDimensions: 14cm × 14cm × 22cm (assembled)\nCapacity: 3 tiers × 500ml each\nFeatures: Leak-proof clips, stackable design, dishwasher safe\nWeight: 850g' },
+                        { label: 'Shipping & Delivery', key: 'shippingInfo', placeholder: 'e.g. Worldwide shipping available.\nStandard delivery: 7–14 business days\nExpress delivery: 3–5 business days (available at checkout)\nAll orders dispatched within 24–48 hours.\nFully tracked with real-time updates.' },
+                        { label: 'Warranty Information', key: 'warrantyInfo', placeholder: 'e.g. 2-year manufacturer warranty included.\nCovers: structural defects, clip malfunctions, and transit damage.\nExcludes: cosmetic wear, misuse, or accidental damage.\nTo claim: contact support@prettyluxeatelier.com with your order number.' },
+                      ].map(({ label, key, placeholder }) => (
+                        <div key={key} className="space-y-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-500">{label}</label>
+                          <textarea rows={5} placeholder={placeholder}
+                            value={(pf as any)[key]}
+                            onChange={e => setPf(p => ({ ...p, [key]: e.target.value }))}
+                            className="w-full bg-brand-50 rounded-xl px-4 py-3 text-sm text-brand-700 border border-brand-100 outline-none focus:ring-2 focus:ring-brand-500/20 resize-none leading-relaxed font-mono" />
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* ── Image upload ── */}
                     <div className="space-y-1">
                       <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Product Images</label>
                       <ImageUpload images={pf.images} onChange={imgs => setPf(p => ({ ...p, images: imgs }))} />
+                    </div>
+
+                    {/* ── Multi-Currency Pricing ── */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-brand-400">International Prices (set manually per currency)</p>
+                        <button type="button"
+                          onClick={() => setPf(p => ({ ...p, currencyPrices: [...p.currencyPrices, { currency: '', symbol: '', price: '', compareAtPrice: '' }] }))}
+                          className="flex items-center gap-1 text-xs font-black text-brand-600 bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition-colors">
+                          <Plus size={12} /> Add Currency
+                        </button>
+                      </div>
+                      <div className="bg-brand-50/60 rounded-2xl border border-brand-100 overflow-hidden">
+                        <div className="grid grid-cols-5 gap-2 px-4 py-2 bg-brand-100/50 text-[9px] font-black uppercase tracking-widest text-brand-400">
+                          <span>Currency Code</span><span>Symbol</span><span>Price</span><span>Compare-At</span><span></span>
+                        </div>
+                        {pf.currencyPrices.map((cp, idx) => (
+                          <div key={idx} className="grid grid-cols-5 gap-2 px-4 py-2.5 border-t border-brand-100 items-center">
+                            <input value={cp.currency} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].currency = e.target.value.toUpperCase().slice(0,3); return { ...p, currencyPrices: a }; })}
+                              placeholder="USD" maxLength={3} className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-black text-brand-900 outline-none uppercase" />
+                            <input value={cp.symbol} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].symbol = e.target.value; return { ...p, currencyPrices: a }; })}
+                              placeholder="$" maxLength={4} className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none" />
+                            <input type="number" value={cp.price} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].price = e.target.value; return { ...p, currencyPrices: a }; })}
+                              placeholder="29.99" className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none" />
+                            <input type="number" value={cp.compareAtPrice} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].compareAtPrice = e.target.value; return { ...p, currencyPrices: a }; })}
+                              placeholder="39.99" className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none" />
+                            <button type="button" onClick={() => setPf(p => ({ ...p, currencyPrices: p.currencyPrices.filter((_, i) => i !== idx) }))}
+                              className="w-7 h-7 flex items-center justify-center bg-red-50 text-red-400 hover:text-red-600 rounded-lg transition-colors ml-auto">
+                              <X size={12} />
+                            </button>
+                          </div>
+                        ))}
+                        {pf.currencyPrices.length === 0 && <p className="text-xs text-brand-300 text-center py-6 font-bold">No international prices set. Add currencies above.</p>}
+                      </div>
+                    </div>
+
+                    {/* ── Admin Reviews (Seeded) ── */}
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-brand-400">Admin Reviews (pre-seeded, shown to customers)</p>
+                        <button type="button"
+                          onClick={() => setPf(p => ({ ...p, adminReviews: [...p.adminReviews, { reviewerName: '', location: '', rating: '5', comment: '' }] }))}
+                          className="flex items-center gap-1 text-xs font-black text-brand-600 bg-brand-50 px-3 py-1.5 rounded-lg hover:bg-brand-100 transition-colors">
+                          <Plus size={12} /> Add Review
+                        </button>
+                      </div>
+                      {pf.adminReviews.map((ar, idx) => (
+                        <div key={idx} className="bg-white rounded-2xl border border-brand-100 p-4 space-y-3 relative shadow-sm">
+                          <button type="button" onClick={() => setPf(p => ({ ...p, adminReviews: p.adminReviews.filter((_, i) => i !== idx) }))}
+                            className="absolute -top-2 -right-2 w-6 h-6 bg-white border border-brand-200 rounded-full flex items-center justify-center text-brand-400 hover:text-red-500 shadow-sm">
+                            <X size={11} />
+                          </button>
+                          <div className="grid grid-cols-3 gap-3">
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase tracking-widest text-brand-400">Reviewer Name</label>
+                              <input value={ar.reviewerName} onChange={e => setPf(p => { const a = [...p.adminReviews]; a[idx].reviewerName = e.target.value; return { ...p, adminReviews: a }; })}
+                                placeholder="Sarah M." className="w-full bg-brand-50 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none border border-brand-100" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase tracking-widest text-brand-400">Location (optional)</label>
+                              <input value={ar.location} onChange={e => setPf(p => { const a = [...p.adminReviews]; a[idx].location = e.target.value; return { ...p, adminReviews: a }; })}
+                                placeholder="London, UK" className="w-full bg-brand-50 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none border border-brand-100" />
+                            </div>
+                            <div className="space-y-1">
+                              <label className="text-[9px] font-black uppercase tracking-widest text-brand-400">Rating (1–5)</label>
+                              <select value={ar.rating} onChange={e => setPf(p => { const a = [...p.adminReviews]; a[idx].rating = e.target.value; return { ...p, adminReviews: a }; })}
+                                className="w-full bg-brand-50 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none border border-brand-100">
+                                {[5,4,3,2,1].map(r => <option key={r} value={r}>{'★'.repeat(r)} ({r}/5)</option>)}
+                              </select>
+                            </div>
+                          </div>
+                          <div className="space-y-1">
+                            <label className="text-[9px] font-black uppercase tracking-widest text-brand-400">Review Comment</label>
+                            <textarea rows={3} value={ar.comment} onChange={e => setPf(p => { const a = [...p.adminReviews]; a[idx].comment = e.target.value; return { ...p, adminReviews: a }; })}
+                              placeholder="Absolutely love this product! The quality is exceptional and the engraving came out perfectly. Great as a gift too."
+                              className="w-full bg-brand-50 rounded-lg px-3 py-2 text-xs text-brand-700 outline-none border border-brand-100 resize-none" />
+                          </div>
+                        </div>
+                      ))}
+                      {pf.adminReviews.length === 0 && (
+                        <div className="bg-brand-50/50 rounded-2xl border border-dashed border-brand-200 py-8 text-center">
+                          <MessageSquare size={24} className="mx-auto mb-2 text-brand-200" />
+                          <p className="text-xs text-brand-300 font-bold">No reviews added yet. Click "Add Review" to seed customer reviews.</p>
+                        </div>
+                      )}
                     </div>
 
                     {/* Customization options */}
@@ -1089,6 +1269,113 @@ export default function AdminDashboard() {
                     </tbody>
                   </table>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* ── SETTINGS ── */}
+          {tab === 'settings' && (
+            <div className="p-8 space-y-8 max-w-3xl">
+              <div>
+                <h3 className="font-heading font-black text-2xl text-brand-900 mb-1">Store Settings</h3>
+                <p className="text-sm text-brand-400">Configure payment gateways and global store options.</p>
+              </div>
+
+              {/* Payment Gateways */}
+              <div className="bg-white rounded-2xl border border-brand-100 shadow-sm overflow-hidden">
+                <div className="px-6 py-4 border-b border-brand-50 flex items-center gap-3">
+                  <div className="w-9 h-9 bg-brand-900 rounded-xl flex items-center justify-center">
+                    <CreditCard size={18} className="text-white" />
+                  </div>
+                  <div>
+                    <h4 className="font-black text-brand-900 text-sm">Payment Gateways</h4>
+                    <p className="text-[10px] text-brand-400">Configure accepted payment methods</p>
+                  </div>
+                </div>
+                <div className="p-6 space-y-6">
+                  {/* PayPal */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-[#003087] rounded-xl flex items-center justify-center">
+                          <span className="text-white font-black text-sm">PP</span>
+                        </div>
+                        <div>
+                          <p className="font-black text-brand-900 text-sm">PayPal</p>
+                          <p className="text-[10px] text-brand-400">Accept PayPal payments worldwide</p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full uppercase tracking-widest">Configure in .env</span>
+                    </div>
+                    <div className="bg-brand-50 rounded-xl p-4 space-y-3">
+                      <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">PayPal Configuration</p>
+                      <div className="grid grid-cols-1 gap-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Client ID (Sandbox/Live)</label>
+                          <input type="text" placeholder="AXX...paypal-client-id" readOnly
+                            defaultValue={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ''}
+                            className="w-full bg-white border border-brand-100 rounded-lg px-3 py-2.5 text-xs font-mono text-brand-600 outline-none" />
+                        </div>
+                        <p className="text-[10px] text-brand-300">Set <code className="bg-brand-100 px-1 rounded">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> in your frontend <code className="bg-brand-100 px-1 rounded">.env</code> file to enable PayPal at checkout.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-brand-50" />
+
+                  {/* Samsung Pay */}
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-[#1428A0] rounded-xl flex items-center justify-center">
+                          <span className="text-white font-black text-[10px]">SAM</span>
+                        </div>
+                        <div>
+                          <p className="font-black text-brand-900 text-sm">Samsung Pay</p>
+                          <p className="text-[10px] text-brand-400">Accept Samsung Pay on compatible devices</p>
+                        </div>
+                      </div>
+                      <span className="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-black rounded-full uppercase tracking-widest">Configure in .env</span>
+                    </div>
+                    <div className="bg-brand-50 rounded-xl p-4 space-y-3">
+                      <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Samsung Pay Configuration</p>
+                      <div className="space-y-3">
+                        <div className="space-y-1">
+                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Service ID (Merchant)</label>
+                          <input type="text" placeholder="samsung-pay-service-id" readOnly
+                            defaultValue={process.env.NEXT_PUBLIC_SAMSUNG_PAY_SERVICE_ID || ''}
+                            className="w-full bg-white border border-brand-100 rounded-lg px-3 py-2.5 text-xs font-mono text-brand-600 outline-none" />
+                        </div>
+                        <p className="text-[10px] text-brand-300">Set <code className="bg-brand-100 px-1 rounded">NEXT_PUBLIC_SAMSUNG_PAY_SERVICE_ID</code> in your frontend <code className="bg-brand-100 px-1 rounded">.env</code> file to enable Samsung Pay.</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-brand-50" />
+
+                  {/* COD / Bank Transfer */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-green-100 rounded-xl flex items-center justify-center">
+                        <Globe size={18} className="text-green-700" />
+                      </div>
+                      <div>
+                        <p className="font-black text-brand-900 text-sm">Cash on Delivery / Bank Transfer</p>
+                        <p className="text-[10px] text-brand-400">Manual payment options — always available</p>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-black rounded-full uppercase tracking-widest border border-green-100">Active</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
+                <p className="text-sm font-black text-amber-800 mb-1">🔑 How to activate PayPal & Samsung Pay</p>
+                <ol className="text-xs text-amber-700 space-y-1 list-decimal list-inside">
+                  <li>Obtain credentials from <strong>PayPal Developer Dashboard</strong> or <strong>Samsung Pay Developers</strong></li>
+                  <li>Add keys to your frontend <code className="bg-amber-100 px-1 rounded">.env.local</code> file</li>
+                  <li>Redeploy — payment buttons will appear automatically at checkout</li>
+                </ol>
               </div>
             </div>
           )}

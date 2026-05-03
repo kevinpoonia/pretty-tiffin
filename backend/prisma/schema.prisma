@@ -38,7 +38,7 @@ model Address {
   street    String
   city      String
   state     String
-  country   String   @default("India")
+  country   String   @default("")
   pincode   String
   isDefault Boolean  @default(false)
   createdAt DateTime @default(now())
@@ -49,7 +49,7 @@ model Product {
   id            String   @id @default(uuid())
   slug          String   @unique
   name          String
-  description   String
+  description   String   @db.Text
   price         Decimal
   compareAtPrice Decimal?
   images        String[]
@@ -57,7 +57,22 @@ model Product {
   stock         Int      @default(0)
   isFeatured    Boolean  @default(false)
 
+  // Product option toggles
+  hasSteel      Boolean  @default(false)
+  hasEngraving  Boolean  @default(false)
+
+  // Per-product content blocks (admin-editable)
+  featuresAndSpecs String?  @db.Text
+  shippingInfo     String?  @db.Text
+  warrantyInfo     String?  @db.Text
+
+  // Manual review overrides (legacy)
+  manualReviewCount Int?
+  manualAvgRating   Decimal?
+
   customizationOptions CustomizationOption[]
+  adminReviews         AdminReview[]
+  currencyPrices       CurrencyPrice[]
   seoTitle      String?
   seoDesc       String?
 
@@ -169,6 +184,35 @@ model Review {
   comment     String?
   isVerified  Boolean  @default(false)
   createdAt   DateTime @default(now())
+}
+
+// Admin-seeded reviews (visible without user account)
+model AdminReview {
+  id           String   @id @default(uuid())
+  productId    String
+  product      Product  @relation(fields: [productId], references: [id])
+  reviewerName String
+  location     String?  // e.g. "London, UK"
+  rating       Int
+  comment      String   @db.Text
+  isVerified   Boolean  @default(true)
+  createdAt    DateTime @default(now())
+
+  @@index([productId])
+}
+
+// Per-product manual currency prices set by admin
+model CurrencyPrice {
+  id             String  @id @default(uuid())
+  productId      String
+  product        Product @relation(fields: [productId], references: [id])
+  currency       String  // ISO code e.g. "USD", "GBP", "EUR"
+  symbol         String  // e.g. "$", "£", "€"
+  price          Decimal
+  compareAtPrice Decimal?
+
+  @@unique([productId, currency])
+  @@index([productId])
 }
 
 model Wishlist {

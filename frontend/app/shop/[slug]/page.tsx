@@ -104,13 +104,13 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       },
       "shippingDetails": {
         "@type": "OfferShippingDetails",
-        "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "INR" },
+        "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "USD" },
         "deliveryTime": {
           "@type": "ShippingDeliveryTime",
           "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 2, "unitCode": "DAY" },
           "transitTime": { "@type": "QuantitativeValue", "minValue": 7, "maxValue": 14, "unitCode": "DAY" }
         },
-        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "IN" }
+        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
       },
       "seller": {
         "@type": "Organization",
@@ -165,7 +165,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         "name": `How long does shipping take for the ${product.name}?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Standard shipping within India takes 7-14 business days. All items are securely packaged to ensure they arrive in pristine condition."
+          "text": "Worldwide shipping available. Standard delivery takes 7–14 business days globally. All items are securely packaged to ensure they arrive in pristine condition."
         }
       },
       {

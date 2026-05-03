@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     'personalized gifts', 'corporate gifting', 'pretty luxe atelier',
     'laser engraved gifts', 'premium tiffin box', 'custom tiffin gift',
     'birthday gift ideas', 'anniversary gifts', 'worldwide gifting',
-    'luxury indian gifting', 'stainless steel bento box'
+    'luxury gifting', 'stainless steel bento box'
   ],
   metadataBase: new URL('https://prettyluxeatelier.com'),
   alternates: { 

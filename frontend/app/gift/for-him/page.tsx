@@ -23,7 +23,7 @@ export default function GiftsForHusband() {
                 animate={{ opacity: 1 }}
                 className="text-[10px] font-black uppercase tracking-[0.2em] text-brand-500 mb-6 block"
               >
-                Curated Gifting Guide • India
+                Curated Gifting Guide • Worldwide
               </motion.span>
               <motion.h1 
                 initial={{ opacity: 0, y: 20 }}
@@ -58,7 +58,7 @@ export default function GiftsForHusband() {
                        {[
                           { title: 'Personalized Laser Engraving', desc: 'Add his name, a special date, or a witty message that never fades.', icon: ShieldCheck },
                           { title: 'Premium Health-First Design', desc: 'Ditch the plastic. 100% food-grade stainless steel for his daily meals.', icon: Heart },
-                          { title: 'Express Delivery Across India', desc: 'Securely delivered to major cities (Mumbai, Delhi, Bangalore) in 3 days.', icon: Truck },
+                          { title: 'Express Worldwide Delivery', desc: 'Securely delivered to major cities globally within 3–5 business days on express shipping.', icon: Truck },
                        ].map((feat, i) => (
                           <div key={i} className="flex gap-6">
                              <div className="w-12 h-12 bg-brand-900 text-white rounded-2xl flex items-center justify-center shrink-0 shadow-lg shadow-brand-900/20">

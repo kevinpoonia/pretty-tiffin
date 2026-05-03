@@ -15,14 +15,14 @@ async function getHomeData() {
 }
 
 export const metadata: Metadata = {
-  title: 'Pretty Luxe Atelier | Tiffin Boxes, Kitchenware & Indian Apparels',
-  description: 'Premium stainless steel tiffin boxes, Indian kitchenware, and ethnic apparels with precision laser engraving. Perfect for everyday use, corporate gifting, and meaningful gifting. Worldwide shipping.',
+  title: 'Pretty Luxe Atelier | Tiffin Boxes, Kitchenware & Ethnic Apparels',
+  description: 'Premium stainless steel tiffin boxes, artisanal kitchenware, and ethnic apparels with precision laser engraving. Perfect for everyday use, corporate gifting, and meaningful gifting. Worldwide shipping.',
   alternates: { canonical: 'https://prettyluxeatelier.com' },
   keywords: [
-    'tiffin box', 'stainless steel tiffin', 'personalized tiffin box', 'Indian kitchenware',
-    'ethnic apparels', 'Indian clothing', 'kitchen accessories India', 'engraved tiffin gift',
-    'corporate gift tiffin', 'bulk tiffin order', 'pretty luxe atelier', 'worldwide shipping India',
-    'custom kitchen gift', 'traditional Indian apparels'
+    'tiffin box', 'stainless steel tiffin', 'personalized tiffin box', 'artisanal kitchenware',
+    'ethnic apparels', 'ethnic clothing', 'kitchen accessories', 'engraved tiffin gift',
+    'corporate gift tiffin', 'bulk tiffin order', 'pretty luxe atelier', 'worldwide shipping',
+    'custom kitchen gift', 'traditional ethnic apparels'
   ],
 };
 
@@ -38,7 +38,7 @@ export default async function Home() {
         "name": "What types of products does Pretty Luxe Atelier sell?",
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": "Pretty Luxe Atelier offers premium stainless steel tiffin boxes, Indian kitchenware essentials, and ethnic apparels. All products can be personalized with laser-engraved names, messages, or company logos — perfect for everyday use, gifting, and corporate orders."
+          "text": "Pretty Luxe Atelier offers premium stainless steel tiffin boxes, artisanal kitchenware essentials, and ethnic apparels. All products can be personalized with laser-engraved names, messages, or company logos — perfect for everyday use, gifting, and corporate orders."
         }
       },
       {

@@ -84,9 +84,18 @@ export default function ProductDetailClient({ product }: { product: any }) {
   }, [product]);
 
   const faqs = [
-    { title: "Product Features & Specs", icon: Info, content: "Made from premium 304 food-grade stainless steel. Features a space-saving stacking design. Dimensions: 14cm x 14cm x 22cm when fully assembled." },
-    { title: "Shipping & Delivery", icon: Truck, content: "Worldwide shipping available. Standard delivery takes 7–14 business days internationally. Express shipping available at checkout. Shipping charges calculated at checkout." },
-    { title: "Warranty Information", icon: ShieldCheck, content: "Enjoy peace of mind with our 1-year manufacturer warranty. Covers structural defects, clip malfunctions, and transit damages." },
+    {
+      title: 'Product Features & Specs', icon: Info,
+      content: product.featuresAndSpecs || 'Made from premium 304 food-grade stainless steel. Features a space-saving stacking design. Dimensions: 14cm x 14cm x 22cm when fully assembled.'
+    },
+    {
+      title: 'Shipping & Delivery', icon: Truck,
+      content: product.shippingInfo || 'Worldwide shipping available. Standard delivery takes 7–14 business days internationally. Express shipping available at checkout.'
+    },
+    {
+      title: 'Warranty Information', icon: ShieldCheck,
+      content: product.warrantyInfo || 'Enjoy peace of mind with our 1-year manufacturer warranty. Covers structural defects, clip malfunctions, and transit damages.'
+    },
   ];
 
   const getTiffinColor = () => {
@@ -203,9 +212,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   </p>
                   <div className="mt-6 pt-6 border-t border-brand-50 grid grid-cols-3 gap-3">
                     {[
-                      { icon: ShieldCheck, label: '304 Steel', sub: 'Food-grade' },
+                      { icon: ShieldCheck, label: product.hasSteel ? '304 Steel' : 'Premium', sub: product.hasSteel ? 'Food-grade' : 'Quality' },
                       { icon: Truck, label: 'Worldwide', sub: 'Shipping' },
-                      { icon: Star, label: 'Engraved', sub: 'Laser precision' },
+                      { icon: Star, label: product.hasEngraving ? 'Engraved' : 'Artisanal', sub: product.hasEngraving ? 'Laser precision' : 'Handcrafted' },
                     ].map(({ icon: Icon, label, sub }) => (
                       <div key={label} className="flex flex-col items-center text-center gap-1">
                         <div className="w-8 h-8 rounded-none bg-brand-50 border border-brand-100 flex items-center justify-center">

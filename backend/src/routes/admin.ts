@@ -153,7 +153,7 @@ router.put('/orders/:id/status', async (req: AuthRequest, res: Response) => {
 router.get('/products', async (req: AuthRequest, res: Response) => {
   try {
     const products = await prisma.product.findMany({
-      include: { customizationOptions: true },
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: { orderBy: { createdAt: 'desc' } } },
       orderBy: { createdAt: 'desc' }
     });
     res.json(products);
@@ -164,7 +164,12 @@ router.get('/products', async (req: AuthRequest, res: Response) => {
 
 router.post('/products', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions } = req.body;
+    const {
+      name, description, price, compareAtPrice, slug, category, images, stock, isFeatured,
+      seoTitle, seoDesc, customizationOptions,
+      hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo,
+      manualReviewCount, manualAvgRating, currencyPrices, adminReviews
+    } = req.body;
     const product = await prisma.product.create({
       data: {
         name, description, slug, category,
@@ -175,14 +180,33 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
         isFeatured: Boolean(isFeatured),
         seoTitle: seoTitle || null,
         seoDesc: seoDesc || null,
+        hasSteel: Boolean(hasSteel),
+        hasEngraving: Boolean(hasEngraving),
+        featuresAndSpecs: featuresAndSpecs || null,
+        shippingInfo: shippingInfo || null,
+        warrantyInfo: warrantyInfo || null,
+        manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+        manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
         customizationOptions: {
           create: (customizationOptions || []).map((opt: any) => ({
             type: opt.type, label: opt.label,
             values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
           }))
+        },
+        currencyPrices: {
+          create: (currencyPrices || []).filter((cp: any) => cp.currency && cp.price).map((cp: any) => ({
+            currency: cp.currency.toUpperCase(), symbol: cp.symbol || cp.currency,
+            price: Number(cp.price), compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+          }))
+        },
+        adminReviews: {
+          create: (adminReviews || []).filter((ar: any) => ar.reviewerName && ar.rating && ar.comment).map((ar: any) => ({
+            reviewerName: ar.reviewerName, location: ar.location || null,
+            rating: Number(ar.rating), comment: ar.comment, isVerified: true
+          }))
         }
       },
-      include: { customizationOptions: true }
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
     });
     await clearCache('/api/products*');
     res.status(201).json(product);
@@ -193,26 +217,54 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
 
 router.put('/products/:id', async (req: AuthRequest, res: Response) => {
   try {
-    const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions } = req.body;
-    if (customizationOptions) {
-      await (prisma as any).customizationOption.deleteMany({ where: { productId: String(req.params.id) } });
-    }
+    const {
+      name, description, price, compareAtPrice, slug, category, images, stock, isFeatured,
+      seoTitle, seoDesc, customizationOptions,
+      hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo,
+      manualReviewCount, manualAvgRating, currencyPrices, adminReviews
+    } = req.body;
+    const productId = String(req.params.id);
+
+    // Replace related data
+    await (prisma as any).customizationOption.deleteMany({ where: { productId } });
+    await (prisma as any).currencyPrice.deleteMany({ where: { productId } });
+    await (prisma as any).adminReview.deleteMany({ where: { productId } });
+
     const product = await prisma.product.update({
-      where: { id: String(req.params.id) },
+      where: { id: productId },
       data: {
         name, description, slug, category,
         price: Number(price),
         compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null,
-        images, stock: Number(stock), isFeatured,
+        images: images || [], stock: Number(stock) || 0, isFeatured: Boolean(isFeatured),
         seoTitle: seoTitle || null, seoDesc: seoDesc || null,
-        customizationOptions: customizationOptions ? {
-          create: customizationOptions.map((opt: any) => ({
+        hasSteel: Boolean(hasSteel),
+        hasEngraving: Boolean(hasEngraving),
+        featuresAndSpecs: featuresAndSpecs || null,
+        shippingInfo: shippingInfo || null,
+        warrantyInfo: warrantyInfo || null,
+        manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+        manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
+        customizationOptions: {
+          create: (customizationOptions || []).map((opt: any) => ({
             type: opt.type, label: opt.label,
             values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
           }))
-        } : undefined
+        },
+        currencyPrices: {
+          create: (currencyPrices || []).filter((cp: any) => cp.currency && cp.price).map((cp: any) => ({
+            currency: cp.currency.toUpperCase(), symbol: cp.symbol || cp.currency,
+            price: Number(cp.price), compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+          }))
+        },
+        adminReviews: {
+          create: (adminReviews || []).filter((ar: any) => ar.reviewerName && ar.rating && ar.comment).map((ar: any) => ({
+            reviewerName: ar.reviewerName, location: ar.location || null,
+            rating: Number(ar.rating), comment: ar.comment, isVerified: true
+          }))
+        }
       },
-      include: { customizationOptions: true }
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
     });
     await clearCache('/api/products*');
     res.json(product);
@@ -223,7 +275,11 @@ router.put('/products/:id', async (req: AuthRequest, res: Response) => {
 
 router.delete('/products/:id', async (req: AuthRequest, res: Response) => {
   try {
-    await prisma.product.delete({ where: { id: String(req.params.id) } });
+    const productId = String(req.params.id);
+    await (prisma as any).adminReview.deleteMany({ where: { productId } });
+    await (prisma as any).currencyPrice.deleteMany({ where: { productId } });
+    await (prisma as any).customizationOption.deleteMany({ where: { productId } });
+    await prisma.product.delete({ where: { id: productId } });
     await clearCache('/api/products*');
     res.json({ success: true });
   } catch (error) {
