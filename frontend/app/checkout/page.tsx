@@ -10,11 +10,7 @@ import { useCart } from '@/context/CartContext';
 import api from '@/lib/api';
 import { useCurrency } from '@/context/CurrencyContext';
 
-declare global {
-  interface Window {
-    Razorpay: any;
-  }
-}
+// PayFast doesn't need a script in the same way Razorpay does
 
 export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth();
@@ -23,33 +19,14 @@ export default function CheckoutPage() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [razorpayReady, setRazorpayReady] = useState(false);
+  const [payfastLoading, setPayfastLoading] = useState(false);
 
   const [shipping, setShipping] = useState({
     firstName: '', lastName: '', phone: '', email: '', 
     address: '', city: '', state: '', pincode: ''
   });
 
-  // Load Razorpay Script only when payment step is opened
-  useEffect(() => {
-    if (step < 3 || typeof window === 'undefined') return;
-    if (window.Razorpay) {
-      setRazorpayReady(true);
-      return;
-    }
-
-    const script = document.createElement('script');
-    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
-    script.async = true;
-    script.onload = () => setRazorpayReady(true);
-    script.onerror = () => setError('Unable to load payment gateway. Please refresh and try again.');
-    document.body.appendChild(script);
-
-    return () => {
-      script.onload = null;
-      script.onerror = null;
-    };
-  }, [step]);
+  // No external script needed for PayFast redirect
 
   // Require Login
   if (!authLoading && !user) {
@@ -82,65 +59,30 @@ export default function CheckoutPage() {
     setError('');
 
     try {
-      // 1. Create Razorpay Order Intent
-      const intentRes = await api.post('/orders/create-intent', { amount: total, currency: 'INR' });
-      const order = intentRes.data;
-
-      // 2. Open Razorpay Modal
-      const options = {
-        key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'dummy_key',
-        amount: order.amount,
-        currency: order.currency,
-        name: 'Pretty Luxe Atelier',
-        description: 'Premium Customized Tiffin',
-        order_id: order.id,
-        handler: async function (response: any) {
-            try {
-              // 3. Verify Payment & Create DB Order
-              await api.post('/orders/verify', {
-                razorpay_order_id: response.razorpay_order_id,
-                razorpay_payment_id: response.razorpay_payment_id,
-                razorpay_signature: response.razorpay_signature,
-                totalAmount: total,
-                paymentMethod: 'RAZORPAY',
-                shippingAddress: shipping,
-                items: items.map(i => ({
-                  productId: i.productId,
-                  quantity: i.quantity,
-                  price: i.price,
-                  customizationDetails: i.customization || {}
-                }))
-              });
-
-              // 4. Success -> Clear Cart and redirect
-              await clearCart();
-              window.location.href = '/order-confirmation';
-              
-            } catch (err: any) {
-              setError(err.response?.data?.error || 'Payment Verification Failed');
-              setLoading(false);
-            }
-        },
-        prefill: {
-          name: user?.name,
-          email: user?.email,
-          contact: shipping.phone
-        },
-        theme: { color: '#628f57' } // IGP Red
-      };
-
-      if (!window.Razorpay) {
-         setError('Payment gateway is still loading. Please try again in a moment.');
-         setLoading(false);
-         return;
-      }
-
-      const rzp = new window.Razorpay(options);
-      rzp.on('payment.failed', function () {
-         setError("Payment Failed or Cancelled");
-         setLoading(false);
+      // 1. Get PayFast Session/Data
+      const res = await api.post('/orders/payfast-session', { 
+        amount: total, 
+        items, 
+        shippingAddress: shipping 
       });
-      rzp.open();
+      
+      const { url, fields } = res.data;
+
+      // 2. Create a hidden form and submit it to PayFast
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = url;
+
+      Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value as string;
+        form.appendChild(input);
+      });
+
+      document.body.appendChild(form);
+      form.submit();
 
     } catch (err: any) {
       setError(err.response?.data?.error || 'Failed to initialize payment');
@@ -242,11 +184,11 @@ export default function CheckoutPage() {
                   </div>
 
                   <button 
-                    disabled={loading || items.length === 0 || !razorpayReady}
+                    disabled={loading || items.length === 0}
                     onClick={handlePayment} 
                     className="w-full bg-brand-500 hover:bg-brand-600 disabled:opacity-50 text-white font-bold py-5 px-10 rounded-none transition-all duration-700 text-[10px] uppercase tracking-[0.2em] mt-8 shadow-sm"
                   >
-                    {loading ? 'INITIATING...' : !razorpayReady ? 'LOADING GATEWAY...' : `AUTHORIZE ${formatPrice(total)}`}
+                    {loading ? 'REDIRECTING TO PAYFAST...' : `AUTHORIZE ${formatPrice(total)}`}
                   </button>
                 </div>
               )}

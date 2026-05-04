@@ -3,7 +3,7 @@ import { verifyToken } from '@clerk/backend';
 import { prisma } from '../prisma';
 
 export interface AuthRequest extends Request {
-  user?: { id: string; role: string };
+  user?: { id: string; role: string; name: string; email: string };
 }
 
 export const authenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
@@ -23,7 +23,7 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
       return;
     }
 
-    req.user = { id: user.id, role: user.role };
+    req.user = { id: user.id, role: user.role, name: user.name, email: user.email };
     next();
   } catch {
     res.status(401).json({ error: 'Invalid token' });

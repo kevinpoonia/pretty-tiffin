@@ -1293,63 +1293,38 @@ export default function AdminDashboard() {
                   </div>
                 </div>
                 <div className="p-6 space-y-6">
-                  {/* PayPal */}
+                  {/* PayFast */}
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#003087] rounded-xl flex items-center justify-center">
-                          <span className="text-white font-black text-sm">PP</span>
+                        <div className="w-10 h-10 bg-[#e01414] rounded-xl flex items-center justify-center">
+                          <span className="text-white font-black text-sm">PF</span>
                         </div>
                         <div>
-                          <p className="font-black text-brand-900 text-sm">PayPal</p>
-                          <p className="text-[10px] text-brand-400">Accept PayPal payments worldwide</p>
+                          <p className="font-black text-brand-900 text-sm">PayFast</p>
+                          <p className="text-[10px] text-brand-400">Accept payments via South Africa&apos;s leading gateway</p>
                         </div>
                       </div>
-                      <span className="px-3 py-1 bg-blue-50 text-blue-600 text-[10px] font-black rounded-full uppercase tracking-widest">Configure in .env</span>
+                      <span className="px-3 py-1 bg-red-50 text-red-600 text-[10px] font-black rounded-full uppercase tracking-widest">Active</span>
                     </div>
                     <div className="bg-brand-50 rounded-xl p-4 space-y-3">
-                      <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">PayPal Configuration</p>
+                      <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">PayFast Configuration</p>
                       <div className="grid grid-cols-1 gap-3">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Client ID (Sandbox/Live)</label>
-                          <input type="text" placeholder="AXX...paypal-client-id" readOnly
-                            defaultValue={process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID || ''}
+                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Merchant ID</label>
+                          <input type="text" value="10796991" readOnly
                             className="w-full bg-white border border-brand-100 rounded-lg px-3 py-2.5 text-xs font-mono text-brand-600 outline-none" />
                         </div>
-                        <p className="text-[10px] text-brand-300">Set <code className="bg-brand-100 px-1 rounded">NEXT_PUBLIC_PAYPAL_CLIENT_ID</code> in your frontend <code className="bg-brand-100 px-1 rounded">.env</code> file to enable PayPal at checkout.</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="border-t border-brand-50" />
-
-                  {/* Samsung Pay */}
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-[#1428A0] rounded-xl flex items-center justify-center">
-                          <span className="text-white font-black text-[10px]">SAM</span>
-                        </div>
-                        <div>
-                          <p className="font-black text-brand-900 text-sm">Samsung Pay</p>
-                          <p className="text-[10px] text-brand-400">Accept Samsung Pay on compatible devices</p>
-                        </div>
-                      </div>
-                      <span className="px-3 py-1 bg-purple-50 text-purple-600 text-[10px] font-black rounded-full uppercase tracking-widest">Configure in .env</span>
-                    </div>
-                    <div className="bg-brand-50 rounded-xl p-4 space-y-3">
-                      <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Samsung Pay Configuration</p>
-                      <div className="space-y-3">
                         <div className="space-y-1">
-                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Service ID (Merchant)</label>
-                          <input type="text" placeholder="samsung-pay-service-id" readOnly
-                            defaultValue={process.env.NEXT_PUBLIC_SAMSUNG_PAY_SERVICE_ID || ''}
+                          <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Merchant Key</label>
+                          <input type="text" value="unt8phrpweunr" readOnly
                             className="w-full bg-white border border-brand-100 rounded-lg px-3 py-2.5 text-xs font-mono text-brand-600 outline-none" />
                         </div>
-                        <p className="text-[10px] text-brand-300">Set <code className="bg-brand-100 px-1 rounded">NEXT_PUBLIC_SAMSUNG_PAY_SERVICE_ID</code> in your frontend <code className="bg-brand-100 px-1 rounded">.env</code> file to enable Samsung Pay.</p>
+                        <p className="text-[10px] text-brand-300">Credentials are securely managed in the backend <code className="bg-brand-100 px-1 rounded">.env</code> file.</p>
                       </div>
                     </div>
                   </div>
+
 
                   <div className="border-t border-brand-50" />
 
@@ -1370,11 +1345,11 @@ export default function AdminDashboard() {
               </div>
 
               <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5">
-                <p className="text-sm font-black text-amber-800 mb-1">🔑 How to activate PayPal & Samsung Pay</p>
+                <p className="text-sm font-black text-amber-800 mb-1">🔑 PayFast Activation Status</p>
                 <ol className="text-xs text-amber-700 space-y-1 list-decimal list-inside">
-                  <li>Obtain credentials from <strong>PayPal Developer Dashboard</strong> or <strong>Samsung Pay Developers</strong></li>
-                  <li>Add keys to your frontend <code className="bg-amber-100 px-1 rounded">.env.local</code> file</li>
-                  <li>Redeploy — payment buttons will appear automatically at checkout</li>
+                  <li>PayFast is currently <strong>Active</strong> using your provided credentials</li>
+                  <li>Instant Transaction Notifications (ITN) are handled by the backend</li>
+                  <li>Payments are processed in <strong>ZAR</strong> (South African Rand) by default</li>
                 </ol>
               </div>
             </div>

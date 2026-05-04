@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../prisma';
 import { authenticate, AuthRequest } from '../middleware/auth';
-import { razorpay } from '../razorpay';
 import crypto from 'crypto';
 import { sendEmail, orderConfirmationEmail, invoiceHtml } from './email';
+import { generatePayFastSignature, verifyPayFastNotification } from '../payfast';
 
 const router = Router();
 
@@ -18,20 +18,124 @@ const getUserOrders = async (userId: string) => {
   });
 };
 
-// POST /api/orders/create-intent — Create Razorpay order
-router.post('/create-intent', authenticate, async (req: AuthRequest, res: Response) => {
+// POST /api/orders/payfast-session — Generate PayFast request data
+router.post('/payfast-session', authenticate, async (req: AuthRequest, res: Response) => {
   try {
-    const { amount, currency = 'INR', receipt } = req.body;
-    const options = {
-      amount: Math.round(Number(amount) * 100),
-      currency,
-      receipt: receipt || `receipt_${Date.now()}`
+    const { amount, items, shippingAddress, giftDetails } = req.body;
+    
+    // 1. Create a PENDING order in DB first
+    let giftOptionId: string | null = null;
+    if (giftDetails && (giftDetails.occasion || giftDetails.message)) {
+      const go = await prisma.giftOption.create({
+        data: {
+          occasion: giftDetails.occasion,
+          message: giftDetails.message,
+          scheduledFor: giftDetails.scheduledFor ? new Date(giftDetails.scheduledFor) : null,
+          packaging: giftDetails.packaging
+        }
+      });
+      giftOptionId = go.id;
+    }
+
+    const newOrder = await prisma.order.create({
+      data: {
+        userId: req.user!.id,
+        totalAmount: Number(amount),
+        paymentMethod: 'PAYFAST',
+        shippingAddress: JSON.stringify(shippingAddress),
+        giftOptionId,
+        status: 'PENDING',
+        items: {
+          create: (items || []).map((item: any) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+            price: Number(item.price),
+            customizationDetails: JSON.stringify(item.customizationDetails || {})
+          }))
+        }
+      }
+    });
+
+    // 2. Prepare PayFast data
+    const payfastData = {
+      merchant_id: process.env.PAYFAST_MERCHANT_ID || '',
+      merchant_key: process.env.PAYFAST_MERCHANT_KEY || '',
+      return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/order-confirmation?orderId=${newOrder.id}`,
+      cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout?error=cancelled`,
+      notify_url: `${process.env.BACKEND_URL || 'http://localhost:4000'}/api/orders/payfast-notify`,
+      name_first: req.user?.name?.split(' ')[0] || '',
+      name_last: req.user?.name?.split(' ')[1] || '',
+      email_address: req.user?.email || '',
+      m_payment_id: newOrder.id,
+      amount: Number(amount).toFixed(2),
+      item_name: `Order #${newOrder.id.slice(-8).toUpperCase()}`,
     };
-    const order = await razorpay.orders.create(options);
-    res.json(order);
+
+    const signature = generatePayFastSignature(payfastData, process.env.PAYFAST_PASSPHRASE);
+    
+    res.json({
+      url: process.env.PAYFAST_SANDBOX === 'true' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process',
+      fields: { ...payfastData, signature }
+    });
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: 'Error creating Razorpay order' });
+    res.status(500).json({ error: 'Error initializing PayFast session' });
+  }
+});
+
+// POST /api/orders/payfast-notify — Handle PayFast ITN
+router.post('/payfast-notify', async (req: Request, res: Response) => {
+  try {
+    const data = req.body;
+    console.log('PayFast ITN Received:', data);
+
+    if (!verifyPayFastNotification(data, process.env.PAYFAST_PASSPHRASE)) {
+      console.error('PayFast Signature Verification Failed');
+      return res.status(400).send('Invalid Signature');
+    }
+
+    if (data.payment_status === 'COMPLETE') {
+      const orderId = data.m_payment_id;
+      
+      const order = await prisma.order.findUnique({
+        where: { id: orderId },
+        include: { items: { include: { product: { select: { name: true } } } }, user: { select: { email: true, name: true } } }
+      });
+
+      if (order && order.status === 'PENDING') {
+        const updatedOrder = await prisma.order.update({
+          where: { id: orderId },
+          data: {
+            status: 'CONFIRMED',
+            paymentRef: data.pf_payment_id
+          },
+          include: { items: { include: { product: { select: { name: true } } } } }
+        });
+
+        // Send emails
+        const emailItems = updatedOrder.items.map((i: any) => ({ name: i.product.name, quantity: i.quantity, price: i.price }));
+        const shippingAddress = JSON.parse(updatedOrder.shippingAddress);
+        
+        sendEmail(
+          order.user.email,
+          'Your Pretty Luxe Atelier Order is Confirmed! 🎉',
+          orderConfirmationEmail(order.user.name, updatedOrder.id, Number(updatedOrder.totalAmount), emailItems)
+        ).catch(console.error);
+
+        const fullOrder = { ...updatedOrder, items: updatedOrder.items, shippingAddress, status: 'CONFIRMED' as const, paymentMethod: 'PAYFAST', trackingNumber: null };
+        sendEmail(
+          order.user.email,
+          `Invoice #INV-${updatedOrder.id.slice(-8).toUpperCase()} — Pretty Luxe Atelier`,
+          invoiceHtml(fullOrder as any, order.user as any)
+        ).catch(console.error);
+      }
+    }
+
+    res.status(200).send('OK');
+  } catch (error) {
+    console.error('PayFast Notify Error:', error);
+    res.status(500).send('Error');
   }
 });
 
