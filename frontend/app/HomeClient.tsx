@@ -47,14 +47,14 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
 
   const categories = Array.from(new Set(products.map(p => p.category))).map(cat => ({
     name: cat,
-    img: products.find(p => p.category === cat)?.images?.[0] || '/images/product-1.png',
+    img: products.find(p => p.category === cat)?.images?.[0] || '/images/product-1.webp',
   })).slice(0, 6);
 
   const relationships = [
-    { title: 'For Husband', img: '/images/hero.png', href: '/shop?for=For Husband' },
-    { title: 'For Wife', img: '/images/feature-2.png', href: '/shop?for=For Wife' },
-    { title: 'For Kids', img: '/images/feature-1.png', href: '/shop?for=For Kids' },
-    { title: 'For Parents', img: '/images/gifting.png', href: '/shop?for=For Parents' },
+    { title: 'For Husband', img: '/images/hero.webp', href: '/shop?for=For Husband' },
+    { title: 'For Wife', img: '/images/feature-2.webp', href: '/shop?for=For Wife' },
+    { title: 'For Kids', img: '/images/feature-1.webp', href: '/shop?for=For Kids' },
+    { title: 'For Parents', img: '/images/gifting.webp', href: '/shop?for=For Parents' },
   ];
 
   const faqs = [
@@ -191,7 +191,7 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
               )) : ['Personalized', 'Corporate', 'Birthday', 'Anniversary', 'Wedding', 'Occasions'].map((cat, i) => (
                 <Link key={i} href={`/shop?category=${cat.toLowerCase()}`} className="flex flex-col items-center group cursor-pointer w-[5rem] flex-shrink-0">
                   <div className="w-[4.5rem] h-[4.5rem] rounded-full bg-brand-50 mb-4 overflow-hidden relative border border-brand-100 shadow-sm animate-pulse">
-                     <Image src="/images/category-placeholder.png" alt="Loading category" fill className="object-cover opacity-50" />
+                     <Image src="/images/category-placeholder.webp" alt="Loading category" fill className="object-cover opacity-50" />
                   </div>
                   <span className="text-xs font-semibold text-stone-400">{cat}</span>
                 </Link>

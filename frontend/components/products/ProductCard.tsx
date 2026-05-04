@@ -32,7 +32,7 @@ export default function ProductCard({ product, showBadge = false, priority = fal
   const { showToast } = useToast();
   const { formatPrice } = useCurrency();
 
-  const images = product.images?.length > 0 ? product.images : ['/images/product-1.png'];
+  const images = product.images?.length > 0 ? product.images : ['/images/product-1.webp'];
 
   const toggleWishlist = async (e: React.MouseEvent) => {
     e.preventDefault();
