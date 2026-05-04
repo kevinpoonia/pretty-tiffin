@@ -58,20 +58,23 @@ router.post('/payfast-session', authenticate, async (req: AuthRequest, res: Resp
 
     // 2. Prepare PayFast data
     const payfastData: any = {
-      merchant_id: process.env.PAYFAST_MERCHANT_ID || '',
-      merchant_key: process.env.PAYFAST_MERCHANT_KEY || '',
+      merchant_id: String(process.env.PAYFAST_MERCHANT_ID || '').trim(),
+      merchant_key: String(process.env.PAYFAST_MERCHANT_KEY || '').trim(),
       return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/order-confirmation?orderId=${newOrder.id}`,
       cancel_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/checkout?error=cancelled`,
       notify_url: `${process.env.BACKEND_URL || 'http://localhost:4000'}/api/orders/payfast-notify`,
-      name_first: req.user?.name?.split(' ')[0] || '',
-      name_last: req.user?.name?.split(' ')[1] || '',
-      email_address: req.user?.email || '',
-      m_payment_id: newOrder.id,
+      name_first: String(req.user?.name?.split(' ')[0] || 'Customer').trim(),
+      name_last: String(req.user?.name?.split(' ')[1] || 'User').trim(),
+      email_address: String(req.user?.email || '').trim(),
+      m_payment_id: String(newOrder.id).trim(),
       amount: Number(amount).toFixed(2),
-      item_name: `Order #${newOrder.id.slice(-8).toUpperCase()}`,
+      item_name: `Order ${newOrder.id.slice(-8).toUpperCase()}`, // Removed '#' character
     };
 
+    console.log('PayFast Session Data:', payfastData);
+
     const signature = generatePayFastSignature(payfastData, process.env.PAYFAST_PASSPHRASE);
+    console.log('Generated Signature:', signature);
     
     // Sort fields alphabetically for the response to ensure form order matches signature order
     const sortedFields: any = {};
