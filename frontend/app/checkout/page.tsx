@@ -59,9 +59,13 @@ export default function CheckoutPage() {
     setError('');
 
     try {
+      // Convert INR total to ZAR for PayFast
+      const zarRate = rates['ZAR'] || 0.22; // Fallback to 0.22 if rates not loaded
+      const totalZar = total * zarRate;
+
       // 1. Get PayFast Session/Data
       const res = await api.post('/orders/payfast-session', { 
-        amount: total, 
+        amount: totalZar, 
         items, 
         shippingAddress: shipping 
       });

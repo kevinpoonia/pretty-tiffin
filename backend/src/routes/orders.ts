@@ -57,7 +57,7 @@ router.post('/payfast-session', authenticate, async (req: AuthRequest, res: Resp
     });
 
     // 2. Prepare PayFast data
-    const payfastData = {
+    const payfastData: any = {
       merchant_id: process.env.PAYFAST_MERCHANT_ID || '',
       merchant_key: process.env.PAYFAST_MERCHANT_KEY || '',
       return_url: `${process.env.FRONTEND_URL || 'http://localhost:3000'}/order-confirmation?orderId=${newOrder.id}`,
@@ -73,9 +73,16 @@ router.post('/payfast-session', authenticate, async (req: AuthRequest, res: Resp
 
     const signature = generatePayFastSignature(payfastData, process.env.PAYFAST_PASSPHRASE);
     
+    // Sort fields alphabetically for the response to ensure form order matches signature order
+    const sortedFields: any = {};
+    Object.keys(payfastData).sort().forEach(key => {
+      sortedFields[key] = payfastData[key];
+    });
+    sortedFields.signature = signature;
+
     res.json({
       url: process.env.PAYFAST_SANDBOX === 'true' ? 'https://sandbox.payfast.co.za/eng/process' : 'https://www.payfast.co.za/eng/process',
-      fields: { ...payfastData, signature }
+      fields: sortedFields
     });
 
   } catch (error) {
