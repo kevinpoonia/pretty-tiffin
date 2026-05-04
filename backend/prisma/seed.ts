@@ -47,70 +47,103 @@ async function main() {
     console.log(`ℹ️ User ${adminEmail} already exists. Role ensured as ADMIN.`);
   }
 
+  // Safely clear out existing child records related to products to allow removal
+  console.log('Clearing old product dependencies...');
+  try { await prisma.customizationOption.deleteMany({}); } catch (e) {}
+  try { await prisma.adminReview.deleteMany({}); } catch (e) {}
+  try { await prisma.currencyPrice.deleteMany({}); } catch (e) {}
+  // If there are order items, wishlists, or reviews, we may need to delete them. 
+  // However, for safety, we only delete those that are purely product config.
+  // We'll then delete products.
+  
+  // Note: if there are existing Orders/Reviews, deleting products may fail. We will try to delete products
+  // that don't have constraints, or just delete everything if needed.
+  try {
+    await prisma.product.deleteMany({});
+    console.log('✅ All existing products removed.');
+  } catch (err) {
+    console.log('⚠️ Could not remove all products (likely due to existing orders). We will upsert the new ones.');
+  }
+
   // --- Seed Products ---
   const products = [
     {
       name: "Vintage Copper Tiffin",
       slug: "vintage-copper-tiffin",
-      description: "Authentic 3-tier traditional design with a premium copper finish. Keeps food warm and adds a touch of elegance to your lunch.",
+      description: "Authentic 3-tier traditional design with a premium copper finish. Keeps food warm naturally and adds a touch of rustic elegance to your daily lunch.",
+      featuresAndSpecs: "Handcrafted pure copper\n3-tier stackable design\nBrass handle with secure locking mechanism\nNaturally antimicrobial properties",
       price: 2499,
       category: "Vintage Collection",
-      images: ["/images/product-1.png", "/images/hero.png", "/images/feature-1.png"],
+      images: ["/images/copper_tiffin.png"],
       isFeatured: true,
       stock: 50,
+      hasSteel: false,
+      hasEngraving: true,
       customizationOptions: [
         { type: "ENGRAVING", label: "Name Engraving", values: ["None", "Custom Text"], priceOffset: 200 },
         { type: "PACKAGING", label: "Gift Wrap", values: ["Standard", "Premium Velvet"], priceOffset: 150 }
       ]
     },
     {
-      name: "Modern Minimalist Steel",
+      name: "Modern Minimalist Steel Bento",
       slug: "modern-minimalist-steel",
-      description: "Sleek, airtight, 2-tier stainless steel tiffin for the modern professional. Leak-proof and easy to clean.",
-      price: 1299,
+      description: "Sleek, airtight, 2-tier stainless steel bento box for the modern professional. Leak-proof, highly durable, and effortless to clean.",
+      featuresAndSpecs: "Premium 304 Stainless Steel\nDouble-wall vacuum insulation\n100% Leak-proof silicone seals\nDishwasher safe",
+      price: 1499,
       category: "Modern Minimalist",
-      images: ["/images/product-2.png", "/images/gifting.png"],
+      images: ["/images/steel_bento.png"],
       isFeatured: true,
       stock: 100,
+      hasSteel: true,
+      hasEngraving: true,
       customizationOptions: [
         { type: "COLOR", label: "Lid Color", values: ["Silver", "Gunmetal", "Rose Gold"], priceOffset: 0 }
       ]
     },
     {
-      name: "Pastel Delight Set",
+      name: "Pastel Delight Tiffin Set",
       slug: "pastel-delight-set",
-      description: "4-tier tiffin set in beautiful powder-coated pastel colors. Perfect for long meals and sharing.",
+      description: "A gorgeous 4-tier tiffin set finished in beautiful matte pastel powder-coated colors. Perfect for long meals, picnics, and sharing with loved ones.",
+      featuresAndSpecs: "Food-grade stainless steel interior\nMatte pastel exterior finish\n4 spacious compartments\nSecure side latches",
       price: 1899,
       category: "Special Occasions",
-      images: ["/images/product-3.png", "/images/feature-2.png"],
-      isFeatured: false,
-      stock: 30,
+      images: ["/images/pastel_tiffin.png"],
+      isFeatured: true,
+      stock: 40,
+      hasSteel: true,
+      hasEngraving: false,
       customizationOptions: [
         { type: "COLOR", label: "Shade", values: ["Mint", "Lavender", "Peach"], priceOffset: 0 }
       ]
     },
     {
-      name: "Electric Bento Pro",
+      name: "Electric Heating Bento Pro",
       slug: "electric-bento-pro",
-      description: "Self-heating, leak-proof electric bento box for office executives. Plug in and enjoy a hot meal within 15 minutes.",
+      description: "Self-heating, leak-proof electric bento box for office executives. Plug it in via USB or wall adapter and enjoy a piping hot meal within 15 minutes.",
+      featuresAndSpecs: "Rapid self-heating technology\nUSB-C and wall-plug compatible\nLED temperature indicator\nRemovable stainless steel tray for easy cleaning",
       price: 3499,
       category: "Executive",
-      images: ["/images/feature-1.png", "/images/product-1.png"],
+      images: ["/images/electric_bento.png"],
       isFeatured: true,
-      stock: 20,
+      stock: 25,
+      hasSteel: true,
+      hasEngraving: false,
       customizationOptions: [
-        { type: "PACKAGING", label: "Carry Bag", values: ["None", "Insulated Premium"], priceOffset: 300 }
+        { type: "PACKAGING", label: "Carry Bag", values: ["None", "Insulated Premium Bag"], priceOffset: 300 }
       ]
     },
     {
-      name: "Kids Adventure Box",
+      name: "Kids Adventure Lunchbox",
       slug: "kids-adventure-box",
-      description: "Lightweight, themed designs, BPA-free lunchbox for school kids. Durable and fun.",
-      price: 899,
+      description: "Lightweight, durable, and playful bento box designed specifically for kids. Features fun, colorful adventure prints, easy-to-open latches, and portion-control compartments.",
+      featuresAndSpecs: "BPA-Free, non-toxic materials\nDrop-proof durable outer shell\n5 portion-control compartments\nEasy-snap latches for little hands",
+      price: 999,
       category: "Kids Edition",
-      images: ["/images/feature-2.png", "/images/product-2.png"],
-      isFeatured: false,
+      images: ["/images/kids_lunchbox.png"],
+      isFeatured: true,
       stock: 150,
+      hasSteel: false,
+      hasEngraving: true,
       customizationOptions: [
         { type: "ENGRAVING", label: "Child's Name", values: ["None", "Laser Etched"], priceOffset: 100 }
       ]
@@ -124,7 +157,10 @@ async function main() {
       update: {
         images: p.images,
         description: p.description,
+        featuresAndSpecs: p.featuresAndSpecs,
         price: p.price,
+        category: p.category,
+        isFeatured: p.isFeatured,
       },
       create: {
         ...productData,
@@ -141,52 +177,45 @@ async function main() {
   const banners = [
     {
       title: "Premium Tiffins for Every Occasion",
-      subtitle: "Customize your lunch experience with Pretty Tiffin.",
-      imageUrl: "/images/hero.png",
+      subtitle: "Elevate your daily lunch with Pretty Tiffin.",
+      imageUrl: "/images/banner_premium.png",
       link: "/shop",
       order: 1
     },
     {
-      title: "Gifting Made Special",
-      subtitle: "Explore our range of artisanal gift sets.",
-      imageUrl: "/images/gifting.png",
-      link: "/shop?category=special-occasions",
+      title: "Timeless Vintage Copper Collection",
+      subtitle: "Rediscover the art of carrying lunch with artisanal copper.",
+      imageUrl: "/images/banner_vintage.png",
+      link: "/shop?category=Vintage%20Collection",
       order: 2
     },
     {
-      title: "Vintage Copper Collection",
-      subtitle: "Timeless elegance for your daily meals.",
-      imageUrl: "/images/product-1.png",
-      link: "/shop?category=vintage-collection",
+      title: "Modern Minimalist Range",
+      subtitle: "Sleek. Durable. Effortlessly stylish for work and beyond.",
+      imageUrl: "/images/banner_modern.png",
+      link: "/shop?category=Modern%20Minimalist",
       order: 3
     },
     {
-      title: "Modern Minimalist Range",
-      subtitle: "Sleek and functional designs for professionals.",
-      imageUrl: "/images/product-2.png",
-      link: "/shop?category=modern-minimalist",
+      title: "Special Occasion Gifting Sets",
+      subtitle: "Curated tiffin collections, beautifully wrapped and ready to gift.",
+      imageUrl: "/images/banner_gifting.png",
+      link: "/shop?category=Special%20Occasions",
       order: 4
     },
     {
-      title: "Special Occasion Gifts",
-      subtitle: "Make memories with our vibrant lunch sets.",
-      imageUrl: "/images/product-3.png",
-      link: "/shop?category=special-occasions",
+      title: "Kids Adventure Tiffins",
+      subtitle: "Pack a smile! Colorful & fun lunchboxes for every journey.",
+      imageUrl: "/images/banner_kids.png",
+      link: "/shop?category=Kids%20Edition",
       order: 5
     },
     {
-      title: "Premium Packaging Included",
-      subtitle: "Every gift arrives beautifully wrapped.",
-      imageUrl: "/images/feature-1.png",
-      link: "/shop",
+      title: "Executive Electric Bento Series",
+      subtitle: "Self-heating technology for the ultimate warm dining experience at work.",
+      imageUrl: "/images/banner_executive.png",
+      link: "/shop?category=Executive",
       order: 6
-    },
-    {
-      title: "Kids Tiffin Collection",
-      subtitle: "Durable and fun designs for little explorers.",
-      imageUrl: "/images/feature-2.png",
-      link: "/shop?category=kids-edition",
-      order: 7
     }
   ];
 
