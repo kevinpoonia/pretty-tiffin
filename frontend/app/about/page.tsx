@@ -94,7 +94,7 @@ export default function AboutPage() {
                     className="relative aspect-square rounded-[4rem] overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700"
                  >
                     <Image 
-                      src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80&w=2070&auto=format&fit=crop" 
+                      src="/images/about-story.png" 
                       alt="Hand-Engraved Tiffin Craftsmanship" 
                       fill 
                       className="object-cover"
