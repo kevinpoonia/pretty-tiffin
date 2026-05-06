@@ -6,7 +6,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, Plus, Edit, Trash2, X,
   Loader2, Save, ChevronRight, Bell, Search, ImageIcon, RefreshCw,
   Star, Eye, BarChart3, MessageSquare, CheckCircle, Minus, Image as ImageIconLucide,
-  Settings, CreditCard, Globe
+  Settings, CreditCard, Globe, Box
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import api from '@/lib/api';
