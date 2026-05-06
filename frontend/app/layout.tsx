@@ -6,18 +6,18 @@ import WhatsAppFloating from '@/components/WhatsAppFloating';
 
 export const metadata: Metadata = {
   title: {
-    default: 'Pretty Tiffin | Premium Personalized Tiffin Boxes & Gifts',
-    template: '%s | Pretty Tiffin'
+    default: 'Pretty Luxe Atelier | Premium Personalized Tiffin Boxes & Gifts',
+    template: '%s | Pretty Luxe Atelier'
   },
-  description: 'Premium, personalized stainless steel tiffin boxes with laser engraving. Perfect for birthdays, anniversaries, corporate gifting, and everyday use. Worldwide shipping.',
+  description: 'Premium, personalized stainless steel tiffin boxes with laser engraving. Perfect for birthdays, anniversaries, corporate gifting, and everyday use. Worldwide shipping by Pretty Luxe Atelier.',
   keywords: [
     'personalized tiffin box', 'customized tiffin', 'engraved stainless steel tiffin',
-    'personalized gifts', 'corporate gifting', 'pretty tiffin',
+    'personalized gifts', 'corporate gifting', 'pretty luxe atelier',
     'laser engraved gifts', 'premium tiffin box', 'custom tiffin gift',
     'birthday gift ideas', 'anniversary gifts', 'worldwide gifting',
     'luxury gifting', 'stainless steel bento box'
   ],
-  metadataBase: new URL('https://prettytiffin.com'),
+  metadataBase: new URL('https://prettyluxeatelier.com'),
   alternates: { 
     canonical: '/',
     languages: {
@@ -27,8 +27,8 @@ export const metadata: Metadata = {
     },
   },
   category: 'ecommerce',
-  creator: 'Pretty Tiffin',
-  publisher: 'Pretty Tiffin',
+  creator: 'Pretty Luxe Atelier',
+  publisher: 'Pretty Luxe Atelier',
   formatDetection: {
     email: false,
     address: false,
@@ -36,32 +36,32 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: 'Pretty Tiffin',
+    title: 'Pretty Luxe Atelier',
     statusBarStyle: 'black-translucent',
   },
   appLinks: {
     web: {
-      url: 'https://prettytiffin.com',
+      url: 'https://prettyluxeatelier.com',
       should_fallback: true,
     },
   },
   openGraph: {
-    title: 'Pretty Tiffin | Premium Personalized Tiffin Boxes & Gifts',
+    title: 'Pretty Luxe Atelier | Premium Personalized Tiffin Boxes & Gifts',
     description: 'Personalized stainless steel tiffin boxes with precision laser engraving. The perfect gift for every occasion. Worldwide shipping.',
-    url: 'https://prettytiffin.com',
-    siteName: 'Pretty Tiffin',
-    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Pretty Tiffin – Personalized Tiffin Collection' }],
+    url: 'https://prettyluxeatelier.com',
+    siteName: 'Pretty Luxe Atelier',
+    images: [{ url: '/og-image.jpg', width: 1200, height: 630, alt: 'Pretty Luxe Atelier – Personalized Tiffin Collection' }],
     locale: 'en_US',
     alternateLocale: ['en_GB', 'en_IN', 'en_AU', 'en_CA'],
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Pretty Tiffin | Premium Personalized Tiffin Boxes & Gifts',
+    title: 'Pretty Luxe Atelier | Premium Personalized Tiffin Boxes & Gifts',
     description: 'Personalized stainless steel tiffin boxes with precision laser engraving. Worldwide shipping.',
     images: ['/og-image.jpg'],
-    creator: '@prettytiffin',
-    site: '@prettytiffin',
+    creator: '@prettyluxeatelier',
+    site: '@prettyluxeatelier',
   },
   robots: {
     index: true,
@@ -93,27 +93,27 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const organizationSchema = {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": "https://prettytiffin.com/#organization",
-    "name": "Pretty Tiffin",
-    "url": "https://prettytiffin.com",
+    "@id": "https://prettyluxeatelier.com/#organization",
+    "name": "Pretty Luxe Atelier",
+    "url": "https://prettyluxeatelier.com",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://prettytiffin.com/logo.png",
+      "url": "https://prettyluxeatelier.com/logo.png",
       "width": 300,
       "height": 100
     },
     "description": "Premium personalized stainless steel tiffin boxes with precision laser engraving. Crafted for gifting and everyday use. Worldwide shipping.",
     "foundingDate": "2023",
     "sameAs": [
-      "https://instagram.com/prettytiffin",
-      "https://facebook.com/prettytiffin",
-      "https://twitter.com/prettytiffin"
+      "https://instagram.com/prettyluxeatelier",
+      "https://facebook.com/prettyluxeatelier",
+      "https://twitter.com/prettyluxeatelier"
     ],
     "contactPoint": [
       {
         "@type": "ContactPoint",
-        "telephone": "+91-9999988888",
-        "email": "hello@prettytiffin.com",
+        "telephone": "+27-640-129-242",
+        "email": "support@prettyluxeatelier.com",
         "contactType": "Customer Service",
         "availableLanguage": ["English"],
         "areaServed": "Worldwide"
@@ -141,16 +141,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const websiteSchema = {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    "@id": "https://prettytiffin.com/#website",
-    "url": "https://prettytiffin.com",
-    "name": "Pretty Tiffin",
+    "@id": "https://prettyluxeatelier.com/#website",
+    "url": "https://prettyluxeatelier.com",
+    "name": "Pretty Luxe Atelier",
     "description": "Premium personalized tiffin boxes and engraved gifts. Worldwide shipping.",
-    "publisher": { "@id": "https://prettytiffin.com/#organization" },
+    "publisher": { "@id": "https://prettyluxeatelier.com/#organization" },
     "potentialAction": {
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": "https://prettytiffin.com/shop?search={search_term_string}"
+        "urlTemplate": "https://prettyluxeatelier.com/shop?search={search_term_string}"
       },
       "query-input": "required name=search_term_string"
     }
@@ -159,12 +159,12 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   const localBusinessSchema = {
     "@context": "https://schema.org",
     "@type": "LocalBusiness",
-    "@id": "https://prettytiffin.com/#localbusiness",
-    "name": "Pretty Tiffin",
-    "image": "https://prettytiffin.com/logo.png",
-    "telephone": "+919999988888",
-    "email": "hello@prettytiffin.com",
-    "url": "https://prettytiffin.com",
+    "@id": "https://prettyluxeatelier.com/#localbusiness",
+    "name": "Pretty Luxe Atelier",
+    "image": "https://prettyluxeatelier.com/logo.png",
+    "telephone": "+27640129242",
+    "email": "support@prettyluxeatelier.com",
+    "url": "https://prettyluxeatelier.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": "Udaipur",

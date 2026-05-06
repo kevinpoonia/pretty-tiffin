@@ -81,7 +81,7 @@ export default function Footer() {
             <h4 className="font-heading font-semibold text-white mb-6 text-lg uppercase tracking-wider">Collections</h4>
             <ul className="space-y-4 text-sm text-brand-100">
               <li><Link href="/shop?category=tiffins" className="hover:text-white transition-colors">Stainless Steel Tiffins</Link></li>
-              <li><Link href="/shop?category=kitchenware" className="hover:text-white transition-colors">Indian Kitchen Essentials</Link></li>
+              <li><Link href="/shop?category=kitchenware" className="hover:text-white transition-colors">Artisanal Kitchen Essentials</Link></li>
               <li><Link href="/shop?category=apparels" className="hover:text-white transition-colors">Ethnic Wear</Link></li>
               <li><Link href="/shop?category=best-sellers" className="hover:text-white transition-colors">Bestselling Classics</Link></li>
               <li><Link href="/shop?category=corporate" className="hover:text-white transition-colors">Bulk & Corporate Orders</Link></li>

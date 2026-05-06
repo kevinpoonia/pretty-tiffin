@@ -18,7 +18,7 @@ export default function AboutPage() {
         <section className="relative h-[70vh] flex items-center justify-center overflow-hidden bg-brand-900">
            <div className="absolute inset-0 opacity-40">
               <Image 
-                src="https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=2070&auto=format&fit=crop" 
+                src="https://images.unsplash.com/photo-1556912172-45b7abe8b7e1?q=80&w=2070&auto=format&fit=crop" 
                 alt="Heritage Background" 
                 fill 
                 className="object-cover scale-110"
@@ -94,7 +94,7 @@ export default function AboutPage() {
                     className="relative aspect-square rounded-[4rem] overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-700"
                  >
                     <Image 
-                      src="/home/kevinpoonia/.gemini/antigravity/brain/9b3282b9-ffb8-4249-9b0d-d226e47be980/artisanal_tiffin_story_1778087896947.png" 
+                      src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?q=80&w=2070&auto=format&fit=crop" 
                       alt="Hand-Engraved Tiffin Craftsmanship" 
                       fill 
                       className="object-cover"

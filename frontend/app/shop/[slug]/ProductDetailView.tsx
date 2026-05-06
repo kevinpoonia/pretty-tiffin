@@ -36,7 +36,13 @@ export default function ProductDetailClient({ product }: { product: any }) {
 
   useEffect(() => {
     api.get(`/products/${product.slug}/reviews`).then((r) => {
-      setReviews(r.data.reviews || []);
+      const userReviews = r.data.reviews || [];
+      const adminReviews = (r.data.adminReviews || []).map((ar: any) => ({
+        ...ar,
+        user: { name: ar.reviewerName },
+        isVerified: true
+      }));
+      setReviews([...adminReviews, ...userReviews]);
       if (r.data.avgRating) setAvgRating(r.data.avgRating);
       if (r.data.total) setReviewsTotal(r.data.total);
     }).catch(() => {});

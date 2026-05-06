@@ -49,7 +49,7 @@ export default function Navbar({ alwaysSolid = true }: { alwaysSolid?: boolean }
       <div className="bg-brand-500 text-brand-50 hidden lg:block overflow-hidden relative border-b border-brand-600">
         <div className="container mx-auto px-4 md:px-6 h-10 flex items-center justify-between text-[10px] font-bold tracking-[0.2em] relative z-10 uppercase">
           <div className="flex items-center gap-4 text-brand-100">
-            <span>✨ TIFFINS · KITCHENWARE · APPARELS — CRAFTED IN INDIA</span>
+            <span>✨ TIFFINS · KITCHENWARE · APPARELS — HANDCRAFTED HERITAGE</span>
           </div>
           <div className="flex items-center gap-6 text-brand-100">
             <Link href="/track" className="hover:text-white flex items-center gap-2 transition-colors">

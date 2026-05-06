@@ -12,6 +12,7 @@ export interface CurrencyInfo {
 export const CURRENCIES: CurrencyInfo[] = [
   { code: 'INR', symbol: '₹',   name: 'Indian Rupee',        locale: 'en-IN' },
   { code: 'USD', symbol: '$',   name: 'US Dollar',           locale: 'en-US' },
+  { code: 'ZAR', symbol: 'R',   name: 'South African Rand',  locale: 'en-ZA' },
 ];
 
 // Fallback rates (1 INR = X units of currency). Updated periodically.

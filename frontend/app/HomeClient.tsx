@@ -58,11 +58,11 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
   ];
 
   const faqs = [
-    { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box from Pretty Tiffin combines heritage craftsmanship with modern utility. It is a thoughtful, eco-friendly gift that lasts a lifetime, making every meal a special memory for your loved ones.' },
+    { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box from Pretty Luxe Atelier combines heritage craftsmanship with modern utility. It is a thoughtful, eco-friendly gift that lasts a lifetime, making every meal a special memory for your loved ones.' },
     { q: 'How long does it take for my custom order to arrive?', a: 'Every piece is custom engraved at our atelier. Standard international shipping typically takes 7-12 business days. You will receive a tracking number as soon as your artisanal piece is dispatched.' },
     { q: 'Can I add a custom logo for corporate gifting?', a: 'Absolutely. We specialize in bespoke corporate gifting. We can engrave company logos, individual names, or special messages. Contact us via WhatsApp for bulk inquiries and custom design proofs.' },
     { q: 'Is the laser engraving permanent?', a: 'Yes, our high-precision laser engraving process etches the design directly into the 304-grade stainless steel. It will never fade, peel, or wash off, even after years of daily use and washing.' },
-    { q: 'How should I care for my engraved tiffin?', a: 'Pretty Tiffin products are made from premium, food-safe 304 stainless steel. While they are dishwasher safe, we recommend hand-washing with a soft sponge and mild soap to maintain the brilliant artisanal finish.' },
+    { q: 'How should I care for my engraved tiffin?', a: 'Pretty Luxe Atelier products are made from premium, food-safe 304 stainless steel. While they are dishwasher safe, we recommend hand-washing with a soft sponge and mild soap to maintain the brilliant artisanal finish.' },
     { q: 'Do you ship to my country?', a: 'Yes, we offer worldwide shipping to over 100 countries including the USA, UK, Canada, Australia, and the Middle East. Shipping rates and delivery times are automatically calculated at checkout based on your location.' },
     { q: 'Can I return a personalized item?', a: 'Since each product is custom-engraved to your specifications, we do not accept returns unless there is a manufacturing defect or shipping damage. If you encounter any issues, please contact us within 48 hours of delivery.' },
   ];

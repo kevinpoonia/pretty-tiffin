@@ -37,7 +37,7 @@ export async function sendWhatsApp(phone: string, message: string): Promise<void
   if (!sid || !token || !from || !phone) return;
 
   const clean = phone.replace(/\D/g, '');
-  const to = clean.startsWith('91') ? `+${clean}` : `+91${clean}`;
+  const to = `+${clean}`;
 
   try {
     const creds = Buffer.from(`${sid}:${token}`).toString('base64');

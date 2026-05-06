@@ -250,3 +250,10 @@ model Banner {
   order     Int      @default(0)
   createdAt DateTime @default(now())
 }
+
+model XeroConfig {
+  id        String   @id @default("singleton")
+  tokenSet  String   @db.Text // JSON stringified token set
+  tenantId  String?
+  updatedAt DateTime @updatedAt
+}

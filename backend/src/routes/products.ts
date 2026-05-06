@@ -18,13 +18,19 @@ router.get('/', cacheMiddleware(3600), async (req: Request, res: Response) => {
       },
       orderBy: { createdAt: 'desc' }
     });
-    const result = products.map(({ reviews, _count, ...p }) => ({
-      ...p,
-      reviewCount: _count.reviews,
-      avgRating: reviews.length
-        ? Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length * 10) / 10
-        : 0,
-    }));
+    const result = products.map(({ reviews, adminReviews, _count, ...p }) => {
+      const allRatings = [
+        ...reviews.map(r => r.rating),
+        ...(adminReviews || []).map((r: any) => r.rating)
+      ];
+      return {
+        ...p,
+        reviewCount: allRatings.length,
+        avgRating: allRatings.length
+          ? Math.round(allRatings.reduce((s, r) => s + r, 0) / allRatings.length * 10) / 10
+          : 0,
+      };
+    });
     res.json(result);
   } catch (error) {
     console.error(error);

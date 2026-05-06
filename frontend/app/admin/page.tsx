@@ -1343,6 +1343,35 @@ export default function AdminDashboard() {
 
                   <div className="border-t border-brand-50" />
                   
+                  {/* Xero Integration */}
+                  <div className="space-y-4 pt-4">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 bg-[#13b5ea] rounded-xl flex items-center justify-center">
+                          <Box size={18} className="text-white" />
+                        </div>
+                        <div>
+                          <p className="font-black text-brand-900 text-sm">Xero Accounting</p>
+                          <p className="text-[10px] text-brand-400">Automate invoicing and financial tracking</p>
+                        </div>
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          try {
+                            const res = await api.get('/xero/auth');
+                            if (res.data.url) window.location.href = res.data.url;
+                          } catch (err) {
+                            alert('Failed to initialize Xero connection.');
+                          }
+                        }}
+                        className="px-4 py-2 border-2 border-brand-100 text-brand-900 rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-brand-50 transition-all active:scale-95">
+                        Connect to Xero
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="border-t border-brand-50" />
+                  
                   {/* Danger Zone */}
                   <div className="space-y-4 pt-4">
                     <div className="flex items-center gap-3">

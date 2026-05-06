@@ -4,6 +4,8 @@ import { authenticate, AuthRequest } from '../middleware/auth';
 import crypto from 'crypto';
 import { sendEmail, orderConfirmationEmail, invoiceHtml } from './email';
 import { generatePayFastSignature, verifyPayFastNotification } from '../payfast';
+import { sendWhatsApp, getStatusMessage } from '../notifications';
+import { syncOrderToXero } from '../services/xeroService';
 
 const router = Router();
 
@@ -139,6 +141,14 @@ router.post('/payfast-notify', async (req: Request, res: Response) => {
           `Invoice #INV-${updatedOrder.id.slice(-8).toUpperCase()} — Pretty Luxe Atelier`,
           invoiceHtml(fullOrder as any, order.user as any)
         ).catch(console.error);
+
+        // WhatsApp Notification
+        if ((order.user as any).phone) {
+          sendWhatsApp((order.user as any).phone, getStatusMessage('CONFIRMED', updatedOrder.id)).catch(console.error);
+        }
+
+        // Xero Sync
+        syncOrderToXero(updatedOrder.id).catch(console.error);
       }
     }
 
@@ -223,6 +233,14 @@ router.post('/verify', authenticate, async (req: AuthRequest, res: Response) => 
         `Invoice #INV-${newOrder.id.slice(-8).toUpperCase()} — Pretty Luxe Atelier`,
         invoiceHtml(fullOrder, user)
       ).catch(console.error);
+
+      // WhatsApp Notification
+      if (user.phone) {
+        sendWhatsApp(user.phone, getStatusMessage('CONFIRMED', newOrder.id)).catch(console.error);
+      }
+
+      // Xero Sync
+      syncOrderToXero(newOrder.id).catch(console.error);
     }
 
     res.json(newOrder);
@@ -283,8 +301,15 @@ router.patch('/:id/status', authenticate, async (req: AuthRequest, res: Response
       data: {
         ...(status && { status }),
         ...(trackingNumber !== undefined && { trackingNumber })
-      }
+      },
+      include: { user: { select: { phone: true, email: true, name: true } } }
     });
+
+    // Send notification on status change
+    if (status && updated.user.phone) {
+      sendWhatsApp(updated.user.phone, getStatusMessage(status, updated.id, trackingNumber)).catch(console.error);
+    }
+
     res.json(updated);
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
