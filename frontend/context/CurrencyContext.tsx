@@ -59,34 +59,11 @@ const CurrencyContext = createContext<CurrencyContextType>({
 
 export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const [currency, setCurrencyState] = useState('USD');
-  const [rates, setRates] = useState<Record<string, number>>(FALLBACK_RATES);
 
   useEffect(() => {
     // Restore saved currency or auto-detect
     const saved = localStorage.getItem('pla_currency');
     setCurrencyState(saved || detectCurrency());
-
-    // Load cached rates or fetch fresh
-    try {
-      const cached = localStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const { ts, data } = JSON.parse(cached);
-        if (Date.now() - ts < CACHE_TTL) {
-          setRates(data);
-          return;
-        }
-      }
-    } catch {}
-
-    fetch('https://open.er-api.com/v6/latest/INR')
-      .then(r => r.json())
-      .then(data => {
-        if (data?.rates) {
-          setRates(data.rates);
-          localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), data: data.rates }));
-        }
-      })
-      .catch(() => {}); // silently use fallback rates
   }, []);
 
   const setCurrency = useCallback((code: string) => {
@@ -99,7 +76,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const formatPrice = useCallback((inrAmount: number | string, productPrices?: any[]): string => {
     const info = CURRENCIES.find(c => c.code === currency)!;
     
-    // Check for manual admin-set price for the current currency
+    // 1. Check for manual admin-set price for the current currency
     if (productPrices && Array.isArray(productPrices)) {
       const manualPrice = productPrices.find(p => p.currency === currency);
       if (manualPrice) {
@@ -114,25 +91,25 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // Fallback to conversion
-    const amountInr = Number(inrAmount) || 0;
-    const rate = rates[currency] ?? FALLBACK_RATES[currency] ?? 1;
-    const converted = amountInr * rate;
-    
-    try {
-      return new Intl.NumberFormat(info.locale, {
-        style: 'currency',
-        currency,
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      }).format(converted);
-    } catch {
-      return `${info.symbol}${converted.toFixed(2)}`;
+    // 2. If currency is INR, fallback to the base price (which is INR)
+    if (currency === 'INR') {
+      const amount = Number(inrAmount) || 0;
+      try {
+        return new Intl.NumberFormat(info.locale, {
+          style: 'currency',
+          currency: 'INR',
+        }).format(amount);
+      } catch {
+        return `₹${amount}`;
+      }
     }
-  }, [currency, rates]);
+
+    // 3. No manual price for USD (or other non-INR) - return placeholder
+    return 'Price on Request';
+  }, [currency]);
 
   return (
-    <CurrencyContext.Provider value={{ currency, currencyInfo, setCurrency, formatPrice, rates }}>
+    <CurrencyContext.Provider value={{ currency, currencyInfo, setCurrency, formatPrice, rates: {} }}>
       {children}
     </CurrencyContext.Provider>
   );
