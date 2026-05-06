@@ -4,7 +4,12 @@ import React from 'react';
 import { MessageCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
 
+import { usePathname } from 'next/navigation';
+
 export default function WhatsAppFloating() {
+  const pathname = usePathname();
+  if (pathname?.startsWith('/admin')) return null;
+
   return (
     <motion.a
       href="https://wa.me/27640129242?text=Hi, I have a query about Pretty Luxe Atelier."

@@ -619,7 +619,7 @@ export default function AdminDashboard() {
                         <div className={`absolute top-0.5 w-4 h-4 bg-white rounded-full shadow transition-all ${orderNotify ? 'left-5' : 'left-0.5'}`} />
                       </div>
                       <span className="text-xs font-bold text-brand-700">
-                        Send Email + SMS + WhatsApp to customer
+                        Send Email + SMS to customer
                       </span>
                       <Bell size={13} className={orderNotify ? 'text-brand-500' : 'text-brand-300'} />
                     </label>
