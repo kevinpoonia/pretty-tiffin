@@ -30,7 +30,7 @@ const resolveCartKey = async (req) => {
     }
     return sessionId ? `cart:${sessionId}` : null;
 };
-router.use(auth_1.authenticate); // This middleware is soft, doesn't block if no token
+router.use(auth_1.optionalAuthenticate); // This middleware is soft, doesn't block if no token
 router.get('/', async (req, res) => {
     try {
         const cartKey = await resolveCartKey(req);

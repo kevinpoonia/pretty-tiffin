@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import { redis } from '../redis';
 import { v4 as uuidv4 } from 'uuid';
-import { authenticate } from '../middleware/auth';
+import { optionalAuthenticate } from '../middleware/auth';
 
 const router = Router();
 
@@ -35,7 +35,7 @@ const resolveCartKey = async (req: Request) => {
   return sessionId ? `cart:${sessionId}` : null;
 };
 
-router.use(authenticate); // This middleware is soft, doesn't block if no token
+router.use(optionalAuthenticate); // This middleware is soft, doesn't block if no token
 
 router.get('/', async (req: Request, res: Response) => {
   try {

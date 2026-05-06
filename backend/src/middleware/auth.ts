@@ -30,6 +30,28 @@ export const authenticate = async (req: AuthRequest, res: Response, next: NextFu
   }
 };
 
+export const optionalAuthenticate = async (req: AuthRequest, res: Response, next: NextFunction): Promise<void> => {
+  const token = req.headers.authorization?.split(' ')[1];
+  if (!token) {
+    next();
+    return;
+  }
+
+  try {
+    const payload = await verifyToken(token, { secretKey: process.env.CLERK_SECRET_KEY });
+    const clerkId = payload.sub;
+
+    const user = await prisma.user.findUnique({ where: { clerkId } });
+    if (user) {
+      req.user = { id: user.id, role: user.role, name: user.name, email: user.email };
+    }
+    next();
+  } catch {
+    // If token is invalid but provided, we still proceed as guest
+    next();
+  }
+};
+
 export const requireAdmin = (req: AuthRequest, res: Response, next: NextFunction): void => {
   if (req.user?.role !== 'ADMIN') {
     res.status(403).json({ error: 'Forbidden' });

@@ -180,7 +180,7 @@ router.put('/profile', auth_1.authenticate, async (req, res) => {
 });
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
 // GET /api/user/wishlist
-router.get('/wishlist', auth_1.authenticate, async (req, res) => {
+router.get('/wishlist', auth_1.optionalAuthenticate, async (req, res) => {
     try {
         const sessionId = req.headers['x-session-id'];
         // If authenticated, merge guest wishlist first
@@ -227,7 +227,7 @@ router.get('/wishlist', auth_1.authenticate, async (req, res) => {
     }
 });
 // POST /api/user/wishlist/:productId
-router.post('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
+router.post('/wishlist/:productId', auth_1.optionalAuthenticate, async (req, res) => {
     try {
         const { productId } = req.params;
         const sessionId = req.headers['x-session-id'];
@@ -256,7 +256,7 @@ router.post('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
     }
 });
 // DELETE /api/user/wishlist/:productId
-router.delete('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
+router.delete('/wishlist/:productId', auth_1.optionalAuthenticate, async (req, res) => {
     try {
         const { productId } = req.params;
         const sessionId = req.headers['x-session-id'];

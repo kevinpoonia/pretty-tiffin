@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { prisma } from '../prisma';
-import { authenticate } from '../middleware/auth';
+import { authenticate, optionalAuthenticate } from '../middleware/auth';
 import bcrypt from 'bcrypt';
 import { redis } from '../redis';
 
@@ -198,7 +198,7 @@ router.put('/profile', authenticate, async (req: any, res: Response) => {
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
 
 // GET /api/user/wishlist
-router.get('/wishlist', authenticate, async (req: any, res: Response) => {
+router.get('/wishlist', optionalAuthenticate, async (req: any, res: Response) => {
   try {
     const sessionId = req.headers['x-session-id'] as string;
     
@@ -249,7 +249,7 @@ router.get('/wishlist', authenticate, async (req: any, res: Response) => {
 });
 
 // POST /api/user/wishlist/:productId
-router.post('/wishlist/:productId', authenticate, async (req: any, res: Response) => {
+router.post('/wishlist/:productId', optionalAuthenticate, async (req: any, res: Response) => {
   try {
     const { productId } = req.params;
     const sessionId = req.headers['x-session-id'] as string;
@@ -281,7 +281,7 @@ router.post('/wishlist/:productId', authenticate, async (req: any, res: Response
 });
 
 // DELETE /api/user/wishlist/:productId
-router.delete('/wishlist/:productId', authenticate, async (req: any, res: Response) => {
+router.delete('/wishlist/:productId', optionalAuthenticate, async (req: any, res: Response) => {
   try {
     const { productId } = req.params;
     const sessionId = req.headers['x-session-id'] as string;

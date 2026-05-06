@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.requireAdmin = exports.authenticate = void 0;
+exports.requireAdmin = exports.optionalAuthenticate = exports.authenticate = void 0;
 const backend_1 = require("@clerk/backend");
 const prisma_1 = require("../prisma");
 const authenticate = async (req, res, next) => {
@@ -25,6 +25,27 @@ const authenticate = async (req, res, next) => {
     }
 };
 exports.authenticate = authenticate;
+const optionalAuthenticate = async (req, res, next) => {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+        next();
+        return;
+    }
+    try {
+        const payload = await (0, backend_1.verifyToken)(token, { secretKey: process.env.CLERK_SECRET_KEY });
+        const clerkId = payload.sub;
+        const user = await prisma_1.prisma.user.findUnique({ where: { clerkId } });
+        if (user) {
+            req.user = { id: user.id, role: user.role, name: user.name, email: user.email };
+        }
+        next();
+    }
+    catch {
+        // If token is invalid but provided, we still proceed as guest
+        next();
+    }
+};
+exports.optionalAuthenticate = optionalAuthenticate;
 const requireAdmin = (req, res, next) => {
     if (req.user?.role !== 'ADMIN') {
         res.status(403).json({ error: 'Forbidden' });
