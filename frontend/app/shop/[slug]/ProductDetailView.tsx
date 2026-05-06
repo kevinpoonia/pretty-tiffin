@@ -26,8 +26,8 @@ export default function ProductDetailClient({ product }: { product: any }) {
   const [quantity, setQuantity] = useState(1);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [reviews, setReviews] = useState<any[]>([]);
-  const [avgRating, setAvgRating] = useState(product.manualAvgRating || 0);
-  const [reviewsTotal, setReviewsTotal] = useState(product.manualReviewCount || 0);
+  const [avgRating, setAvgRating] = useState(Number(product.manualAvgRating || 0));
+  const [reviewsTotal, setReviewsTotal] = useState(Number(product.manualReviewCount || 0));
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [newComment, setNewComment] = useState('');
@@ -117,8 +117,8 @@ export default function ProductDetailClient({ product }: { product: any }) {
     return basePrice * quantity;
   };
 
-  const displayRating = avgRating || product.manualAvgRating || 0;
-  const displayTotal = reviewsTotal || product.manualReviewCount || 0;
+  const displayRating = Number(avgRating || product.manualAvgRating || 0);
+  const displayTotal = Number(reviewsTotal || product.manualReviewCount || 0);
 
   return (
     <>
@@ -190,7 +190,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     ))}
                   </div>
                   {displayTotal > 0 && (
-                    <span className="text-[10px] font-bold text-stone-400">{displayRating > 0 ? displayRating.toFixed(1) : ''} ({displayTotal} review{displayTotal !== 1 ? 's' : ''})</span>
+                    <span className="text-[10px] font-bold text-stone-400">{displayRating > 0 ? Number(displayRating).toFixed(1) : ''} ({displayTotal} review{displayTotal !== 1 ? 's' : ''})</span>
                   )}
                 </div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading text-stone-800 mb-4 sm:mb-6 leading-tight uppercase tracking-tighter">{product.name}</h1>
@@ -362,7 +362,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
                       <Star key={s} size={16} className={s <= Math.round(displayRating) ? 'fill-brand-400 text-brand-400' : 'text-brand-200 fill-brand-200'} />
                     ))}
                   </div>
-                  <span className="font-bold text-stone-700">{displayRating > 0 ? displayRating.toFixed(1) : '—'}</span>
+                  <span className="font-bold text-stone-700">{displayRating > 0 ? Number(displayRating).toFixed(1) : '—'}</span>
                   <span className="text-sm text-stone-400">({displayTotal} review{displayTotal !== 1 ? 's' : ''})</span>
                 </div>
               </div>

@@ -29,6 +29,8 @@ const defaultAllowedOrigins = [
   'http://localhost:3000',
   'https://prettytiffin.com',
   'https://www.prettytiffin.com',
+  'https://prettyluxeatelier.com',
+  'https://www.prettyluxeatelier.com',
   'https://pretty-tiffin.vercel.app'
 ];
 
@@ -43,6 +45,7 @@ const allowedOrigins = new Set(
 const allowedOriginPatterns = [
   /^https?:\/\/localhost(?::\d+)?$/,
   /^https:\/\/(?:www\.)?prettytiffin\.com$/,
+  /^https:\/\/(?:www\.)?prettyluxeatelier\.com$/,
   /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 

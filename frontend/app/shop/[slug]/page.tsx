@@ -24,7 +24,7 @@ export async function generateMetadata(
   const product = await getProduct(slug);
   if (!product) return { title: 'Product Not Found' };
 
-  const description = product.description.substring(0, 160);
+  const description = (product.description || '').substring(0, 160);
   const previousImages = (await parent).openGraph?.images || [];
 
   return {
@@ -68,7 +68,7 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
 
   const displayRating = Number(product.manualAvgRating || (product.reviews?.length
     ? product.reviews.reduce((s: number, r: any) => s + r.rating, 0) / product.reviews.length
-    : 0));
+    : 0)) || 0;
   
   const displayReviewCount = Number(product.manualReviewCount || product.reviews?.length || 0);
   const cleanPrice = parseFloat(String(product.price).replace(/[^0-9.]/g, '')) || 0;
