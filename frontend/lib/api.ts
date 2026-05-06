@@ -14,6 +14,14 @@ export const setApiToken = (getter: (() => Promise<string | null>) | null) => {
 };
 
 api.interceptors.request.use(async (config) => {
+  // Add session ID for guest tracking
+  if (typeof window !== 'undefined') {
+    const sid = localStorage.getItem('guest_session_id');
+    if (sid) {
+      config.headers['x-session-id'] = sid;
+    }
+  }
+
   if (_getToken) {
     const token = await _getToken();
     if (token) {

@@ -20,6 +20,7 @@ interface ProductCardProps {
     images: string[];
     avgRating?: number;
     reviewCount?: number;
+    currencyPrices?: any[];
   };
   showBadge?: boolean;
   priority?: boolean;
@@ -138,13 +139,13 @@ export default function ProductCard({ product, showBadge = false, priority = fal
               {compareAtPrice && compareAtPrice > price && (
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs text-stone-300 line-through font-medium">
-                    {formatPrice(compareAtPrice)}
+                    {formatPrice(compareAtPrice, product.currencyPrices)}
                   </span>
                 </div>
               )}
               <div className="flex items-center gap-2">
                 <span className="font-sans font-bold text-stone-900 text-lg">
-                  {formatPrice(price)}
+                  {formatPrice(price, product.currencyPrices)}
                 </span>
               </div>
             </div>

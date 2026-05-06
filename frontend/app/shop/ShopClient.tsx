@@ -67,11 +67,12 @@ const matchesCuratedCollection = (product: any, collection: string) => {
 };
 
 const matchesRelationship = (product: any, relationship: string) => {
-  switch (normalizeValue(relationship)) {
-    case 'for-him': return matchesTokens(product, ['executive', 'copper', 'modern', 'vintage', 'mens']);
-    case 'for-her': return matchesTokens(product, ['pastel', 'special', 'rose', 'women', 'ethnic']);
-    case 'for-kids': return matchesTokens(product, ['kids', 'children', 'school', 'small']);
-    case 'for-home': return matchesTokens(product, ['kitchen', 'vessel', 'home', 'cookware', 'bowl']);
+  const rel = normalizeValue(relationship);
+  switch (rel) {
+    case 'for-him': return matchesTokens(product, ['executive', 'copper', 'modern', 'vintage', 'mens', 'husband', 'father', 'him']);
+    case 'for-her': return matchesTokens(product, ['pastel', 'special', 'rose', 'women', 'ethnic', 'wife', 'mother', 'her']);
+    case 'for-kids': return matchesTokens(product, ['kids', 'children', 'school', 'small', 'student']);
+    case 'for-home': return matchesTokens(product, ['kitchen', 'vessel', 'home', 'cookware', 'bowl', 'decor']);
     default: return true;
   }
 };

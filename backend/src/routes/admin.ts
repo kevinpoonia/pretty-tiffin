@@ -4,9 +4,20 @@ import { authenticate, requireAdmin, AuthRequest } from '../middleware/auth';
 import { clearCache } from '../middleware/cache';
 import { sendEmail, orderStatusUpdateEmail } from './email';
 import { sendSMS, sendWhatsApp, getStatusMessage } from '../notifications';
+import { cleanupStaleOrders } from '../scripts/cleanupOrders';
 
 const router = Router();
 router.use(authenticate, requireAdmin);
+
+// Cleanup stale orders
+router.post('/cleanup-orders', async (req: AuthRequest, res: Response) => {
+  try {
+    const count = await cleanupStaleOrders();
+    res.json({ success: true, message: `Removed ${count} stale pending orders.` });
+  } catch (error) {
+    res.status(500).json({ error: 'Cleanup failed' });
+  }
+});
 
 // ─── Stats (with trends + 7-day chart) ───────────────────────────────────────
 router.get('/stats', async (req: AuthRequest, res: Response) => {
@@ -17,6 +28,8 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
     const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
 
+    const successfulStatuses: any[] = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
+
     const [
       totalUsers, totalOrders, totalProducts,
       thisMonthOrders, lastMonthOrders,
@@ -24,14 +37,14 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
       recentOrdersRaw
     ] = await Promise.all([
       prisma.user.count(),
-      prisma.order.count(),
+      prisma.order.count({ where: { status: { in: successfulStatuses } } }),
       prisma.product.count(),
-      prisma.order.findMany({ where: { createdAt: { gte: startOfMonth }, status: { not: 'CANCELLED' } }, select: { totalAmount: true, createdAt: true } }),
-      prisma.order.findMany({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth }, status: { not: 'CANCELLED' } }, select: { totalAmount: true } }),
+      prisma.order.findMany({ where: { createdAt: { gte: startOfMonth }, status: { in: successfulStatuses } }, select: { totalAmount: true, createdAt: true } }),
+      prisma.order.findMany({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth }, status: { in: successfulStatuses } }, select: { totalAmount: true } }),
       prisma.user.count({ where: { createdAt: { gte: startOfMonth } } }),
       prisma.user.count({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth } } }),
       prisma.order.findMany({
-        where: { createdAt: { gte: sevenDaysAgo }, status: { not: 'CANCELLED' } },
+        where: { createdAt: { gte: sevenDaysAgo }, status: { in: successfulStatuses } },
         select: { totalAmount: true, createdAt: true }
       })
     ]);
@@ -54,7 +67,7 @@ router.get('/stats', async (req: AuthRequest, res: Response) => {
     }
 
     // Total all-time revenue
-    const allOrders = await prisma.order.findMany({ where: { status: { not: 'CANCELLED' } }, select: { totalAmount: true } });
+    const allOrders = await prisma.order.findMany({ where: { status: { in: successfulStatuses } }, select: { totalAmount: true } });
     const totalRevenue = allOrders.reduce((s, o) => s + Number(o.totalAmount), 0);
 
     res.json({

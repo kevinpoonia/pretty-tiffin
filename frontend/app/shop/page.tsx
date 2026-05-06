@@ -16,9 +16,9 @@ async function getProducts() {
 }
 
 export const metadata: Metadata = {
-  title: 'Shop Tiffins, Kitchenware & Apparels | Pretty Luxe Atelier',
+  title: 'Shop Tiffins, Kitchenware & Apparels | Pretty Tiffin',
   description: 'Browse our curated collection of premium stainless steel tiffin boxes, artisanal kitchenware, and ethnic apparels. Laser-engraved personalisation available. Worldwide shipping.',
-  keywords: ['tiffin box shop', 'artisanal kitchenware online', 'ethnic apparels', 'personalized tiffin', 'pretty luxe atelier shop'],
+  keywords: ['tiffin box shop', 'artisanal kitchenware online', 'ethnic apparels', 'personalized tiffin', 'pretty tiffin shop'],
 };
 
 function ShopPageFallback() {

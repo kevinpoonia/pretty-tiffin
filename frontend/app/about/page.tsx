@@ -25,13 +25,13 @@ export default function AboutPage() {
               />
            </div>
            <div className="absolute inset-0 bg-gradient-to-t from-brand-900 via-brand-900/60 to-transparent" />
-           <div className="container mx-auto px-6 relative z-10 text-center">
+            <div class="container mx-auto px-6 relative z-10 text-center">
               <motion.span 
                 initial={{ opacity: 0, letterSpacing: '0.2em' }}
                 animate={{ opacity: 1, letterSpacing: '0.4em' }}
                 className="text-brand-400 font-bold text-[10px] uppercase tracking-[0.4em] mb-6 block"
               >
-                Our Story • Since 2023
+                Our Story • Heritage Reimagined
               </motion.span>
               <motion.h1 
                 initial={{ opacity: 0, y: 30 }}
@@ -39,8 +39,8 @@ export default function AboutPage() {
                 transition={{ delay: 0.2 }}
                 className="text-4xl md:text-7xl font-heading font-black text-white tracking-tighter mb-8 leading-none"
               >
-                Redefining the Art of <br />
-                <span className="text-brand-500 italic font-serif">Artisanal Gifting.</span>
+                The Legacy of <br />
+                <span className="text-brand-500 italic font-serif">Pretty Tiffin.</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export default function AboutPage() {
                 transition={{ delay: 0.4 }}
                 className="text-brand-100 max-w-2xl mx-auto text-lg opacity-80 leading-relaxed"
               >
-                Pretty Luxe Atelier was born from a simple desire: to bring heritage craftsmanship and premium personalization to the world — one artisanal piece at a time.
+                Pretty Tiffin was born from a passion for preserving the timeless tradition of the Indian Tiffin, while elevating it with premium craftsmanship and personal storytelling.
               </motion.p>
            </div>
         </section>
@@ -65,14 +65,14 @@ export default function AboutPage() {
                   >
                     <h2 className="text-[10px] font-black uppercase tracking-widest text-brand-500 mb-4">The Craft</h2>
                     <h3 className="text-3xl md:text-5xl font-heading font-black text-brand-900 tracking-tighter mb-8 leading-tight">
-                      Stainless Steel <br />Meet&apos;s Artistry.
+                      Stainless Steel <br />Meets Artistry.
                     </h3>
                     <div className="space-y-6 text-brand-700 leading-relaxed text-lg opacity-90">
                        <p>
-                          Every Pretty Luxe Atelier is crafted from premium ISO-grade stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your story.
+                          Every Pretty Tiffin piece is crafted from premium ISO-grade 304 stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your own story.
                        </p>
                        <p>
-                          Our signature laser-engraving process allows you to immortalize names, dates, or messages directly onto the steel, creating a gift that lasts a lifetime.
+                          Our signature high-precision laser-engraving process allows you to immortalize names, dates, or bespoke messages directly onto the steel, creating a functional piece of art that lasts generations.
                        </p>
                     </div>
                     <div className="mt-12 grid grid-cols-2 gap-8">
@@ -117,7 +117,7 @@ export default function AboutPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
                  {[
                     { icon: Heart, title: 'Made with Love', desc: 'Every product is hand-finished and inspected for quality.' },
-                    { icon: ShieldCheck, title: 'Premium Quality', desc: 'Only high-grade, food-safe stainless steel is used.' },
+                    { icon: ShieldCheck, title: 'Premium Quality', desc: 'Only high-grade, food-safe 304 stainless steel is used.' },
                     { icon: Truck, title: 'Worldwide Shipping', desc: 'Secure delivery to customers in over 100 countries worldwide.' },
                     { icon: Users, title: 'Customer First', desc: 'Personalized support for every order, big or small.' },
                  ].map((value, i) => (
@@ -146,10 +146,10 @@ export default function AboutPage() {
                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
                  <div className="relative z-10">
                     <h2 className="text-3xl md:text-6xl font-heading font-black text-white tracking-tighter mb-8 leading-none">
-                       Experience the <br />Pretty Luxe Atelier Standard.
+                       Experience the <br />Pretty Tiffin Standard.
                     </h2>
                     <p className="text-brand-300 mb-12 text-lg max-w-xl mx-auto opacity-80">
-                       Ready to personalize your first tiffin? Join thousands of happy customers today.
+                       Ready to personalize your first piece? Join thousands of happy customers today.
                     </p>
                     <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
                        <Link href="/shop" className="w-full sm:w-auto px-10 py-5 bg-brand-500 text-white rounded-full font-black text-xs uppercase tracking-widest hover:bg-brand-400 hover:scale-105 active:scale-95 transition-all shadow-2xl shadow-brand-500/20">

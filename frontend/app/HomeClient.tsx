@@ -51,20 +51,20 @@ export default function HomeClient({ initialProducts, initialBanners }: { initia
   })).slice(0, 6);
 
   const relationships = [
-    { title: 'For Husband', img: '/images/hero.webp', href: '/shop?for=For Husband' },
-    { title: 'For Wife', img: '/images/feature-2.webp', href: '/shop?for=For Wife' },
-    { title: 'For Kids', img: '/images/feature-1.webp', href: '/shop?for=For Kids' },
-    { title: 'For Parents', img: '/images/gifting.webp', href: '/shop?for=For Parents' },
+    { title: 'For Him', img: '/images/hero.webp', href: '/shop?for=for-him' },
+    { title: 'For Her', img: '/images/feature-2.webp', href: '/shop?for=for-her' },
+    { title: 'For Kids', img: '/images/feature-1.webp', href: '/shop?for=for-kids' },
+    { title: 'For Home', img: '/images/gifting.webp', href: '/shop?for=for-home' },
   ];
 
   const faqs = [
-    { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box combines everyday utility with a personal touch that lasts a lifetime. It’s a thoughtful way to show you care, whether for office lunches or special celebrations.' },
-    { q: 'How long does it take for my custom tiffin to arrive?', a: 'We handle every order with care. Standard international delivery takes 7-14 business days. Express shipping options are available at checkout for faster delivery.' },
-    { q: 'Can I add a custom logo for a team gift?', a: 'Absolutely. We specialize in corporate gifting and can engrave individual names or company logos to create a premium, lasting impression for your team.' },
-    { q: 'Is the engraving permanent?', a: 'Yes, our laser engraving process creates a permanent, high-precision mark on the steel. It will never fade, peel, or wash off, even with daily cleaning.' },
-    { q: 'How should I clean and care for my engraved tiffin?', a: 'Our tiffins are made from high-grade 304 stainless steel. They are dishwasher safe, but we recommend hand-washing with a soft sponge to keep the finish looking brand new for years.' },
-    { q: 'Do you ship worldwide?', a: 'Yes! We ship to customers in over 100 countries. Shipping charges are calculated at checkout based on your location and order size.' },
-    { q: 'What is your return policy for customized items?', a: 'Since each piece is individually engraved for you, we can only accept returns if there is a manufacturing defect or damage during transit. Please reach out to our team within 48 hours of delivery if there is an issue.' },
+    { q: 'What makes a personalized tiffin the perfect gift?', a: 'A hand-engraved stainless steel tiffin box from Pretty Tiffin combines heritage craftsmanship with modern utility. It is a thoughtful, eco-friendly gift that lasts a lifetime, making every meal a special memory for your loved ones.' },
+    { q: 'How long does it take for my custom order to arrive?', a: 'Every piece is custom engraved at our atelier. Standard international shipping typically takes 7-12 business days. You will receive a tracking number as soon as your artisanal piece is dispatched.' },
+    { q: 'Can I add a custom logo for corporate gifting?', a: 'Absolutely. We specialize in bespoke corporate gifting. We can engrave company logos, individual names, or special messages. Contact us via WhatsApp for bulk inquiries and custom design proofs.' },
+    { q: 'Is the laser engraving permanent?', a: 'Yes, our high-precision laser engraving process etches the design directly into the 304-grade stainless steel. It will never fade, peel, or wash off, even after years of daily use and washing.' },
+    { q: 'How should I care for my engraved tiffin?', a: 'Pretty Tiffin products are made from premium, food-safe 304 stainless steel. While they are dishwasher safe, we recommend hand-washing with a soft sponge and mild soap to maintain the brilliant artisanal finish.' },
+    { q: 'Do you ship to my country?', a: 'Yes, we offer worldwide shipping to over 100 countries including the USA, UK, Canada, Australia, and the Middle East. Shipping rates and delivery times are automatically calculated at checkout based on your location.' },
+    { q: 'Can I return a personalized item?', a: 'Since each product is custom-engraved to your specifications, we do not accept returns unless there is a manufacturing defect or shipping damage. If you encounter any issues, please contact us within 48 hours of delivery.' },
   ];
 
   return (

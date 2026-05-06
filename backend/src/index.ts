@@ -16,6 +16,7 @@ import adminRoutes from './routes/admin';
 import emailRoutes from './routes/email';
 import userRoutes from './routes/user';
 import bannerRoutes from './routes/banners';
+import xeroRoutes from './routes/xero';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
@@ -26,9 +27,9 @@ app.set('trust proxy', 1);
 
 const defaultAllowedOrigins = [
   'http://localhost:3000',
-  'https://prettyluxeatelier.com',
-  'https://www.prettyluxeatelier.com',
-  'https://prettyluxeatelier.vercel.app'
+  'https://prettytiffin.com',
+  'https://www.prettytiffin.com',
+  'https://pretty-tiffin.vercel.app'
 ];
 
 const allowedOrigins = new Set(
@@ -41,8 +42,8 @@ const allowedOrigins = new Set(
 
 const allowedOriginPatterns = [
   /^https?:\/\/localhost(?::\d+)?$/,
-  /^https:\/\/(?:www\.)?prettyluxeatelier\.com$/,
-  /^https:\/\/prettyluxeatelier(?:-[a-z0-9-]+)?\.vercel\.app$/
+  /^https:\/\/(?:www\.)?prettytiffin\.com$/,
+  /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 
 const isAllowedOrigin = (origin?: string) => {
@@ -136,6 +137,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/email', emailRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/banners', bannerRoutes);
+app.use('/api/xero', xeroRoutes);
 
 app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
   if (res.headersSent) {

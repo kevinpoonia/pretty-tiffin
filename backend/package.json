@@ -37,7 +37,8 @@
     "razorpay": "^2.9.6",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2",
-    "uuid": "^13.0.0"
+    "uuid": "^13.0.0",
+    "xero-node": "^15.0.1"
   },
   "devDependencies": {
     "@types/pg": "^8.20.0",

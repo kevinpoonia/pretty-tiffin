@@ -195,9 +195,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 </div>
                 <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-heading text-stone-800 mb-4 sm:mb-6 leading-tight uppercase tracking-tighter">{product.name}</h1>
                 <div className="flex flex-wrap items-center gap-6">
-                  <p className="text-3xl font-sans font-bold text-stone-900">{formatPrice(product.price)}</p>
+                  <p className="text-3xl font-sans font-bold text-stone-900">{formatPrice(product.price, product.currencyPrices)}</p>
                   {product.compareAtPrice && Number(product.compareAtPrice) > Number(product.price) && (
-                    <p className="text-xl text-stone-300 line-through font-medium">{formatPrice(product.compareAtPrice)}</p>
+                    <p className="text-xl text-stone-300 line-through font-medium">{formatPrice(product.compareAtPrice, product.currencyPrices)}</p>
                   )}
                   <span className="bg-brand-50 text-brand-500 text-[10px] font-bold px-4 py-1.5 rounded-none uppercase tracking-widest border border-brand-100">Artisanal Stock</span>
                 </div>
@@ -266,10 +266,22 @@ export default function ProductDetailClient({ product }: { product: any }) {
                   {isAdding ? <><Loader2 size={20} className="animate-spin" /> CRAFTING...</> : (
                     <div className="flex items-center gap-4">
                       <ShoppingBag size={20} />
-                      <span className="uppercase text-[11px] font-bold tracking-[0.2em]">Add to Cart — {formatPrice(calculateTotalPrice())}</span>
+                      <span className="uppercase text-[11px] font-bold tracking-[0.2em]">Add to Cart — {formatPrice(calculateTotalPrice(), product.currencyPrices)}</span>
                     </div>
                   )}
                 </button>
+              </div>
+
+              {/* WhatsApp Button */}
+              <div className="mt-4">
+                <a
+                  href={`https://wa.me/27640129242?text=${encodeURIComponent(`Hi, I'm interested in ordering ${product.name}.\n\nProduct Link: ${typeof window !== 'undefined' ? window.location.href : ''}\n\nQuantity: ${quantity}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-green-600 text-white font-bold rounded-none py-4 px-10 hover:bg-green-700 transition-all flex items-center justify-center gap-3 shadow-lg uppercase text-[11px] tracking-widest"
+                >
+                  <MessageSquare size={18} /> Order on WhatsApp
+                </a>
               </div>
 
               {/* FAQ Accordions */}
@@ -325,9 +337,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
                     <div className="p-4">
                       <h3 className="font-heading italic text-sm text-brand-900 mb-2 line-clamp-2 leading-snug group-hover:text-brand-600 transition-colors">{p.name}</h3>
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-brand-900 text-sm">{formatPrice(p.price)}</span>
+                        <span className="font-bold text-brand-900 text-sm">{formatPrice(p.price, p.currencyPrices)}</span>
                         {p.compareAtPrice && Number(p.compareAtPrice) > Number(p.price) && (
-                          <span className="text-xs text-stone-300 line-through">{formatPrice(p.compareAtPrice)}</span>
+                          <span className="text-xs text-stone-300 line-through">{formatPrice(p.compareAtPrice, p.currencyPrices)}</span>
                         )}
                       </div>
                     </div>
