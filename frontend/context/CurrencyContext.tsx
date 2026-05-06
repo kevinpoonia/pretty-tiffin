@@ -16,7 +16,7 @@ export const CURRENCIES: CurrencyInfo[] = [
 
 // Fallback rates (1 INR = X units of currency). Updated periodically.
 const FALLBACK_RATES: Record<string, number> = {
-  INR: 1, USD: 0.012
+  INR: 1, USD: 0.012, ZAR: 0.22
 };
 
 // Timezone → currency mapping for auto-detection
@@ -109,7 +109,7 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   }, [currency]);
 
   return (
-    <CurrencyContext.Provider value={{ currency, currencyInfo, setCurrency, formatPrice, rates: {} }}>
+    <CurrencyContext.Provider value={{ currency, currencyInfo, setCurrency, formatPrice, rates: FALLBACK_RATES }}>
       {children}
     </CurrencyContext.Provider>
   );

@@ -15,7 +15,7 @@ import { useCurrency } from '@/context/CurrencyContext';
 export default function CheckoutPage() {
   const { user, loading: authLoading } = useAuth();
   const { items, total, loading: cartLoading, clearCart } = useCart();
-  const { formatPrice } = useCurrency();
+  const { formatPrice, rates } = useCurrency();
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
