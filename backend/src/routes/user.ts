@@ -2,6 +2,7 @@ import { Router, Request, Response } from 'express';
 import { prisma } from '../prisma';
 import { authenticate } from '../middleware/auth';
 import bcrypt from 'bcrypt';
+import { redis } from '../redis';
 
 const router = Router();
 
