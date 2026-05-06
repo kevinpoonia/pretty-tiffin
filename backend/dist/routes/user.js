@@ -7,6 +7,7 @@ const express_1 = require("express");
 const prisma_1 = require("../prisma");
 const auth_1 = require("../middleware/auth");
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const redis_1 = require("../redis");
 const router = (0, express_1.Router)();
 // Get user profile & addresses
 router.get('/profile', auth_1.authenticate, async (req, res) => {
@@ -178,45 +179,103 @@ router.put('/profile', auth_1.authenticate, async (req, res) => {
     }
 });
 // ─── Wishlist ─────────────────────────────────────────────────────────────────
-// GET /api/users/wishlist
+// GET /api/user/wishlist
 router.get('/wishlist', auth_1.authenticate, async (req, res) => {
     try {
-        const wishlist = await prisma_1.prisma.wishlist.findMany({
-            where: { userId: req.user.id },
-            include: { product: { include: { customizationOptions: true } } },
-            orderBy: { createdAt: 'desc' }
-        });
-        res.json(wishlist);
-    }
-    catch (error) {
-        res.status(500).json({ error: 'Server error' });
-    }
-});
-// POST /api/users/wishlist
-router.post('/wishlist', auth_1.authenticate, async (req, res) => {
-    try {
-        const { productId } = req.body;
-        if (!productId) {
-            res.status(400).json({ error: 'productId required' });
-            return;
+        const sessionId = req.headers['x-session-id'];
+        // If authenticated, merge guest wishlist first
+        if (req.user && sessionId) {
+            const guestKey = `wishlist:${sessionId}`;
+            const guestWishlistStr = await redis_1.redis.get(guestKey);
+            if (guestWishlistStr) {
+                const guestProductIds = JSON.parse(guestWishlistStr);
+                for (const pid of guestProductIds) {
+                    await prisma_1.prisma.wishlist.upsert({
+                        where: { userId_productId: { userId: req.user.id, productId: pid } },
+                        update: {},
+                        create: { userId: req.user.id, productId: pid }
+                    });
+                }
+                await redis_1.redis.del(guestKey);
+            }
         }
-        const item = await prisma_1.prisma.wishlist.upsert({
-            where: { userId_productId: { userId: req.user.id, productId } },
-            update: {},
-            create: { userId: req.user.id, productId }
-        });
-        res.status(201).json(item);
+        if (req.user) {
+            const wishlist = await prisma_1.prisma.wishlist.findMany({
+                where: { userId: req.user.id },
+                include: { product: { include: { customizationOptions: true, currencyPrices: true } } },
+                orderBy: { createdAt: 'desc' }
+            });
+            return res.json(wishlist.map(w => w.product));
+        }
+        // Guest wishlist from Redis
+        if (sessionId) {
+            const guestWishlistStr = await redis_1.redis.get(`wishlist:${sessionId}`);
+            if (guestWishlistStr) {
+                const productIds = JSON.parse(guestWishlistStr);
+                const products = await prisma_1.prisma.product.findMany({
+                    where: { id: { in: productIds } },
+                    include: { customizationOptions: true, currencyPrices: true }
+                });
+                return res.json(products);
+            }
+        }
+        res.json([]);
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server error' });
+    }
+});
+// POST /api/user/wishlist/:productId
+router.post('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
+    try {
+        const { productId } = req.params;
+        const sessionId = req.headers['x-session-id'];
+        if (req.user) {
+            await prisma_1.prisma.wishlist.upsert({
+                where: { userId_productId: { userId: req.user.id, productId } },
+                update: {},
+                create: { userId: req.user.id, productId }
+            });
+            return res.json({ success: true });
+        }
+        if (sessionId) {
+            const key = `wishlist:${sessionId}`;
+            const existing = await redis_1.redis.get(key);
+            let list = existing ? JSON.parse(existing) : [];
+            if (!list.includes(productId)) {
+                list.push(productId);
+                await redis_1.redis.setex(key, 60 * 60 * 24 * 7, JSON.stringify(list));
+            }
+            return res.json({ success: true });
+        }
+        res.status(400).json({ error: 'Session ID or Auth required' });
     }
     catch (error) {
         res.status(500).json({ error: 'Server error' });
     }
 });
-// DELETE /api/users/wishlist/:productId
+// DELETE /api/user/wishlist/:productId
 router.delete('/wishlist/:productId', auth_1.authenticate, async (req, res) => {
     try {
-        await prisma_1.prisma.wishlist.deleteMany({
-            where: { userId: req.user.id, productId: req.params.productId }
-        });
+        const { productId } = req.params;
+        const sessionId = req.headers['x-session-id'];
+        if (req.user) {
+            await prisma_1.prisma.wishlist.deleteMany({
+                where: { userId: req.user.id, productId }
+            });
+            return res.json({ success: true });
+        }
+        if (sessionId) {
+            const key = `wishlist:${sessionId}`;
+            const existing = await redis_1.redis.get(key);
+            if (existing) {
+                let list = JSON.parse(existing);
+                list = list.filter(id => id !== productId);
+                await redis_1.redis.setex(key, 60 * 60 * 24 * 7, JSON.stringify(list));
+            }
+            return res.json({ success: true });
+        }
         res.json({ success: true });
     }
     catch (error) {

@@ -20,6 +20,7 @@ const admin_1 = __importDefault(require("./routes/admin"));
 const email_1 = __importDefault(require("./routes/email"));
 const user_1 = __importDefault(require("./routes/user"));
 const banners_1 = __importDefault(require("./routes/banners"));
+const xero_1 = __importDefault(require("./routes/xero"));
 const helmet_1 = __importDefault(require("helmet"));
 const express_rate_limit_1 = __importDefault(require("express-rate-limit"));
 const app = (0, express_1.default)();
@@ -27,9 +28,11 @@ const port = process.env.PORT || 4000;
 app.set('trust proxy', 1);
 const defaultAllowedOrigins = [
     'http://localhost:3000',
+    'https://prettytiffin.com',
+    'https://www.prettytiffin.com',
     'https://prettyluxeatelier.com',
     'https://www.prettyluxeatelier.com',
-    'https://prettyluxeatelier.vercel.app'
+    'https://pretty-tiffin.vercel.app'
 ];
 const allowedOrigins = new Set([
     ...defaultAllowedOrigins,
@@ -38,8 +41,9 @@ const allowedOrigins = new Set([
 ].filter(Boolean));
 const allowedOriginPatterns = [
     /^https?:\/\/localhost(?::\d+)?$/,
+    /^https:\/\/(?:www\.)?prettytiffin\.com$/,
     /^https:\/\/(?:www\.)?prettyluxeatelier\.com$/,
-    /^https:\/\/prettyluxeatelier(?:-[a-z0-9-]+)?\.vercel\.app$/
+    /^https:\/\/pretty-tiffin(?:-[a-z0-9-]+)?\.vercel\.app$/
 ];
 const isAllowedOrigin = (origin) => {
     if (!origin) {
@@ -91,6 +95,7 @@ const authLimiter = (0, express_rate_limit_1.default)({
 app.use(readLimiter);
 app.use(writeLimiter);
 app.use(express_1.default.json({ limit: '1mb' }));
+app.use(express_1.default.urlencoded({ extended: true, limit: '1mb' }));
 app.get('/api/health', (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.json({ status: 'ok', timestamp: new Date().toISOString() });
@@ -123,6 +128,7 @@ app.use('/api/admin', admin_1.default);
 app.use('/api/email', email_1.default);
 app.use('/api/users', user_1.default);
 app.use('/api/banners', banners_1.default);
+app.use('/api/xero', xero_1.default);
 app.use((err, req, res, next) => {
     if (res.headersSent) {
         next(err);

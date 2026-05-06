@@ -17,7 +17,7 @@ const authenticate = async (req, res, next) => {
             res.status(401).json({ error: 'User not found. Please sync account.' });
             return;
         }
-        req.user = { id: user.id, role: user.role };
+        req.user = { id: user.id, role: user.role, name: user.name, email: user.email };
         next();
     }
     catch {

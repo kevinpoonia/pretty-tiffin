@@ -8,6 +8,22 @@ const email_1 = require("./email");
 const notifications_1 = require("../notifications");
 const router = (0, express_1.Router)();
 router.use(auth_1.authenticate, auth_1.requireAdmin);
+// Reset all sales data (DELETE ALL ORDERS)
+router.post('/reset-sales', async (req, res) => {
+    try {
+        // Delete in order to handle foreign keys
+        await prisma_1.prisma.orderStatusHistory.deleteMany({});
+        await prisma_1.prisma.orderItem.deleteMany({});
+        const { count } = await prisma_1.prisma.order.deleteMany({});
+        // Also reset coupon usage counts
+        await prisma_1.prisma.coupon.updateMany({ data: { usageCount: 0 } });
+        res.json({ success: true, message: `Successfully reset sales. Deleted ${count} orders.` });
+    }
+    catch (error) {
+        console.error('Reset sales failed:', error);
+        res.status(500).json({ error: 'Reset failed' });
+    }
+});
 // ─── Stats (with trends + 7-day chart) ───────────────────────────────────────
 router.get('/stats', async (req, res) => {
     try {
@@ -16,16 +32,17 @@ router.get('/stats', async (req, res) => {
         const startOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
         const endOfLastMonth = new Date(now.getFullYear(), now.getMonth(), 0);
         const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const successfulStatuses = ['CONFIRMED', 'PROCESSING', 'SHIPPED', 'DELIVERED'];
         const [totalUsers, totalOrders, totalProducts, thisMonthOrders, lastMonthOrders, thisMonthUsers, lastMonthUsers, recentOrdersRaw] = await Promise.all([
             prisma_1.prisma.user.count(),
-            prisma_1.prisma.order.count(),
+            prisma_1.prisma.order.count({ where: { status: { in: successfulStatuses } } }),
             prisma_1.prisma.product.count(),
-            prisma_1.prisma.order.findMany({ where: { createdAt: { gte: startOfMonth }, status: { not: 'CANCELLED' } }, select: { totalAmount: true, createdAt: true } }),
-            prisma_1.prisma.order.findMany({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth }, status: { not: 'CANCELLED' } }, select: { totalAmount: true } }),
+            prisma_1.prisma.order.findMany({ where: { createdAt: { gte: startOfMonth }, status: { in: successfulStatuses } }, select: { totalAmount: true, createdAt: true } }),
+            prisma_1.prisma.order.findMany({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth }, status: { in: successfulStatuses } }, select: { totalAmount: true } }),
             prisma_1.prisma.user.count({ where: { createdAt: { gte: startOfMonth } } }),
             prisma_1.prisma.user.count({ where: { createdAt: { gte: startOfLastMonth, lte: endOfLastMonth } } }),
             prisma_1.prisma.order.findMany({
-                where: { createdAt: { gte: sevenDaysAgo }, status: { not: 'CANCELLED' } },
+                where: { createdAt: { gte: sevenDaysAgo }, status: { in: successfulStatuses } },
                 select: { totalAmount: true, createdAt: true }
             })
         ]);
@@ -43,7 +60,7 @@ router.get('/stats', async (req, res) => {
             revenueByDay.push({ date: label, amount });
         }
         // Total all-time revenue
-        const allOrders = await prisma_1.prisma.order.findMany({ where: { status: { not: 'CANCELLED' } }, select: { totalAmount: true } });
+        const allOrders = await prisma_1.prisma.order.findMany({ where: { status: { in: successfulStatuses } }, select: { totalAmount: true } });
         const totalRevenue = allOrders.reduce((s, o) => s + Number(o.totalAmount), 0);
         res.json({
             totalUsers, totalOrders, totalProducts,
@@ -138,7 +155,7 @@ router.put('/orders/:id/status', async (req, res) => {
 router.get('/products', async (req, res) => {
     try {
         const products = await prisma_1.prisma.product.findMany({
-            include: { customizationOptions: true },
+            include: { customizationOptions: true, currencyPrices: true, adminReviews: { orderBy: { createdAt: 'desc' } } },
             orderBy: { createdAt: 'desc' }
         });
         res.json(products);
@@ -149,7 +166,7 @@ router.get('/products', async (req, res) => {
 });
 router.post('/products', async (req, res) => {
     try {
-        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions } = req.body;
+        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions, hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo, manualReviewCount, manualAvgRating, currencyPrices, adminReviews } = req.body;
         const product = await prisma_1.prisma.product.create({
             data: {
                 name, description, slug, category,
@@ -160,14 +177,33 @@ router.post('/products', async (req, res) => {
                 isFeatured: Boolean(isFeatured),
                 seoTitle: seoTitle || null,
                 seoDesc: seoDesc || null,
+                hasSteel: Boolean(hasSteel),
+                hasEngraving: Boolean(hasEngraving),
+                featuresAndSpecs: featuresAndSpecs || null,
+                shippingInfo: shippingInfo || null,
+                warrantyInfo: warrantyInfo || null,
+                manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+                manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
                 customizationOptions: {
                     create: (customizationOptions || []).map((opt) => ({
                         type: opt.type, label: opt.label,
                         values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
                     }))
+                },
+                currencyPrices: {
+                    create: (currencyPrices || []).filter((cp) => cp.currency && cp.price).map((cp) => ({
+                        currency: cp.currency.toUpperCase(), symbol: cp.symbol || cp.currency,
+                        price: Number(cp.price), compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+                    }))
+                },
+                adminReviews: {
+                    create: (adminReviews || []).filter((ar) => ar.reviewerName && ar.rating && ar.comment).map((ar) => ({
+                        reviewerName: ar.reviewerName, location: ar.location || null,
+                        rating: Number(ar.rating), comment: ar.comment, isVerified: true
+                    }))
                 }
             },
-            include: { customizationOptions: true }
+            include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
         });
         await (0, cache_1.clearCache)('/api/products*');
         res.status(201).json(product);
@@ -178,26 +214,47 @@ router.post('/products', async (req, res) => {
 });
 router.put('/products/:id', async (req, res) => {
     try {
-        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions } = req.body;
-        if (customizationOptions) {
-            await prisma_1.prisma.customizationOption.deleteMany({ where: { productId: String(req.params.id) } });
-        }
+        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions, hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo, manualReviewCount, manualAvgRating, currencyPrices, adminReviews } = req.body;
+        const productId = String(req.params.id);
+        // Replace related data
+        await prisma_1.prisma.customizationOption.deleteMany({ where: { productId } });
+        await prisma_1.prisma.currencyPrice.deleteMany({ where: { productId } });
+        await prisma_1.prisma.adminReview.deleteMany({ where: { productId } });
         const product = await prisma_1.prisma.product.update({
-            where: { id: String(req.params.id) },
+            where: { id: productId },
             data: {
                 name, description, slug, category,
                 price: Number(price),
                 compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null,
-                images, stock: Number(stock), isFeatured,
+                images: images || [], stock: Number(stock) || 0, isFeatured: Boolean(isFeatured),
                 seoTitle: seoTitle || null, seoDesc: seoDesc || null,
-                customizationOptions: customizationOptions ? {
-                    create: customizationOptions.map((opt) => ({
+                hasSteel: Boolean(hasSteel),
+                hasEngraving: Boolean(hasEngraving),
+                featuresAndSpecs: featuresAndSpecs || null,
+                shippingInfo: shippingInfo || null,
+                warrantyInfo: warrantyInfo || null,
+                manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+                manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
+                customizationOptions: {
+                    create: (customizationOptions || []).map((opt) => ({
                         type: opt.type, label: opt.label,
                         values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
                     }))
-                } : undefined
+                },
+                currencyPrices: {
+                    create: (currencyPrices || []).filter((cp) => cp.currency && cp.price).map((cp) => ({
+                        currency: cp.currency.toUpperCase(), symbol: cp.symbol || cp.currency,
+                        price: Number(cp.price), compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+                    }))
+                },
+                adminReviews: {
+                    create: (adminReviews || []).filter((ar) => ar.reviewerName && ar.rating && ar.comment).map((ar) => ({
+                        reviewerName: ar.reviewerName, location: ar.location || null,
+                        rating: Number(ar.rating), comment: ar.comment, isVerified: true
+                    }))
+                }
             },
-            include: { customizationOptions: true }
+            include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
         });
         await (0, cache_1.clearCache)('/api/products*');
         res.json(product);
@@ -208,7 +265,11 @@ router.put('/products/:id', async (req, res) => {
 });
 router.delete('/products/:id', async (req, res) => {
     try {
-        await prisma_1.prisma.product.delete({ where: { id: String(req.params.id) } });
+        const productId = String(req.params.id);
+        await prisma_1.prisma.adminReview.deleteMany({ where: { productId } });
+        await prisma_1.prisma.currencyPrice.deleteMany({ where: { productId } });
+        await prisma_1.prisma.customizationOption.deleteMany({ where: { productId } });
+        await prisma_1.prisma.product.delete({ where: { id: productId } });
         await (0, cache_1.clearCache)('/api/products*');
         res.json({ success: true });
     }
@@ -285,14 +346,17 @@ router.delete('/coupons/:id', async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
-// ─── Cache ───────────────────────────────────────────────────────────────────
-router.post('/clear-cache', async (req, res) => {
+// End all sales (CLEAR ALL compareAtPrice)
+router.post('/end-all-sales', async (req, res) => {
     try {
-        await (0, cache_1.clearCache)('*');
-        res.json({ success: true, message: 'Cache cleared' });
+        const { count } = await prisma_1.prisma.product.updateMany({
+            data: { compareAtPrice: null }
+        });
+        await (0, cache_1.clearCache)('/api/products*');
+        res.json({ success: true, message: `Successfully ended sales on ${count} products.` });
     }
     catch (error) {
-        res.status(500).json({ error: 'Failed to clear cache' });
+        res.status(500).json({ error: 'Failed to end sales' });
     }
 });
 exports.default = router;

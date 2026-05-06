@@ -19,8 +19,10 @@ export async function syncOrderToXero(orderId: string) {
     const tokenSet = JSON.parse(config.tokenSet);
     xero.setTokenSet(tokenSet);
 
-    if (tokenSet.expired()) {
-      const refreshedTokenSet = await xero.refreshWithLocalStorage();
+    // Manual check for expiry
+    const now = Math.floor(Date.now() / 1000);
+    if (tokenSet.expires_at && tokenSet.expires_at < now) {
+      const refreshedTokenSet = await xero.refreshToken();
       await prisma.xeroConfig.update({
         where: { id: 'singleton' },
         data: { tokenSet: JSON.stringify(refreshedTokenSet) }

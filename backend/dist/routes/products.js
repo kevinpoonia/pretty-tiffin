@@ -11,18 +11,26 @@ router.get('/', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
         const products = await prisma_1.prisma.product.findMany({
             include: {
                 customizationOptions: true,
+                currencyPrices: true,
                 reviews: { select: { rating: true } },
+                adminReviews: { orderBy: { createdAt: 'desc' } },
                 _count: { select: { reviews: true } },
             },
             orderBy: { createdAt: 'desc' }
         });
-        const result = products.map(({ reviews, _count, ...p }) => ({
-            ...p,
-            reviewCount: _count.reviews,
-            avgRating: reviews.length
-                ? Math.round(reviews.reduce((s, r) => s + r.rating, 0) / reviews.length * 10) / 10
-                : 0,
-        }));
+        const result = products.map(({ reviews, adminReviews, _count, ...p }) => {
+            const allRatings = [
+                ...reviews.map(r => r.rating),
+                ...(adminReviews || []).map((r) => r.rating)
+            ];
+            return {
+                ...p,
+                reviewCount: allRatings.length,
+                avgRating: allRatings.length
+                    ? Math.round(allRatings.reduce((s, r) => s + r, 0) / allRatings.length * 10) / 10
+                    : 0,
+            };
+        });
         res.json(result);
     }
     catch (error) {
@@ -38,15 +46,30 @@ router.get('/:slug/reviews', async (req, res) => {
             res.status(404).json({ error: 'Product not found' });
             return;
         }
-        const reviews = await prisma_1.prisma.review.findMany({
-            where: { productId: product.id },
-            include: { user: { select: { name: true } } },
-            orderBy: { createdAt: 'desc' }
-        });
-        const avgRating = reviews.length
-            ? reviews.reduce((s, r) => s + r.rating, 0) / reviews.length
+        const [reviews, adminReviews] = await Promise.all([
+            prisma_1.prisma.review.findMany({
+                where: { productId: product.id },
+                include: { user: { select: { name: true } } },
+                orderBy: { createdAt: 'desc' }
+            }),
+            prisma_1.prisma.adminReview.findMany({
+                where: { productId: product.id },
+                orderBy: { createdAt: 'desc' }
+            })
+        ]);
+        const allRatings = [
+            ...reviews.map((r) => r.rating),
+            ...adminReviews.map((r) => r.rating)
+        ];
+        const avgRating = allRatings.length
+            ? allRatings.reduce((s, r) => s + r, 0) / allRatings.length
             : 0;
-        res.json({ reviews, avgRating: Math.round(avgRating * 10) / 10, total: reviews.length });
+        res.json({
+            reviews,
+            adminReviews,
+            avgRating: Math.round(avgRating * 10) / 10,
+            total: allRatings.length
+        });
     }
     catch (error) {
         res.status(500).json({ error: 'Internal server error' });
@@ -90,6 +113,8 @@ router.get('/:slug', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
             where: { slug: req.params.slug },
             include: {
                 customizationOptions: true,
+                currencyPrices: true,
+                adminReviews: { orderBy: { createdAt: 'desc' } },
                 reviews: { include: { user: { select: { name: true } } }, orderBy: { createdAt: 'desc' } }
             }
         });
@@ -104,10 +129,11 @@ router.get('/:slug', (0, cache_1.cacheMiddleware)(3600), async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 });
+// ─── Admin Product Routes ────────────────────────────────────────────────────
 // POST /api/products — create product (admin)
 router.post('/', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
     try {
-        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions } = req.body;
+        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions, hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo, manualReviewCount, manualAvgRating, currencyPrices, adminReviews } = req.body;
         const product = await prisma_1.prisma.product.create({
             data: {
                 name, description, price: Number(price),
@@ -116,13 +142,37 @@ router.post('/', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
                 stock: Number(stock) || 0,
                 isFeatured: Boolean(isFeatured),
                 seoTitle, seoDesc,
+                hasSteel: Boolean(hasSteel),
+                hasEngraving: Boolean(hasEngraving),
+                featuresAndSpecs: featuresAndSpecs || null,
+                shippingInfo: shippingInfo || null,
+                warrantyInfo: warrantyInfo || null,
+                manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+                manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
                 customizationOptions: {
                     create: (customizationOptions || []).map((opt) => ({
                         type: opt.type, label: opt.label, values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
                     }))
+                },
+                currencyPrices: {
+                    create: (currencyPrices || []).filter((cp) => cp.currency && cp.price).map((cp) => ({
+                        currency: cp.currency.toUpperCase(),
+                        symbol: cp.symbol || cp.currency,
+                        price: Number(cp.price),
+                        compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+                    }))
+                },
+                adminReviews: {
+                    create: (adminReviews || []).filter((ar) => ar.reviewerName && ar.rating && ar.comment).map((ar) => ({
+                        reviewerName: ar.reviewerName,
+                        location: ar.location || null,
+                        rating: Number(ar.rating),
+                        comment: ar.comment,
+                        isVerified: true
+                    }))
                 }
             },
-            include: { customizationOptions: true }
+            include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
         });
         await (0, cache_1.clearCache)('products*');
         res.status(201).json(product);
@@ -135,29 +185,72 @@ router.post('/', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
 // PUT /api/products/:id — update product (admin)
 router.put('/:id', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
     try {
-        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc } = req.body;
+        const { name, description, price, compareAtPrice, slug, category, images, stock, isFeatured, seoTitle, seoDesc, customizationOptions, hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo, manualReviewCount, manualAvgRating, currencyPrices, adminReviews } = req.body;
+        const productId = req.params.id;
+        // Replace customization options
+        await prisma_1.prisma.customizationOption.deleteMany({ where: { productId } });
+        // Replace currency prices
+        await prisma_1.prisma.currencyPrice.deleteMany({ where: { productId } });
+        // Replace admin reviews
+        await prisma_1.prisma.adminReview.deleteMany({ where: { productId } });
         const product = await prisma_1.prisma.product.update({
-            where: { id: req.params.id },
+            where: { id: productId },
             data: {
                 name, description, price: Number(price),
                 compareAtPrice: compareAtPrice ? Number(compareAtPrice) : null,
                 slug, category, images: images || [],
                 stock: Number(stock) || 0,
                 isFeatured: Boolean(isFeatured),
-                seoTitle, seoDesc
-            }
+                seoTitle, seoDesc,
+                hasSteel: Boolean(hasSteel),
+                hasEngraving: Boolean(hasEngraving),
+                featuresAndSpecs: featuresAndSpecs || null,
+                shippingInfo: shippingInfo || null,
+                warrantyInfo: warrantyInfo || null,
+                manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
+                manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
+                customizationOptions: {
+                    create: (customizationOptions || []).map((opt) => ({
+                        type: opt.type, label: opt.label, values: opt.values || [], priceOffset: Number(opt.priceOffset) || 0
+                    }))
+                },
+                currencyPrices: {
+                    create: (currencyPrices || []).filter((cp) => cp.currency && cp.price).map((cp) => ({
+                        currency: cp.currency.toUpperCase(),
+                        symbol: cp.symbol || cp.currency,
+                        price: Number(cp.price),
+                        compareAtPrice: cp.compareAtPrice ? Number(cp.compareAtPrice) : null
+                    }))
+                },
+                adminReviews: {
+                    create: (adminReviews || []).filter((ar) => ar.reviewerName && ar.rating && ar.comment).map((ar) => ({
+                        reviewerName: ar.reviewerName,
+                        location: ar.location || null,
+                        rating: Number(ar.rating),
+                        comment: ar.comment,
+                        isVerified: true
+                    }))
+                }
+            },
+            include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
         });
         await (0, cache_1.clearCache)('products*');
         res.json(product);
     }
     catch (error) {
+        console.error(error);
         res.status(500).json({ error: 'Internal server error' });
     }
 });
 // DELETE /api/products/:id — delete product (admin)
 router.delete('/:id', auth_1.authenticate, auth_1.requireAdmin, async (req, res) => {
     try {
-        await prisma_1.prisma.product.delete({ where: { id: req.params.id } });
+        const productId = req.params.id;
+        // Clean up related records first
+        await prisma_1.prisma.adminReview.deleteMany({ where: { productId } });
+        await prisma_1.prisma.currencyPrice.deleteMany({ where: { productId } });
+        await prisma_1.prisma.customizationOption.deleteMany({ where: { productId } });
+        await prisma_1.prisma.product.delete({ where: { id: productId } });
         await (0, cache_1.clearCache)('products*');
         res.json({ success: true });
     }

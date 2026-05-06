@@ -39,7 +39,7 @@ async function sendWhatsApp(phone, message) {
     if (!sid || !token || !from || !phone)
         return;
     const clean = phone.replace(/\D/g, '');
-    const to = clean.startsWith('91') ? `+${clean}` : `+91${clean}`;
+    const to = `+${clean}`;
     try {
         const creds = Buffer.from(`${sid}:${token}`).toString('base64');
         await fetch(`https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`, {
