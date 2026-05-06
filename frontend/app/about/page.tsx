@@ -76,10 +76,10 @@ export default function AboutPage() {
                        </p>
                     </div>
                     <div className="mt-12 grid grid-cols-2 gap-8">
-                       <div>
-                          <p className="text-3xl font-heading font-black text-brand-900">10k+</p>
-                          <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Happy Customers</p>
-                       </div>
+                        <div>
+                           <p className="text-3xl font-heading font-black text-brand-900">Heritage</p>
+                           <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Quality Guaranteed</p>
+                        </div>
                        <div>
                           <p className="text-3xl font-heading font-black text-brand-900">100%</p>
                           <p className="text-[10px] font-bold text-brand-400 uppercase tracking-widest">Eco-friendly</p>

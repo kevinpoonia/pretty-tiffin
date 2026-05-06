@@ -9,13 +9,21 @@ import { cleanupStaleOrders } from '../scripts/cleanupOrders';
 const router = Router();
 router.use(authenticate, requireAdmin);
 
-// Cleanup stale orders
-router.post('/cleanup-orders', async (req: AuthRequest, res: Response) => {
+// Reset all sales data (DELETE ALL ORDERS)
+router.post('/reset-sales', async (req: AuthRequest, res: Response) => {
   try {
-    const count = await cleanupStaleOrders();
-    res.json({ success: true, message: `Removed ${count} stale pending orders.` });
+    // Delete in order to handle foreign keys
+    await prisma.orderStatusHistory.deleteMany({});
+    await prisma.orderItem.deleteMany({});
+    const { count } = await prisma.order.deleteMany({});
+    
+    // Also reset coupon usage counts
+    await prisma.coupon.updateMany({ data: { usageCount: 0 } });
+
+    res.json({ success: true, message: `Successfully reset sales. Deleted ${count} orders.` });
   } catch (error) {
-    res.status(500).json({ error: 'Cleanup failed' });
+    console.error('Reset sales failed:', error);
+    res.status(500).json({ error: 'Reset failed' });
   }
 });
 
@@ -366,13 +374,16 @@ router.delete('/coupons/:id', async (req: AuthRequest, res: Response) => {
   }
 });
 
-// ─── Cache ───────────────────────────────────────────────────────────────────
-router.post('/clear-cache', async (req: AuthRequest, res: Response) => {
+// End all sales (CLEAR ALL compareAtPrice)
+router.post('/end-all-sales', async (req: AuthRequest, res: Response) => {
   try {
-    await clearCache('*');
-    res.json({ success: true, message: 'Cache cleared' });
+    const { count } = await prisma.product.updateMany({
+      data: { compareAtPrice: null }
+    });
+    await clearCache('/api/products*');
+    res.json({ success: true, message: `Successfully ended sales on ${count} products.` });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to clear cache' });
+    res.status(500).json({ error: 'Failed to end sales' });
   }
 });
 

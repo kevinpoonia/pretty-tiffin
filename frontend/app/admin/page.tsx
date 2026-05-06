@@ -380,7 +380,7 @@ export default function AdminDashboard() {
       <aside className="w-64 bg-brand-900 flex flex-col shrink-0 hidden lg:flex">
         <div className="px-7 py-6 border-b border-brand-800">
           <Link href="/" className="font-heading font-black text-xl text-white">
-            PRETTY LUXE<span className="text-brand-400"> ATELIER</span>
+            PRETTY<span className="text-brand-400"> TIFFIN</span>
           </Link>
           <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mt-1">Admin Console</p>
         </div>
@@ -1340,6 +1340,76 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <span className="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-black rounded-full uppercase tracking-widest border border-green-100">Active</span>
+                  <div className="border-t border-brand-50" />
+                  
+                  {/* Danger Zone */}
+                  <div className="space-y-4 pt-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-red-100 rounded-xl flex items-center justify-center">
+                        <Trash2 size={18} className="text-red-600" />
+                      </div>
+                      <div>
+                        <p className="font-black text-brand-900 text-sm">Danger Zone</p>
+                        <p className="text-[10px] text-brand-400">Irreversible actions for platform management</p>
+                      </div>
+                    </div>
+                    
+                    <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <p className="font-black text-red-900 text-xs">End All Active Sales</p>
+                        <p className="text-[10px] text-red-700/70 max-w-xs leading-relaxed">
+                          This will remove all &quot;Sale&quot; prices and badges from products. 
+                          Customers will only see the standard price.
+                        </p>
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          if (!confirm('Are you sure you want to remove all discounts/sale prices from ALL products?')) return;
+                          try {
+                            setLoading(true);
+                            await api.post('/admin/end-all-sales');
+                            setNotify('All sales ended successfully!');
+                            setTimeout(() => setNotify(''), 5000);
+                            fetchTab('products');
+                          } catch {
+                            alert('Failed to end sales.');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 active:scale-95">
+                        End All Sales
+                      </button>
+                    </div>
+
+                    <div className="bg-red-50 border border-red-100 rounded-xl p-4 flex items-center justify-between">
+                      <div>
+                        <p className="font-black text-red-900 text-xs">Reset All Sales Data</p>
+                        <p className="text-[10px] text-red-700/70 max-w-xs leading-relaxed">
+                          This will permanently delete all orders, items, and statistics. 
+                          Only use this when preparing for a fresh launch.
+                        </p>
+                      </div>
+                      <button 
+                        onClick={async () => {
+                          if (!confirm('☢️ NUCLEAR OPTION: Are you 100% sure you want to delete ALL orders and sales data? This cannot be undone.')) return;
+                          if (!confirm('FINAL WARNING: This will set all revenue and order counters to zero. Proceed?')) return;
+                          try {
+                            setLoading(true);
+                            await api.post('/admin/reset-sales');
+                            setNotify('Platform data resetted successfully!');
+                            setTimeout(() => setNotify(''), 5000);
+                            fetchTab('overview');
+                          } catch {
+                            alert('Reset failed. Check server logs.');
+                          } finally {
+                            setLoading(false);
+                          }
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-red-700 transition-all shadow-lg shadow-red-600/20 active:scale-95">
+                        Reset Sales
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
