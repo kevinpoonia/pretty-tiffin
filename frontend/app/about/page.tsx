@@ -40,7 +40,7 @@ export default function AboutPage() {
                 className="text-4xl md:text-7xl font-heading font-black text-white tracking-tighter mb-8 leading-none"
               >
                 The Legacy of <br />
-                <span className="text-brand-500 italic font-serif">Pretty Tiffin.</span>
+                <span className="text-brand-500 italic font-serif">Pretty Luxe Atelier.</span>
               </motion.h1>
               <motion.p 
                 initial={{ opacity: 0 }}
@@ -48,7 +48,7 @@ export default function AboutPage() {
                 transition={{ delay: 0.4 }}
                 className="text-brand-100 max-w-2xl mx-auto text-lg opacity-80 leading-relaxed"
               >
-                Pretty Tiffin was born from a passion for preserving the timeless tradition of the Indian Tiffin, while elevating it with premium craftsmanship and personal storytelling.
+                Pretty Luxe Atelier was born from a passion for preserving the timeless tradition of the Indian Tiffin, while elevating it with premium craftsmanship and personal storytelling.
               </motion.p>
            </div>
         </section>
@@ -69,7 +69,7 @@ export default function AboutPage() {
                     </h3>
                     <div className="space-y-6 text-brand-700 leading-relaxed text-lg opacity-90">
                        <p>
-                          Every Pretty Tiffin piece is crafted from premium ISO-grade 304 stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your own story.
+                          Every Pretty Luxe Atelier piece is crafted from premium ISO-grade 304 stainless steel. But we don&apos;t stop at durability. We believe your daily companion should be as unique as your own story.
                        </p>
                        <p>
                           Our signature high-precision laser-engraving process allows you to immortalize names, dates, or bespoke messages directly onto the steel, creating a functional piece of art that lasts generations.
@@ -146,7 +146,7 @@ export default function AboutPage() {
                  <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20 pointer-events-none" />
                  <div className="relative z-10">
                     <h2 className="text-3xl md:text-6xl font-heading font-black text-white tracking-tighter mb-8 leading-none">
-                       Experience the <br />Pretty Tiffin Standard.
+                       Experience the <br />Pretty Luxe Atelier Standard.
                     </h2>
                     <p className="text-brand-300 mb-12 text-lg max-w-xl mx-auto opacity-80">
                        Ready to personalize your first piece? Join thousands of happy customers today.

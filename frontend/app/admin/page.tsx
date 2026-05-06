@@ -380,7 +380,7 @@ export default function AdminDashboard() {
       <aside className="w-64 bg-brand-900 flex flex-col shrink-0 hidden lg:flex">
         <div className="px-7 py-6 border-b border-brand-800">
           <Link href="/" className="font-heading font-black text-xl text-white">
-            PRETTY<span className="text-brand-400"> TIFFIN</span>
+            PRETTY LUXE<span className="text-brand-400"> ATELIER</span>
           </Link>
           <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mt-1">Admin Console</p>
         </div>
@@ -1325,7 +1325,6 @@ export default function AdminDashboard() {
                     </div>
                   </div>
 
-
                   <div className="border-t border-brand-50" />
 
                   {/* COD / Bank Transfer */}
@@ -1340,6 +1339,8 @@ export default function AdminDashboard() {
                       </div>
                     </div>
                     <span className="px-3 py-1 bg-green-50 text-green-700 text-[10px] font-black rounded-full uppercase tracking-widest border border-green-100">Active</span>
+                  </div>
+
                   <div className="border-t border-brand-50" />
                   
                   {/* Danger Zone */}
