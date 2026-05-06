@@ -25,7 +25,7 @@ export default function Footer() {
           <div className="space-y-4 sm:col-span-2 xl:col-span-1">
             <Link href="/" className="inline-block">
               <span className="font-heading font-bold text-2xl text-white tracking-tight uppercase">
-                Pretty Luxe<span className="text-brand-200">Atelier</span>
+                Pretty<span className="text-brand-200">Tiffin</span>
               </span>
             </Link>
             <p className="text-sm text-brand-100 leading-relaxed max-w-xs">
@@ -47,7 +47,7 @@ export default function Footer() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z" /></svg>
                   )
                 },
-                { label: 'WhatsApp', href: 'https://wa.me/919999988888', icon: <MessageCircle size={18} /> },
+                { label: 'WhatsApp', href: 'https://wa.me/27640129242', icon: <MessageCircle size={18} /> },
               ].map(s => (
                 <a
                   key={s.label}
@@ -109,7 +109,7 @@ export default function Footer() {
         {/* Newsletter & Trust Badges Strip */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12 items-center py-12 border-t border-brand-400/20">
           <div className="lg:col-span-2">
-            <h4 className="font-heading font-semibold text-white mb-2 text-2xl uppercase tracking-tight">Join the Pretty Luxe Atelier Circle</h4>
+            <h4 className="font-heading font-semibold text-white mb-2 text-2xl uppercase tracking-tight">Join the Pretty Tiffin Circle</h4>
             <p className="text-sm text-brand-200 mb-6 max-w-lg">Get first access to new product drops, personalized gifting ideas, and exclusive offers from our studio.</p>
             {subscribed ? (
               <div className="flex items-center gap-2 text-brand-100 text-sm font-medium bg-brand-600 rounded-none px-4 py-3 border border-brand-400/20">
@@ -158,7 +158,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-brand-400/20 pt-8 flex flex-col md:flex-row items-center justify-between text-center md:text-left text-[11px] font-medium text-brand-200 gap-4 uppercase tracking-widest">
-          <p>© {new Date().getFullYear()} Pretty Luxe Atelier Studio. Crafted with love for your legacy.</p>
+          <p>© {new Date().getFullYear()} Pretty Tiffin Studio. Crafted with love for your legacy.</p>
           <div className="flex flex-wrap justify-center gap-6">
             <Link href="/privacy" className="hover:text-white transition-colors">Privacy</Link>
             <Link href="/terms" className="hover:text-white transition-colors">Terms</Link>

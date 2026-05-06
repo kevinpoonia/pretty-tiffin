@@ -25,7 +25,7 @@ export default function AboutPage() {
               />
            </div>
            <div className="absolute inset-0 bg-gradient-to-t from-brand-900 via-brand-900/60 to-transparent" />
-            <div class="container mx-auto px-6 relative z-10 text-center">
+            <div className="container mx-auto px-6 relative z-10 text-center">
               <motion.span 
                 initial={{ opacity: 0, letterSpacing: '0.2em' }}
                 animate={{ opacity: 1, letterSpacing: '0.4em' }}
