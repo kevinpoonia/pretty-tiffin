@@ -100,15 +100,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         "returnMethod": "https://schema.org/ReturnByMail",
         "returnFees": "https://schema.org/FreeReturn"
       },
-      "shippingDetails": {
-        "@type": "OfferShippingDetails",
-        "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "USD" },
-        "deliveryTime": {
-          "@type": "ShippingDeliveryTime",
-          "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 2, "unitCode": "DAY" },
-          "transitTime": { "@type": "QuantitativeValue", "minValue": 7, "maxValue": 14, "unitCode": "DAY" }
-        },
-        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
       },
       "seller": { "@id": "https://prettyluxeatelier.com/#organization" },
       "shippingDetails": {
