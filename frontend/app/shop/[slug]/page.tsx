@@ -92,15 +92,6 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
       "itemCondition": "https://schema.org/NewCondition",
       "priceValidUntil": new Date(Date.now() + 90 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       "availability": product.stock > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
-      "hasMerchantReturnPolicy": {
-        "@type": "MerchantReturnPolicy",
-        "applicableCountry": "IN",
-        "returnPolicyCategory": "https://schema.org/MerchantReturnFiniteReturnWindow",
-        "merchantReturnDays": 7,
-        "returnMethod": "https://schema.org/ReturnByMail",
-        "returnFees": "https://schema.org/FreeReturn"
-      },
-      },
       "seller": { "@id": "https://prettyluxeatelier.com/#organization" },
       "shippingDetails": {
         "@type": "OfferShippingDetails",
@@ -113,32 +104,28 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         "shippingDestination": { "@type": "DefinedRegion", "addressCountry": ["IN", "US", "GB", "AU", "ZA", "MU"] }
       }
     },
-    ...(displayReviewCount > 0 ? {
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": displayRating || 5.0,
-        "reviewCount": displayReviewCount,
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": displayRating || 5.0,
+      "reviewCount": displayReviewCount || 0,
+      "bestRating": 5,
+      "worstRating": 1
+    },
+    "review": (product.reviews || []).map((r: any) => ({
+      "@type": "Review",
+      "reviewRating": {
+        "@type": "Rating",
+        "ratingValue": r.rating,
         "bestRating": 5,
         "worstRating": 1
-      }
-    } : {}),
-    ...(product.reviews && product.reviews.length > 0 ? {
-      "review": product.reviews.map((r: any) => ({
-        "@type": "Review",
-        "reviewRating": {
-          "@type": "Rating",
-          "ratingValue": r.rating,
-          "bestRating": 5,
-          "worstRating": 1
-        },
-        "author": {
-          "@type": "Person",
-          "name": r.userName || "Verified Buyer"
-        },
-        "reviewBody": r.comment || "",
-        "datePublished": r.createdAt || new Date().toISOString().split('T')[0]
-      }))
-    } : {})
+      },
+      "author": {
+        "@type": "Person",
+        "name": r.userName || "Verified Buyer"
+      },
+      "reviewBody": r.comment || "",
+      "datePublished": r.createdAt || new Date().toISOString().split('T')[0]
+    }))
   };
 
   const breadcrumbSchema = {
