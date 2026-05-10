@@ -12,17 +12,36 @@ export interface CurrencyInfo {
 export const CURRENCIES: CurrencyInfo[] = [
   { code: 'INR', symbol: '₹',   name: 'Indian Rupee',        locale: 'en-IN' },
   { code: 'USD', symbol: '$',   name: 'US Dollar',           locale: 'en-US' },
+  { code: 'GBP', symbol: '£',   name: 'British Pound',       locale: 'en-GB' },
+  { code: 'EUR', symbol: '€',   name: 'Euro',                locale: 'de-DE' },
+  { code: 'AUD', symbol: 'A$',  name: 'Australian Dollar',   locale: 'en-AU' },
+  { code: 'NZD', symbol: 'NZ$', name: 'New Zealand Dollar',  locale: 'en-NZ' },
   { code: 'ZAR', symbol: 'R',   name: 'South African Rand',  locale: 'en-ZA' },
+  { code: 'MUR', symbol: '₨',   name: 'Mauritian Rupee',     locale: 'en-MU' },
 ];
 
 // Fallback rates (1 INR = X units of currency). Updated periodically.
 const FALLBACK_RATES: Record<string, number> = {
-  INR: 1, USD: 0.012, ZAR: 0.22
+  INR: 1, 
+  USD: 0.012, 
+  GBP: 0.0095, 
+  EUR: 0.011, 
+  AUD: 0.018, 
+  NZD: 0.020, 
+  ZAR: 0.22,
+  MUR: 0.55
 };
 
 // Timezone → currency mapping for auto-detection
 const TZ_CURRENCY: Record<string, string> = {
   'Asia/Kolkata': 'INR', 'Asia/Calcutta': 'INR',
+  'Europe/London': 'GBP', 'Europe/Jersey': 'GBP', 'Europe/Guernsey': 'GBP', 'Europe/Isle_of_Man': 'GBP',
+  'Europe/Dublin': 'EUR', 'Europe/Paris': 'EUR', 'Europe/Berlin': 'EUR', 'Europe/Rome': 'EUR', 'Europe/Madrid': 'EUR', 'Europe/Amsterdam': 'EUR', 'Europe/Brussels': 'EUR', 'Europe/Vienna': 'EUR',
+  'Australia/Sydney': 'AUD', 'Australia/Melbourne': 'AUD', 'Australia/Brisbane': 'AUD', 'Australia/Perth': 'AUD', 'Australia/Adelaide': 'AUD', 'Australia/Hobart': 'AUD', 'Australia/Darwin': 'AUD',
+  'Pacific/Auckland': 'NZD', 'Pacific/Chatham': 'NZD',
+  'Africa/Johannesburg': 'ZAR',
+  'Indian/Mauritius': 'MUR',
+  'America/New_York': 'USD', 'America/Chicago': 'USD', 'America/Denver': 'USD', 'America/Los_Angeles': 'USD', 'America/Phoenix': 'USD',
 };
 
 function detectCurrency(): string {
@@ -31,10 +50,16 @@ function detectCurrency(): string {
     if (TZ_CURRENCY[tz]) return TZ_CURRENCY[tz];
     
     // Fallback: use language/country hints
-    const lang = navigator.language;
+    const lang = typeof navigator !== 'undefined' ? navigator.language : 'en-US';
     if (lang.includes('-IN')) return 'INR';
+    if (lang.includes('-GB')) return 'GBP';
+    if (lang.includes('-AU')) return 'AUD';
+    if (lang.includes('-NZ')) return 'NZD';
+    if (lang.includes('-ZA')) return 'ZAR';
+    if (lang.includes('-MU')) return 'MUR';
+    if (['de', 'fr', 'es', 'it', 'nl'].some(l => lang.startsWith(l))) return 'EUR';
     
-    // Default to USD for everyone outside India
+    // Default to USD for everyone outside detected regions
   } catch {}
   return 'USD';
 }
@@ -75,7 +100,8 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
   const currencyInfo = CURRENCIES.find(c => c.code === currency) || CURRENCIES[0];
 
   const formatPrice = useCallback((inrAmount: number | string, productPrices?: any[]): string => {
-    const info = CURRENCIES.find(c => c.code === currency)!;
+    const info = CURRENCIES.find(c => c.code === currency) || CURRENCIES[0];
+    const amountInINR = Number(inrAmount) || 0;
     
     // 1. Check for manual admin-set price for the current currency
     if (productPrices && Array.isArray(productPrices)) {
@@ -92,22 +118,31 @@ export function CurrencyProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // 2. If currency is INR, fallback to the base price (which is INR)
-    if (currency === 'INR') {
-      const amount = Number(inrAmount) || 0;
+    // 2. Fallback to conversion rate if not INR
+    if (currency !== 'INR') {
+      const rate = FALLBACK_RATES[currency] || FALLBACK_RATES['USD'];
+      const convertedAmount = amountInINR * rate;
       try {
         return new Intl.NumberFormat(info.locale, {
           style: 'currency',
-          currency: 'INR',
-        }).format(amount);
+          currency,
+        }).format(convertedAmount);
       } catch {
-        return `₹${amount}`;
+        return `${info.symbol}${convertedAmount.toFixed(2)}`;
       }
     }
 
-    // 3. No manual price for USD (or other non-INR) - return placeholder
-    return 'Price on Request';
+    // 3. If currency is INR, use the base price
+    try {
+      return new Intl.NumberFormat(info.locale, {
+        style: 'currency',
+        currency: 'INR',
+      }).format(amountInINR);
+    } catch {
+      return `₹${amountInINR}`;
+    }
   }, [currency]);
+
 
   return (
     <CurrencyContext.Provider value={{ currency, currencyInfo, setCurrency, formatPrice, rates: FALLBACK_RATES }}>

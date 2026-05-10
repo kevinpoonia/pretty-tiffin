@@ -9,6 +9,7 @@ import {
   Settings, CreditCard, Globe, Box
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
+import { CURRENCIES } from '@/context/CurrencyContext';
 import api from '@/lib/api';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
@@ -794,8 +795,20 @@ export default function AdminDashboard() {
                         </div>
                         {pf.currencyPrices.map((cp, idx) => (
                           <div key={idx} className="grid grid-cols-5 gap-2 px-4 py-2.5 border-t border-brand-100 items-center">
-                            <input value={cp.currency} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].currency = e.target.value.toUpperCase().slice(0,3); return { ...p, currencyPrices: a }; })}
-                              placeholder="USD" maxLength={3} className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-black text-brand-900 outline-none uppercase" />
+                            <select 
+                              value={cp.currency} 
+                              onChange={e => setPf(p => { 
+                                const a = [...p.currencyPrices]; 
+                                const selected = CURRENCIES.find(c => c.code === e.target.value);
+                                a[idx].currency = e.target.value; 
+                                if (selected) a[idx].symbol = selected.symbol;
+                                return { ...p, currencyPrices: a }; 
+                              })}
+                              className="bg-white border border-brand-100 rounded-lg px-2 py-2 text-xs font-black text-brand-900 outline-none uppercase"
+                            >
+                              <option value="">Select...</option>
+                              {CURRENCIES.map(c => <option key={c.code} value={c.code}>{c.code} ({c.name})</option>)}
+                            </select>
                             <input value={cp.symbol} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].symbol = e.target.value; return { ...p, currencyPrices: a }; })}
                               placeholder="$" maxLength={4} className="bg-white border border-brand-100 rounded-lg px-3 py-2 text-xs font-bold text-brand-900 outline-none" />
                             <input type="number" value={cp.price} onChange={e => setPf(p => { const a = [...p.currencyPrices]; a[idx].price = e.target.value; return { ...p, currencyPrices: a }; })}

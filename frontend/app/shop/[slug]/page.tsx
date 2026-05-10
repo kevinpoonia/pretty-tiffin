@@ -76,16 +76,14 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
   const productSchema = {
     "@context": "https://schema.org",
     "@type": "Product",
-    "@id": `https://prettyluxeatelier.com/shop/${product.slug}`,
+    "@id": `https://prettyluxeatelier.com/shop/${product.slug}#product`,
     "name": product.name,
     "image": product.images || [],
     "description": product.description,
     "sku": product.id,
-    "brand": {
-      "@type": "Brand",
-      "name": "Pretty Luxe Atelier",
-      "@id": "https://prettyluxeatelier.com/#organization"
-    },
+    "mpn": product.id,
+    "brand": { "@id": "https://prettyluxeatelier.com/#organization" },
+    "material": "304 Food-Grade Stainless Steel",
     "offers": {
       "@type": "Offer",
       "url": `https://prettyluxeatelier.com/shop/${product.slug}`,
@@ -112,10 +110,16 @@ export default async function Page({ params }: { params: Promise<{ slug: string 
         },
         "shippingDestination": { "@type": "DefinedRegion", "addressCountry": "US" }
       },
-      "seller": {
-        "@type": "Organization",
-        "@id": "https://prettyluxeatelier.com/#organization",
-        "name": "Pretty Luxe Atelier"
+      "seller": { "@id": "https://prettyluxeatelier.com/#organization" },
+      "shippingDetails": {
+        "@type": "OfferShippingDetails",
+        "shippingRate": { "@type": "MonetaryAmount", "value": "0", "currency": "USD" },
+        "deliveryTime": {
+          "@type": "ShippingDeliveryTime",
+          "handlingTime": { "@type": "QuantitativeValue", "minValue": 1, "maxValue": 3, "unitCode": "DAY" },
+          "transitTime": { "@type": "QuantitativeValue", "minValue": 3, "maxValue": 14, "unitCode": "DAY" }
+        },
+        "shippingDestination": { "@type": "DefinedRegion", "addressCountry": ["IN", "US", "GB", "AU", "ZA", "MU"] }
       }
     },
     ...(displayReviewCount > 0 ? {

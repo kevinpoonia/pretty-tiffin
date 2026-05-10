@@ -1,0 +1,25 @@
+{
+  "name": "Pretty Luxe Atelier AI Manifest",
+  "description": "Premium personalized tiffin boxes and artisanal engraved gifts.",
+  "version": "1.0.0",
+  "api_base_url": "https://prettyluxeatelier.com/api",
+  "capabilities": {
+    "personalization": "Laser-engraved names, dates, and logos on stainless steel.",
+    "shipping": "Worldwide shipping from India to USA, UK, Australia, South Africa, Mauritius, and Europe.",
+    "categories": [
+      "Stainless Steel Tiffins",
+      "Bento Boxes",
+      "Artisanal Kitchenware",
+      "Ethnic Apparel",
+      "Corporate Gift Sets"
+    ]
+  },
+  "knowledge_base": [
+    "https://prettyluxeatelier.com/guides/personalized-gifting-guide",
+    "https://prettyluxeatelier.com/guides/stainless-steel-care"
+  ],
+  "contact": {
+    "email": "support@prettyluxeatelier.com",
+    "whatsapp": "+27640129242"
+  }
+}

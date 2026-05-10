@@ -13,17 +13,23 @@ export const metadata: Metadata = {
   keywords: [
     'personalized tiffin box', 'customized tiffin', 'engraved stainless steel tiffin',
     'personalized gifts', 'corporate gifting', 'pretty luxe atelier',
-    'laser engraved gifts', 'premium tiffin box', 'custom tiffin gift',
-    'birthday gift ideas', 'anniversary gifts', 'worldwide gifting',
-    'luxury gifting', 'stainless steel bento box'
+    'luxury lifestyle gift', 'artisan gift hamper', 'bespoke corporate gifts',
+    'personalized wedding favors', 'luxury kitchenware gifts', 'custom engraved gifts',
+    'premium bento box', 'personalized anniversary gift', 'boutique gift store'
   ],
   metadataBase: new URL('https://prettyluxeatelier.com'),
   alternates: { 
-    canonical: '/',
     languages: {
       'en-US': '/en-US',
       'en-GB': '/en-GB',
+      'en-AU': '/en-AU',
+      'en-NZ': '/en-NZ',
+      'en-ZA': '/en-ZA',
+      'en-MU': '/en-MU',
       'en-IN': '/en-IN',
+      'en-IE': '/en-IE',
+      'de-DE': '/de-DE',
+      'fr-FR': '/fr-FR',
     },
   },
   category: 'ecommerce',
@@ -127,13 +133,38 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       "postalCode": "313001",
       "addressCountry": "IN"
     },
+    "founder": {
+      "@type": "Person",
+      "name": "Admin",
+      "jobTitle": "Creative Director",
+      "sameAs": [
+        "https://www.linkedin.com/company/prettyluxeatelier"
+      ]
+    },
+    "foundingLocation": {
+      "@type": "Place",
+      "name": "Udaipur, India"
+    },
+    "knowsAbout": [
+      "Personalized Gifting",
+      "Corporate Gifting Solutions",
+      "Artisanal Stainless Steel Craftsmanship",
+      "Luxury Lifestyle Products",
+      "Bespoke Wedding Favors"
+    ],
+    "awards": [
+      "Premium Artisanal Brand of the Year Placeholder",
+      "Top Gifting Excellence Award Placeholder"
+    ],
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
-      "name": "Personalized Tiffin Collection",
+      "name": "Personalized Tiffin & Gift Collection",
+      "@id": "https://prettyluxeatelier.com/#offercatalog",
       "itemListElement": [
         "Personalized Tiffin Box",
         "Engraved Gift Set",
-        "Corporate Gift Tiffin"
+        "Corporate Gift Tiffin",
+        "Artisanal Kitchenware"
       ]
     }
   };
@@ -146,6 +177,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     "name": "Pretty Luxe Atelier",
     "description": "Premium personalized tiffin boxes and engraved gifts. Worldwide shipping.",
     "publisher": { "@id": "https://prettyluxeatelier.com/#organization" },
+    "speakable": {
+      "@type": "SpeakableSpecification",
+      "xpath": [
+        "/html/head/title",
+        "/html/head/meta[@name='description']/@content"
+      ]
+    },
     "potentialAction": {
       "@type": "SearchAction",
       "target": {

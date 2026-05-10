@@ -14,6 +14,8 @@ import { useAuth } from '@/context/AuthContext';
 import { useToast } from '@/context/ToastContext';
 import { useCurrency } from '@/context/CurrencyContext';
 import api from '@/lib/api';
+import SmartRecommendations from '@/components/products/SmartRecommendations';
+import GiftSelector from '@/components/products/GiftSelector';
 
 export default function ProductDetailClient({ product }: { product: any }) {
   const { addItem } = useCart();
@@ -97,6 +99,14 @@ export default function ProductDetailClient({ product }: { product: any }) {
     {
       title: 'Shipping & Delivery', icon: Truck,
       content: product.shippingInfo || 'Worldwide shipping available. Standard delivery takes 7–14 business days internationally. Express shipping available at checkout.'
+    },
+    {
+      title: 'Is this a good gift?', icon: Star,
+      content: 'Absolutely. Pretty Luxe Atelier specializes in personalized artisanal gifts. Each piece is custom engraved and arrives in premium, boutique-style packaging, making it perfect for corporate gifting, weddings, and anniversaries.'
+    },
+    {
+      title: 'Why choose Pretty Luxe Atelier?', icon: ShieldCheck,
+      content: 'Unlike mass-produced alternatives, our products blend traditional Indian craftsmanship with modern functionality. We use high-grade materials and offer precision laser engraving for a truly unique, long-lasting luxury experience.'
     },
     {
       title: 'Warranty Information', icon: ShieldCheck,
@@ -315,46 +325,12 @@ export default function ProductDetailClient({ product }: { product: any }) {
           </div>
         </div>
 
-        {/* People Also Buy */}
-        {relatedProducts.length > 0 && (
-          <div className="mt-20 border-t border-brand-50 pt-16">
-            <div className="container mx-auto px-4 md:px-6">
-              <div className="flex items-center justify-between mb-8">
-                <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-brand-400 mb-1">Curated for You</p>
-                  <h2 className="text-3xl md:text-4xl font-heading italic text-stone-800">People Also Buy</h2>
-                </div>
-                <Link href="/shop" className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-brand-500 hover:text-brand-900 transition-colors">
-                  View All <ChevronRight size={12} />
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-                {relatedProducts.map((p: any) => (
-                  <Link key={p.id} href={`/shop/${p.slug}`} className="group block bg-white rounded-2xl border border-brand-100 overflow-hidden hover:shadow-xl hover:border-brand-200 transition-all duration-300">
-                    <div className="relative aspect-square bg-brand-50/50 overflow-hidden">
-                      {p.images?.[0] ? (
-                        <Image src={p.images[0]} alt={p.name} fill sizes="(max-width: 768px) 50vw, 25vw" className="object-contain p-4 group-hover:scale-105 transition-transform duration-700" />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center">
-                          <Package size={32} className="text-brand-200" />
-                        </div>
-                      )}
-                    </div>
-                    <div className="p-4">
-                      <h3 className="font-heading italic text-sm text-brand-900 mb-2 line-clamp-2 leading-snug group-hover:text-brand-600 transition-colors">{p.name}</h3>
-                      <div className="flex items-center gap-2">
-                        <span className="font-bold text-brand-900 text-sm">{formatPrice(p.price, p.currencyPrices)}</span>
-                        {p.compareAtPrice && Number(p.compareAtPrice) > Number(p.price) && (
-                          <span className="text-xs text-stone-300 line-through">{formatPrice(p.compareAtPrice, p.currencyPrices)}</span>
-                        )}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
+        {/* Smart Recommendations */}
+        <SmartRecommendations 
+          currentProductId={product.id} 
+          category={product.category} 
+          productName={product.name} 
+        />
 
         {/* Reviews Section */}
         <div className="mt-20 border-t border-brand-50 pt-16">
