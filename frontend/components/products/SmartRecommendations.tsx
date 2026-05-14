@@ -10,9 +10,10 @@ interface SmartRecommendationsProps {
   currentProductId: string;
   category: string;
   productName: string;
+  relatedProducts?: any[];
 }
 
-export default function SmartRecommendations({ currentProductId, category, productName }: SmartRecommendationsProps) {
+export default function SmartRecommendations({ currentProductId, category, productName, relatedProducts = [] }: SmartRecommendationsProps) {
   const [recommendations, setRecommendations] = useState<any[]>([]);
   const { formatPrice } = useCurrency();
 
@@ -35,12 +36,13 @@ export default function SmartRecommendations({ currentProductId, category, produ
           p.name.toLowerCase().includes('gift')
         );
 
-        // Mix them up
-        let combined = [...categoryMatches, ...giftSets];
+        // Mix them up, prioritizing explicitly connected relatedProducts
+        let combined = [...relatedProducts, ...categoryMatches, ...giftSets];
         
         // Remove duplicates and limit to 4
         const unique = Array.from(new Set(combined.map(p => p.id)))
           .map(id => combined.find(p => p.id === id))
+          .filter(p => p && p.id !== currentProductId)
           .slice(0, 4);
           
         // If we still need more, add random ones
@@ -52,7 +54,7 @@ export default function SmartRecommendations({ currentProductId, category, produ
         setRecommendations(unique.slice(0, 4));
       })
       .catch(() => {});
-  }, [currentProductId, category, productName]);
+  }, [currentProductId, category, productName, relatedProducts]);
 
   if (recommendations.length === 0) return null;
 

@@ -87,6 +87,9 @@ export default function ProductDetailClient({ product }: { product: any }) {
           defaults[opt.label] = opt.values[0];
         }
       });
+      if (product.colors && product.colors.length > 0) {
+        defaults['Color'] = product.colors[0];
+      }
       setSelectedOptions(defaults);
     }
   }, [product]);
@@ -244,6 +247,41 @@ export default function ProductDetailClient({ product }: { product: any }) {
                 </div>
               </div>
 
+              {/* Product Colors */}
+              {product.colors && product.colors.length > 0 && (
+                <div className="mb-6 border-b border-brand-50 pb-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <h3 className="text-[11px] font-black uppercase tracking-widest text-stone-800">
+                      Color
+                    </h3>
+                    <span className="text-[10px] font-bold text-brand-500 uppercase">
+                      {selectedOptions['Color']}
+                    </span>
+                  </div>
+                  {product.colors.length === 1 ? (
+                    <div className="bg-brand-50 border border-brand-100 p-4 flex items-center gap-3">
+                      <div className="w-6 h-6 rounded-full border border-stone-200" style={{ backgroundColor: product.colors[0].toLowerCase() === 'gold' ? '#FFD700' : product.colors[0].toLowerCase() === 'silver' ? '#C0C0C0' : product.colors[0].toLowerCase() }} />
+                      <span className="text-sm font-bold text-stone-800">{product.colors[0]}</span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-wrap gap-3">
+                      {product.colors.map((c: string) => (
+                        <button
+                          key={c}
+                          onClick={() => setSelectedOptions(prev => ({ ...prev, Color: c }))}
+                          className={`group relative flex flex-col items-center gap-2 p-2 border-2 transition-all ${selectedOptions['Color'] === c ? 'border-brand-500 bg-brand-50' : 'border-transparent hover:border-brand-200'}`}
+                        >
+                          <div className="w-8 h-8 rounded-full border border-stone-200 shadow-sm transition-transform group-hover:scale-110" style={{ backgroundColor: c.toLowerCase() === 'gold' ? '#FFD700' : c.toLowerCase() === 'silver' ? '#C0C0C0' : c.toLowerCase() }} />
+                          <span className={`text-[10px] font-bold uppercase tracking-wider ${selectedOptions['Color'] === c ? 'text-brand-600' : 'text-stone-500'}`}>
+                            {c}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
               <ProductCustomizer
                 options={product.customizationOptions || []}
                 selectedOptions={selectedOptions}
@@ -330,6 +368,7 @@ export default function ProductDetailClient({ product }: { product: any }) {
           currentProductId={product.id} 
           category={product.category} 
           productName={product.name} 
+          relatedProducts={product.relatedProducts || []}
         />
 
         {/* Reviews Section */}

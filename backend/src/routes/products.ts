@@ -15,6 +15,7 @@ router.get('/', cacheMiddleware(3600), async (req: Request, res: Response) => {
         reviews: { select: { rating: true } },
         adminReviews: { orderBy: { createdAt: 'desc' } },
         _count: { select: { reviews: true } },
+        relatedProducts: { select: { id: true, name: true, slug: true, images: true, price: true, compareAtPrice: true, currencyPrices: true } }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -113,7 +114,8 @@ router.get('/:slug', cacheMiddleware(3600), async (req: Request, res: Response) 
         customizationOptions: true,
         currencyPrices: true,
         adminReviews: { orderBy: { createdAt: 'desc' } },
-        reviews: { include: { user: { select: { name: true } } }, orderBy: { createdAt: 'desc' } }
+        reviews: { include: { user: { select: { name: true } } }, orderBy: { createdAt: 'desc' } },
+        relatedProducts: { select: { id: true, name: true, slug: true, images: true, price: true, compareAtPrice: true, currencyPrices: true } }
       }
     });
     if (!product) { res.status(404).json({ error: 'Product not found' }); return; }

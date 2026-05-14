@@ -174,7 +174,7 @@ router.put('/orders/:id/status', async (req: AuthRequest, res: Response) => {
 router.get('/products', async (req: AuthRequest, res: Response) => {
   try {
     const products = await prisma.product.findMany({
-      include: { customizationOptions: true, currencyPrices: true, adminReviews: { orderBy: { createdAt: 'desc' } } },
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: { orderBy: { createdAt: 'desc' } }, relatedProducts: { select: { id: true, name: true } } },
       orderBy: { createdAt: 'desc' }
     });
     res.json(products);
@@ -189,7 +189,7 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
       name, description, price, compareAtPrice, slug, category, images, stock, isFeatured,
       seoTitle, seoDesc, customizationOptions,
       hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo,
-      manualReviewCount, manualAvgRating, currencyPrices, adminReviews
+      manualReviewCount, manualAvgRating, currencyPrices, adminReviews, colors, relatedProductIds
     } = req.body;
     const product = await prisma.product.create({
       data: {
@@ -206,6 +206,8 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
         featuresAndSpecs: featuresAndSpecs || null,
         shippingInfo: shippingInfo || null,
         warrantyInfo: warrantyInfo || null,
+        colors: colors || [],
+        relatedProducts: relatedProductIds && relatedProductIds.length > 0 ? { connect: relatedProductIds.map((id: string) => ({ id })) } : undefined,
         manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
         manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
         customizationOptions: {
@@ -227,7 +229,7 @@ router.post('/products', async (req: AuthRequest, res: Response) => {
           }))
         }
       },
-      include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: true, relatedProducts: { select: { id: true, name: true } } }
     });
     await clearCache('/api/products*');
     res.status(201).json(product);
@@ -242,7 +244,7 @@ router.put('/products/:id', async (req: AuthRequest, res: Response) => {
       name, description, price, compareAtPrice, slug, category, images, stock, isFeatured,
       seoTitle, seoDesc, customizationOptions,
       hasSteel, hasEngraving, featuresAndSpecs, shippingInfo, warrantyInfo,
-      manualReviewCount, manualAvgRating, currencyPrices, adminReviews
+      manualReviewCount, manualAvgRating, currencyPrices, adminReviews, colors, relatedProductIds
     } = req.body;
     const productId = String(req.params.id);
 
@@ -264,6 +266,8 @@ router.put('/products/:id', async (req: AuthRequest, res: Response) => {
         featuresAndSpecs: featuresAndSpecs || null,
         shippingInfo: shippingInfo || null,
         warrantyInfo: warrantyInfo || null,
+        colors: colors || [],
+        relatedProducts: { set: (relatedProductIds || []).map((id: string) => ({ id })) },
         manualReviewCount: manualReviewCount ? Number(manualReviewCount) : null,
         manualAvgRating: manualAvgRating ? Number(manualAvgRating) : null,
         customizationOptions: {
@@ -285,7 +289,7 @@ router.put('/products/:id', async (req: AuthRequest, res: Response) => {
           }))
         }
       },
-      include: { customizationOptions: true, currencyPrices: true, adminReviews: true }
+      include: { customizationOptions: true, currencyPrices: true, adminReviews: true, relatedProducts: { select: { id: true, name: true } } }
     });
     await clearCache('/api/products*');
     res.json(product);

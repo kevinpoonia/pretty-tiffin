@@ -61,6 +61,13 @@ model Product {
   hasSteel      Boolean  @default(false)
   hasEngraving  Boolean  @default(false)
 
+  // Colors predefined
+  colors        String[] @default([])
+
+  // Related / Jodi Wala products
+  relatedProducts Product[] @relation("ProductToProduct")
+  relatedTo       Product[] @relation("ProductToProduct")
+
   // Per-product content blocks (admin-editable)
   featuresAndSpecs String?  @db.Text
   shippingInfo     String?  @db.Text

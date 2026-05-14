@@ -154,6 +154,7 @@ export default function AdminDashboard() {
     manualReviewCount: '', manualAvgRating: '',
     hasSteel: false, hasEngraving: false,
     featuresAndSpecs: '', shippingInfo: '', warrantyInfo: '',
+    colors: [] as string[], relatedProductIds: [] as string[],
     customizationOptions: [] as { type: string; label: string; values: string; priceOffset: string }[],
     currencyPrices: [] as { currency: string; symbol: string; price: string; compareAtPrice: string }[],
     adminReviews: [] as { reviewerName: string; location: string; rating: string; comment: string }[]
@@ -254,6 +255,8 @@ export default function AdminDashboard() {
       featuresAndSpecs: p.featuresAndSpecs || '',
       shippingInfo: p.shippingInfo || '',
       warrantyInfo: p.warrantyInfo || '',
+      colors: (p as any).colors || [],
+      relatedProductIds: (p as any).relatedProducts?.map((rp: any) => rp.id) || [],
       customizationOptions: (p.customizationOptions || []).map(o => ({
         type: o.type, label: o.label, values: o.values.join(', '), priceOffset: String(o.priceOffset)
       })),
@@ -271,6 +274,7 @@ export default function AdminDashboard() {
       manualReviewCount: '', manualAvgRating: '',
       hasSteel: false, hasEngraving: false,
       featuresAndSpecs: '', shippingInfo: '', warrantyInfo: '',
+      colors: [], relatedProductIds: [],
       customizationOptions: [],
       currencyPrices: [
         { currency: 'USD', symbol: '$', price: '', compareAtPrice: '' },
@@ -297,6 +301,8 @@ export default function AdminDashboard() {
         featuresAndSpecs: pf.featuresAndSpecs || null,
         shippingInfo: pf.shippingInfo || null,
         warrantyInfo: pf.warrantyInfo || null,
+        colors: pf.colors,
+        relatedProductIds: pf.relatedProductIds,
         customizationOptions: pf.customizationOptions.map(o => ({
           type: o.type, label: o.label, priceOffset: Number(o.priceOffset) || 0,
           values: o.values.split(',').map(v => v.trim()).filter(Boolean)
@@ -785,6 +791,40 @@ export default function AdminDashboard() {
                         <input type="checkbox" checked={pf.isFeatured} onChange={e => setPf(p => ({ ...p, isFeatured: e.target.checked }))} className="w-4 h-4 rounded accent-brand-600" />
                         <span className="text-sm font-bold text-brand-700">Featured product (shown on homepage)</span>
                       </label>
+                    </div>
+
+                    {/* ── Colors & Connected Products ── */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-brand-50/60 rounded-2xl p-5 border border-brand-100">
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Available Colors</label>
+                        <div className="flex flex-wrap gap-2">
+                          {['Red', 'Yellow', 'Blue', 'Gold', 'Green', 'Pink', 'White', 'Black', 'Purple', 'Silver'].map(c => {
+                            const isSelected = pf.colors.includes(c);
+                            return (
+                              <button type="button" key={c} onClick={() => {
+                                setPf(p => ({ ...p, colors: isSelected ? p.colors.filter(x => x !== c) : [...p.colors, c] }));
+                              }}
+                                className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${isSelected ? 'bg-brand-900 text-white border-brand-900 shadow-md' : 'bg-white text-brand-600 border-brand-200 hover:border-brand-400'}`}>
+                                {c}
+                              </button>
+                            );
+                          })}
+                        </div>
+                        <p className="text-[10px] text-brand-400">If exactly 1 color is chosen, no options will be shown to the user.</p>
+                      </div>
+                      <div className="space-y-2">
+                        <label className="text-[10px] font-black uppercase tracking-widest text-brand-400">Connected "Jodi Wala" Products</label>
+                        <select multiple value={pf.relatedProductIds} onChange={e => {
+                          const options = Array.from(e.target.selectedOptions, option => option.value);
+                          setPf(p => ({ ...p, relatedProductIds: options }));
+                        }}
+                          className="w-full bg-white rounded-xl px-4 py-2.5 text-sm font-medium text-brand-900 border border-brand-100 outline-none focus:ring-2 focus:ring-brand-500/20 h-28">
+                          {products.filter(p => p.id !== editingProduct?.id).map(p => (
+                            <option key={p.id} value={p.id} className="py-1">{p.name}</option>
+                          ))}
+                        </select>
+                        <p className="text-[10px] text-brand-400">Hold Cmd/Ctrl to select multiple. These will appear first in recommendations.</p>
+                      </div>
                     </div>
 
                     {/* ── Content Tabs: Features / Shipping / Warranty ── */}
