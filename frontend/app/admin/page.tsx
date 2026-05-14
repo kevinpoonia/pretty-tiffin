@@ -6,7 +6,7 @@ import {
   TrendingUp, TrendingDown, DollarSign, Plus, Edit, Trash2, X,
   Loader2, Save, ChevronRight, Bell, Search, ImageIcon, RefreshCw,
   Star, Eye, BarChart3, MessageSquare, CheckCircle, Minus, Image as ImageIconLucide,
-  Settings, CreditCard, Globe, Box
+  Settings, CreditCard, Globe, Box, Menu
 } from 'lucide-react';
 import { useAuth } from '@/context/AuthContext';
 import { CURRENCIES } from '@/context/CurrencyContext';
@@ -112,6 +112,20 @@ export default function AdminDashboard() {
   const [tab, setTab] = useState<TabType>('overview');
   const [loading, setLoading] = useState(true);
   const [notify, setNotify] = useState('');
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) {
+        setIsSidebarOpen(false);
+      } else {
+        setIsSidebarOpen(true);
+      }
+    };
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Data
   const [stats, setStats] = useState<Stats | null>(null);
@@ -377,17 +391,31 @@ export default function AdminDashboard() {
   return (
     <div className="flex h-screen bg-brand-50 font-sans overflow-hidden">
 
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div 
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden" 
+          onClick={() => setIsSidebarOpen(false)} 
+        />
+      )}
+
       {/* ── Sidebar ── */}
-      <aside className="w-64 bg-brand-900 flex flex-col shrink-0 hidden lg:flex">
-        <div className="px-7 py-6 border-b border-brand-800">
-          <Link href="/" className="font-heading font-black text-xl text-white">
-            PRETTY LUXE<span className="text-brand-400"> ATELIER</span>
-          </Link>
-          <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mt-1">Admin Console</p>
-        </div>
-        <nav className="flex-1 py-6 px-4 space-y-1">
-          {NAV.map(({ id, label, icon: Icon }) => (
-            <button key={id} onClick={() => { setTab(id); setSelectedOrder(null); setProductFormOpen(false); }}
+      <aside className={`bg-brand-900 flex flex-col shrink-0 transition-all duration-300 fixed inset-y-0 left-0 z-50 lg:static overflow-hidden ${isSidebarOpen ? 'w-64 translate-x-0' : 'w-0 -translate-x-full lg:translate-x-0'}`}>
+        <div className="w-64 h-full flex flex-col overflow-y-auto">
+          <div className="px-7 py-6 border-b border-brand-800 flex justify-between items-start">
+            <div>
+              <Link href="/" className="font-heading font-black text-xl text-white block">
+                PRETTY LUXE<span className="text-brand-400"> ATELIER</span>
+              </Link>
+              <p className="text-[10px] font-bold text-brand-500 uppercase tracking-widest mt-1">Admin Console</p>
+            </div>
+            <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden text-brand-400 hover:text-white mt-1">
+              <X size={20} />
+            </button>
+          </div>
+          <nav className="flex-1 py-6 px-4 space-y-1">
+            {NAV.map(({ id, label, icon: Icon }) => (
+              <button key={id} onClick={() => { setTab(id); setSelectedOrder(null); setProductFormOpen(false); if (window.innerWidth < 1024) setIsSidebarOpen(false); }}
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl font-bold text-sm transition-all ${
                 tab === id ? 'bg-brand-500 text-white shadow-lg shadow-brand-500/30' : 'text-brand-400 hover:bg-brand-800 hover:text-white'
               }`}>
@@ -412,10 +440,13 @@ export default function AdminDashboard() {
       <div className="flex-1 flex flex-col overflow-hidden">
 
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-brand-100 flex items-center px-8 justify-between shrink-0 z-10">
+        <header className="h-16 bg-white border-b border-brand-100 flex items-center px-4 lg:px-8 justify-between shrink-0 z-10">
           <div className="flex items-center gap-3">
-            <h2 className="font-heading font-black text-xl text-brand-900 capitalize">{tab}</h2>
-            {tab === 'orders' && <span className="text-xs font-bold text-brand-400 bg-brand-50 px-2.5 py-1 rounded-full">{ordersTotal} orders</span>}
+            <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} className="p-2 -ml-2 text-brand-900 hover:bg-brand-50 rounded-lg transition-colors">
+              <Menu size={20} />
+            </button>
+            <h2 className="font-heading font-black text-xl text-brand-900 capitalize hidden sm:block">{tab}</h2>
+            {tab === 'orders' && <span className="text-xs font-bold text-brand-400 bg-brand-50 px-2.5 py-1 rounded-full hidden sm:inline-block">{ordersTotal} orders</span>}
           </div>
           <div className="flex items-center gap-4">
             {notify && (
@@ -442,7 +473,7 @@ export default function AdminDashboard() {
               {loading ? <div className="flex justify-center py-20"><Loader2 className="animate-spin text-brand-400" size={36} /></div> : stats && (
                 <>
                   {/* Stats cards */}
-                  <div className="grid grid-cols-2 xl:grid-cols-4 gap-6">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 lg:gap-6">
                     {[
                       { title: 'Total Revenue', value: `₹${stats.revenue.toLocaleString(undefined)}`, sub: `₹${stats.monthRevenue.toLocaleString(undefined)} this month`, trend: stats.revenueChange, icon: DollarSign, color: 'bg-green-500' },
                       { title: 'Total Orders', value: stats.totalOrders, sub: 'All time orders', trend: stats.ordersChange, icon: ShoppingCart, color: 'bg-blue-500' },
@@ -501,7 +532,7 @@ export default function AdminDashboard() {
           {tab === 'orders' && (
             <div className="flex h-full overflow-hidden">
               {/* Order list */}
-              <div className={`flex flex-col border-r border-brand-100 bg-white ${selectedOrder ? 'w-96 shrink-0' : 'flex-1'}`}>
+              <div className={`flex flex-col border-r border-brand-100 bg-white ${selectedOrder ? 'hidden lg:flex w-96 shrink-0' : 'flex-1'}`}>
                 {/* Filter bar */}
                 <div className="p-4 border-b border-brand-50 flex gap-2 flex-wrap">
                   {['', ...STATUSES].map(s => (
@@ -539,7 +570,7 @@ export default function AdminDashboard() {
 
               {/* Order detail panel */}
               {selectedOrder && (
-                <div className="flex-1 overflow-auto bg-brand-50/30 p-6 space-y-6">
+                <div className="flex-1 overflow-auto bg-brand-50/30 p-4 lg:p-6 space-y-6 w-full">
                   <div className="flex items-center justify-between">
                     <div>
                       <h3 className="font-heading font-black text-xl text-brand-900">#{selectedOrder.id.slice(-8).toUpperCase()}</h3>
@@ -553,7 +584,7 @@ export default function AdminDashboard() {
                   </div>
 
                   {/* Customer + Amount */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="bg-white rounded-2xl p-4 border border-brand-100">
                       <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest mb-2">Customer</p>
                       <p className="text-sm font-black text-brand-900">{selectedOrder.user?.name}</p>
@@ -591,7 +622,7 @@ export default function AdminDashboard() {
                   <div className="bg-white rounded-2xl border border-brand-100 p-5 space-y-4">
                     <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Update Order</p>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                       <div>
                         <label className="text-[10px] font-black text-brand-400 uppercase tracking-widest block mb-1">Status</label>
                         <select value={orderStatus} onChange={e => setOrderStatus(e.target.value)}
@@ -932,7 +963,7 @@ export default function AdminDashboard() {
 
               {/* Product grid */}
               {!productFormOpen && (
-                <div className="bg-white rounded-2xl border border-brand-100 overflow-hidden shadow-sm">
+                <div className="bg-white rounded-2xl border border-brand-100 overflow-x-auto shadow-sm">
                   {loading ? (
                     <div className="flex justify-center py-16"><Loader2 className="animate-spin text-brand-400" size={28} /></div>
                   ) : products.length === 0 ? (
@@ -1010,7 +1041,7 @@ export default function AdminDashboard() {
           {/* ── CUSTOMERS ── */}
           {tab === 'customers' && (
             <div className="flex h-full overflow-hidden">
-              <div className={`flex flex-col bg-white border-r border-brand-100 ${selectedCustomer ? 'w-96 shrink-0' : 'flex-1'}`}>
+              <div className={`flex flex-col bg-white border-r border-brand-100 ${selectedCustomer ? 'hidden lg:flex w-96 shrink-0' : 'flex-1'}`}>
                 <div className="p-4 border-b border-brand-50">
                   <div className="relative">
                     <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-400" />
@@ -1041,7 +1072,7 @@ export default function AdminDashboard() {
               </div>
 
               {selectedCustomer && (
-                <div className="flex-1 overflow-auto p-6 space-y-5">
+                <div className="flex-1 overflow-auto p-4 lg:p-6 space-y-5 w-full">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-4">
                       <div className="w-14 h-14 bg-brand-900 rounded-2xl flex items-center justify-center text-white font-black text-xl">
@@ -1056,7 +1087,7 @@ export default function AdminDashboard() {
                     <button onClick={() => setSelectedCustomer(null)} className="p-2 hover:bg-brand-100 rounded-xl"><X size={18} /></button>
                   </div>
 
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     <div className="bg-white rounded-2xl p-4 border border-brand-100 text-center">
                       <p className="text-2xl font-black text-brand-900">{selectedCustomer.orders.length}</p>
                       <p className="text-[10px] font-black text-brand-400 uppercase tracking-widest">Orders</p>
@@ -1233,7 +1264,7 @@ export default function AdminDashboard() {
                 </div>
               )}
 
-              <div className="bg-white rounded-2xl border border-brand-100 overflow-hidden shadow-sm">
+              <div className="bg-white rounded-2xl border border-brand-100 overflow-x-auto shadow-sm">
                 {loading ? (
                   <div className="flex justify-center py-16"><Loader2 className="animate-spin text-brand-400" size={28} /></div>
                 ) : coupons.length === 0 ? (
