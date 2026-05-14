@@ -1014,7 +1014,7 @@ export default function AdminDashboard() {
                               </button>
                             </td>
                             <td className="px-6 py-4 text-right">
-                              <div className="flex justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <div className="flex justify-end gap-2 transition-opacity">
                                 <Link href={`/shop/${p.slug}`} target="_blank"
                                   className="p-2 text-brand-400 hover:text-brand-900 bg-brand-50 rounded-lg hover:bg-brand-100 transition-all">
                                   <Eye size={15} />
@@ -1189,7 +1189,7 @@ export default function AdminDashboard() {
                           {b.subtitle && <p className="text-white/70 text-xs">{b.subtitle}</p>}
                         </div>
                         <button onClick={() => deleteBanner(b.id)}
-                          className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-xl shadow opacity-0 group-hover:opacity-100 transition-opacity">
+                          className="absolute top-3 right-3 p-2 bg-red-500 text-white rounded-xl shadow transition-opacity">
                           <Trash2 size={14} />
                         </button>
                       </div>
@@ -1304,7 +1304,7 @@ export default function AdminDashboard() {
                             </td>
                             <td className="px-6 py-4 text-right">
                               <button onClick={() => deleteCoupon(c.id)}
-                                className="p-2 text-brand-300 hover:text-red-600 bg-brand-50 rounded-lg hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-all">
+                                className="p-2 text-brand-300 hover:text-red-600 bg-brand-50 rounded-lg hover:bg-red-50 transition-all">
                                 <Trash2 size={15} />
                               </button>
                             </td>

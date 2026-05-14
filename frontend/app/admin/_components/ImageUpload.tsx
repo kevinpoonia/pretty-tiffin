@@ -88,7 +88,7 @@ export default function ImageUpload({ images, onChange, maxImages = 8 }: Props) 
             <div key={url + i} className="relative aspect-square rounded-xl overflow-hidden group bg-brand-50 border border-brand-100">
               <Image src={url} alt="" fill sizes="140px" className="object-cover" />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-all" />
-              <div className="absolute top-1.5 right-1.5 flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute top-1.5 right-1.5 flex gap-1 transition-opacity">
                 {i !== 0 && (
                   <button type="button" onClick={() => makeMain(i)}
                     className="w-7 h-7 bg-yellow-400 rounded-full flex items-center justify-center shadow" title="Set as main">
