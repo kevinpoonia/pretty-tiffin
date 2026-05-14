@@ -434,6 +434,7 @@ export default function AdminDashboard() {
             <LogOut size={16} /> Sign Out
           </button>
         </div>
+        </div>
       </aside>
 
       {/* ── Main ── */}
